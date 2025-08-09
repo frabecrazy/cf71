@@ -952,11 +952,12 @@ def show_guess():
             color:#1b4332; font-weight:700; font-size:.9rem;
         }
         /* evidenzia la card selezionata */
-        .picked { box-shadow: 0 0 0 3px #52b788 inset; border-radius: 12px; }
-        /* togli qualsiasi “pill” vuota extra */
-        div[data-testid="stVerticalBlockBorderWrapper"] > div:empty { display:none; }
-        </style>
-    """, unsafe_allow_html=True)
+        .picked {    background-color: #d8f3dc;   /* verde chiaro */
+    box-shadow: 0 0 0 3px #52b788 inset;
+    border-radius: 12px;
+    transform: scale(1.03);
+    transition: all 0.15s ease-in-out;
+        }
 
     st.markdown("""
         <div class="hero-guess">
@@ -1013,6 +1014,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
