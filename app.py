@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="Digital Carbon Footprint Calculator", layout="wide")
 
 # Init session state
-if "page" not in st.session_state or st.session_state.page not in ["intro", "main", "results"]:
+if "page" not in st.session_state or st.session_state.page not in ["intro", "main", "virtues", "results"]:
     st.session_state.page = "intro"
 if "role" not in st.session_state:
     st.session_state.role = ""
@@ -511,7 +511,7 @@ def show_main():
                     "Digital Activities": digital_total,
                     "AI Tools": ai_total
                 }
-                st.session_state.page = "results"
+                st.session_state.page = "virtues"
                 st.rerun()
 
 
@@ -897,6 +897,12 @@ def show_virtues():
     total_found = len(virtues)
     st.caption(f"Showing up to 3 highlights • {total_found} virtue(s) detected in total.")
 
+    # Pulsante per passare ai risultati
+    st.markdown("### ")
+    if st.button("➡️ See your detailed results", use_container_width=True):
+        st.session_state.page = "results"
+        st.rerun()
+
 # === PAGE NAVIGATION ===
 if st.session_state.page == "intro":
     show_intro()
@@ -906,6 +912,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
