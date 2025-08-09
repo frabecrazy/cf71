@@ -647,43 +647,37 @@ def show_results():
 
     with left:
         st.markdown(f"""
-            <div style="background-color:#d8f3dc; border-left: 6px solid #1b4332;
-                        padding: 1em 1.5em; margin-top: 20px; border-radius: 10px;">
-                <h3 style="margin: 0; font-size: 1.6em;">🌱 {st.session_state.name}, your total CO₂e is...</h3>
-                <p style="font-size: 2.2em; font-weight: bold; color: #1b4332; margin: 0;">
+            <div style="background-color:white; border-radius:10px; padding:1em 1.2em;">
+                <h3 style="margin:0; font-size:1.3em; color:#1d3557;">
+                    🌱 {st.session_state.name}, your total CO₂e is...
+                </h3>
+                <p style="font-size:2em; font-weight:bold; color:#1d3557; margin:0;">
                     {total:.0f} kg/year
                 </p>
             </div>
         """, unsafe_allow_html=True)
 
     with right:
-        bg = "#e3fced" if guessed_right else "#fff5f5"
-        border = "#52b788" if guessed_right else "#e63946"
-        title = ("✅ Great job! You nailed it —" if guessed_right
-                 else "❌ Nice try — your real match is")
+        color = "#1b4332" if guessed_right else "#e63946"
+        title = ("Great job! You nailed it —" if guessed_right
+                 else "Nice try — your real match is")
 
         show_arc = guessed if guessed_right else actual
         arc_name = show_arc["name"] if show_arc else "—"
         arc_img = show_arc["image"] if show_arc else None
 
-        # Card contenitore (unico box)
         card = st.container(border=True)
         with card:
-            # Header della card colorato
             st.markdown(f"""
-                <div style="background-color:{bg};
-                            border-left:6px solid {border};
-                            border-radius:8px;
-                            padding:.9rem 1.1rem; margin:-.4rem -.4rem 0 -.4rem;">
-                    <div style="font-size:1.25rem; font-weight:800; margin:0;">{title}</div>
+                <div style="font-size:1.25rem; font-weight:800; margin-bottom:.6rem; color:{color};">
+                    {title}
                 </div>
             """, unsafe_allow_html=True)
 
-            # Contenuto: testo a sinistra, immagine a destra
             text_col, img_col = st.columns([3, 1])
             with text_col:
                 st.markdown(
-                    f"<div style='margin-top:.6rem; font-weight:800; font-size:1.15rem; color:#1d3557;'>{arc_name}</div>",
+                    f"<div style='font-weight:800; font-size:1.15rem; color:#1d3557;'>{arc_name}</div>",
                     unsafe_allow_html=True
                 )
                 st.markdown(
@@ -693,6 +687,7 @@ def show_results():
             with img_col:
                 if arc_img:
                     st.image(arc_img, use_container_width=True)
+
 
 
     # --- METRICHE IN GRIGLIA ---
@@ -1082,6 +1077,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
