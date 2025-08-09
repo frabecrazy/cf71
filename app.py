@@ -754,64 +754,6 @@ def show_results():
     fig.update_traces(marker=dict(line=dict(width=1.5, color='white')))
     st.plotly_chart(fig, use_container_width=True)
 
-
-    # --- TIPS PERSONALIZZATI ---
-    detailed_tips = {
-        "Devices": [
-            "<b>Turn off devices when not in use</b> – Even in standby mode, they consume energy. Powering them off saves electricity and extends their lifespan.",
-            "<b>Update software regularly</b> – This enhances efficiency and performance, often reducing energy consumption.",
-            "<b>Activate power-saving settings, reduce screen brightness and enable dark mode</b> – This lower energy use.",
-            "<b>Choose accessories made from recycled or sustainable materials</b> – This minimizes the environmental impact of your tech choices."
-        ],
-        "E-Waste": [
-            "<b>Avoid upgrading devices every year</b> – Extending device lifespan significantly reduces environmental impact.",
-            "<b>Repair instead of replacing</b> – Fix broken electronics whenever possible to avoid unnecessary waste.",
-            "<b>Consider buying refurbished devices</b> – They’re often as good as new, but with a much lower environmental footprint.",
-            "<b>Recycle unused electronics properly</b> – Don’t store old devices at home or dispose of them in the environment! E-waste contains polluting and valuable materials that need specialized treatment."
-        ],
-        "Digital Activities": [
-            "<b>Use your internet mindfully</b> – Close unused apps, avoid sending large attachments, and turn off video during calls when not essential.",
-            "<b>Declutter your digital space</b> – Regularly delete unnecessary files, empty trash and spam folders, and clean up cloud storage to reduce digital pollution.",
-            "<b>Share links instead of attachments</b> – For example, link to a document on OneDrive or Google Drive instead of attaching it in an email.",
-            "<b>Use instant messaging for short, urgent messages</b> – It's more efficient than email for quick communications."
-        ],
-        "Artificial Intelligence": [
-            "<b>Use search engines for simple tasks</b> – They consume far less energy than AI tools.",
-            "<b>Disable AI-generated results in search engines</b> – (e.g., on Bing: go to Settings > Search > Uncheck \"Include AI-powered answers\" or similar option)",
-            "<b>Prefer smaller AI models when possible</b> – For basic tasks, use lighter versions like GPT-4o-mini instead of more energy-intensive models.",
-            "<b>Be concise in AI prompts and require concise answers</b> – Short inputs and outputs require less processing."
-        ]
-    }
-
-    # --- TITOLO + TIPS PER LA CATEGORIA PRINCIPALE ---
-    most_impact_cat = df_plot.sort_values("CO₂e (kg)", ascending=False).iloc[0]["Category"]
-
-    st.markdown(f"### 💡 Your biggest impact comes from: <b>{most_impact_cat}</b>", unsafe_allow_html=True)
-
-    with st.expander("📌 Tips to reduce your footprint"):
-        for tip in detailed_tips[most_impact_cat]:
-            st.markdown(f"""
-                <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-                    {tip}
-                </div>
-            """, unsafe_allow_html=True)
-
-    # --- EXTRA TIPS ---
-    other_categories = [cat for cat in detailed_tips if cat != most_impact_cat]
-    extra_tips = [random.choice(detailed_tips[cat]) for cat in random.sample(other_categories, 3)]
-
-    st.markdown("### 💡 Some Extra Tips:")
-
-    with st.expander("📌 Bonus advice from other categories"):
-        for tip in extra_tips:
-            st.markdown(f"""
-                <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-                    {tip}
-                </div>
-            """, unsafe_allow_html=True)
-
-
-
     st.divider()
 
     # --- EQUIVALENZE VISUALI ---
@@ -909,6 +851,79 @@ def show_results():
         st.rerun()
 
 def show_virtues():
+
+    # =======================
+    # PERSONALIZED TIPS (spostati qui dai Results)
+    # =======================
+
+    # Prendi i risultati
+    res = st.session_state.get("results", {})
+    if res:
+        # Ricostruisci il ranking categorie
+        df_plot = pd.DataFrame({
+            "Category": ["Devices", "Digital Activities", "Artificial Intelligence", "E-Waste"],
+            "CO₂e (kg)": [res.get("Devices", 0), res.get("Digital Activities", 0), res.get("AI Tools", 0), res.get("E-Waste", 0)]
+        })
+
+        most_impact_cat = df_plot.sort_values("CO₂e (kg)", ascending=False).iloc[0]["Category"]
+
+        detailed_tips = {
+            "Devices": [
+                "<b>Turn off devices when not in use</b> – Even in standby mode, they consume energy. Powering them off saves electricity and extends their lifespan.",
+                "<b>Update software regularly</b> – This enhances efficiency and performance, often reducing energy consumption.",
+                "<b>Activate power-saving settings, reduce screen brightness and enable dark mode</b> – This lowers energy use.",
+                "<b>Choose accessories made from recycled or sustainable materials</b> – This minimizes the environmental impact of your tech choices."
+            ],
+            "E-Waste": [
+                "<b>Avoid upgrading devices every year</b> – Extending device lifespan significantly reduces environmental impact.",
+                "<b>Repair instead of replacing</b> – Fix broken electronics whenever possible to avoid unnecessary waste.",
+                "<b>Consider buying refurbished devices</b> – They’re often as good as new, but with a much lower environmental footprint.",
+                "<b>Recycle unused electronics properly</b> – Don’t store old devices at home or dispose of them in the environment! E-waste contains polluting and valuable materials that need specialized treatment."
+            ],
+            "Digital Activities": [
+                "<b>Use your internet mindfully</b> – Close unused apps, avoid sending large attachments, and turn off video during calls when not essential.",
+                "<b>Declutter your digital space</b> – Regularly delete unnecessary files, empty trash and spam folders, and clean up cloud storage to reduce digital pollution.",
+                "<b>Share links instead of attachments</b> – For example, link to a document on OneDrive or Google Drive instead of attaching it in an email.",
+                "<b>Use instant messaging for short, urgent messages</b> – It's more efficient than email for quick communications."
+            ],
+            "Artificial Intelligence": [
+                "<b>Use search engines for simple tasks</b> – They consume far less energy than AI tools.",
+                "<b>Disable AI-generated results in search engines</b> – (e.g., on Bing: go to Settings > Search > Uncheck \"Include AI-powered answers\" or similar option)",
+                "<b>Prefer smaller AI models when possible</b> – For basic tasks, use lighter versions like GPT-4o-mini instead of more energy-intensive models.",
+                "<b>Be concise in AI prompts and require concise answers</b> – Short inputs and outputs require less processing."
+            ]
+        }
+
+        st.markdown(f"### 💡 Personalized Tips based on your biggest impact: <b>{most_impact_cat}</b>", unsafe_allow_html=True)
+
+        with st.expander("📌 Tips to reduce your footprint"):
+            for tip in detailed_tips.get(most_impact_cat, []):
+                st.markdown(f"""
+                    <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                        {tip}
+                    </div>
+                """, unsafe_allow_html=True)
+
+        # Bonus tips da altre categorie
+        other_categories = [cat for cat in detailed_tips if cat != most_impact_cat]
+        # Se hai meno di 3 categorie alternative, limita la sample di conseguenza
+        import random
+        k = min(3, len(other_categories))
+        extra_pool = random.sample(other_categories, k) if k > 0 else []
+
+        st.markdown("### 💡 Some Extra Tips:")
+        with st.expander("📌 Bonus advice from other categories"):
+            for cat in extra_pool:
+                tip = random.choice(detailed_tips[cat])
+                st.markdown(f"""
+                    <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                        {tip}
+                    </div>
+                """, unsafe_allow_html=True)
+    else:
+        st.info("Complete the previous steps to unlock your personalized tips.")
+
+
     st.markdown("""
         <style>
         .virtue-card {
@@ -1094,6 +1109,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
