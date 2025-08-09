@@ -654,15 +654,17 @@ def show_results():
                 min-height: 230px;
                 display:flex; flex-direction:column; justify-content:center;
             ">
-                <div style="margin:0 0 .5rem 0; font-size:2.5rem; color:#1d3557;">
+                <div style="margin:0 0 .5rem 0; font-size:2.5rem; color:#1b4332;
+                            font-family: 'Inter', sans-serif; font-weight:800;">
                     🌱 {st.session_state.name}, your total CO₂e is…
                 </div>
                 <div style="
-                    font-size:4rem;    /* ENORME */
+                    font-size:4rem;
                     line-height:1;
                     font-weight:900;
-                    color:#1b4332;       /* verde scuro */
+                    color:#1b4332;
                     letter-spacing:-0.5px;
+                    font-family: 'Inter', sans-serif;
                 ">
                     {total:.0f} kg/year
                 </div>
@@ -681,7 +683,8 @@ def show_results():
         card = st.container(border=True)
         with card:
             st.markdown(f"""
-                <div style="font-size:2rem; font-weight:800; margin-bottom:.7rem; color:{color};">
+                <div style="font-size:2rem; font-weight:800; margin-bottom:.7rem;
+                            color:#1b4332; font-family: 'Inter', sans-serif;">
                     {title}
                 </div>
             """, unsafe_allow_html=True)
@@ -689,17 +692,16 @@ def show_results():
             text_col, img_col = st.columns([3, 1])
             with text_col:
                 st.markdown(
-                    f"<div style='font-weight:800; font-size:2rem; color:#1d3557;'>{arc_name}</div>",
+                    f"<div style='font-weight:800; font-size:2rem; color:#1b4332; font-family: \"Inter\", sans-serif;'>{arc_name}</div>",
                     unsafe_allow_html=True
                 )
                 st.markdown(
-                    f"<div style='margin-top:.45rem; font-size:2rem; color:#1b4332;'>Top impact area: <b>{actual_top}</b></div>",
+                    f"<div style='margin-top:.45rem; font-size:2rem; color:#1b4332; font-family: \"Inter\", sans-serif;'>Top impact area: <b>{actual_top}</b></div>",
                     unsafe_allow_html=True
                 )
             with img_col:
                 if arc_img:
                     st.image(arc_img, use_container_width=True)
-
 
 
     # --- METRICHE IN GRIGLIA ---
@@ -1089,6 +1091,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
