@@ -631,20 +631,19 @@ def show_results():
     }
     actual_top = max(cat_by_value, key=cat_by_value.get)
 
-    # mapping chiave↔categoria come definito nella pagina 
-    key_to_category = {
-        "gadgets": "Devices",
-        "weee": "E-Waste",
-        "activities": "Digital Activities",
-        "ai": "Artificial Intelligence",
-    }
-    category_to_key = {v: k for k, v in key_to_category.items()}
+    # mappe derivate dagli ARCHETYPES (no hardcode)
+    key_to_category = {a["key"]: a["category"] for a in ARCHETYPES}
+    category_to_arc = {a["category"]: a for a in ARCHETYPES}
 
-    ed_key = st.session_state.get("archetype_")
-    ed = next((a for a in ARCHETYPES if a["key"] == ed_key), None)
-    actual_key = category_to_key.get(actual_top)
-    actual = next((a for a in ARCHETYPES if a["key"] == actual_key), None)
-    ed_right = (ed and actual and key_to_category.get(ed["key"]) == actual_top)
+    # guess scelto dall'utente
+    guessed_key = st.session_state.get("archetype_guess")
+    guessed = next((a for a in ARCHETYPES if a["key"] == guessed_key), None)
+
+    # archetipo reale in base alla categoria più impattante
+    actual = category_to_arc.get(actual_top)
+
+    # ha indovinato?
+    guessed_right = bool(guessed) and (key_to_category.get(guessed["key"]) == actual_top)
 
     left, right = st.columns(2)
 
@@ -658,7 +657,7 @@ def show_results():
                 display:flex; flex-direction:column; justify-content:center;
             ">
                 <div style="margin:0 0 .5rem 0; font-size:2.5rem; color:#1b4332; font-weight:800;">
-                    🌱 {st.session_state.name}, your total CO₂e is…
+                    🌱 {st.session_state.get('name','')}, your total CO₂e is…
                 </div>
                 <div style="
                     font-size:4rem;
@@ -673,18 +672,18 @@ def show_results():
         """, unsafe_allow_html=True)
 
     with right:
-        color = "#1b4332" if ed_right else "#e63946"
-        title = ("Great job, you ed it. Your match is" if ed_right
-         else "Nice try, but your match is")
+        color = "#1b4332" if guessed_right else "#e63946"
+        title = ("Great job, you guessed it. Your match is" if guessed_right
+                 else "Nice try, but your match is")
 
-        show_arc = ed if ed_right else actual
+        show_arc = guessed if guessed_right else actual
         arc_name = show_arc["name"] if show_arc else "—"
         arc_img = show_arc["image"] if show_arc else None
 
         card = st.container(border=True)
         with card:
             st.markdown(f"""
-                <div style="font-size:1.3rem; font-weight:800; margin-bottom:.7rem; color:#1b4332;">
+                <div style="font-size:1.3rem; font-weight:800; margin-bottom:.7rem; color:{color};">
                     {title}
                 </div>
             """, unsafe_allow_html=True)
@@ -1114,6 +1113,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
