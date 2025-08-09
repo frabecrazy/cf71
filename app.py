@@ -391,7 +391,8 @@ def show_main():
     cloud = st.selectbox("Cloud storage you currently use for academic or work-related files (e.g., on iCloud, Google Drive, OneDrive)", cloud_opts, index=0, key="cloud")
 
     wifi = st.slider("Estimated daily Wi-Fi connection time", 0.0, 8.0, 4.0, 0.5)
-    pages = st.number_input("Printed pages per day", 0, 100, 0)
+    pages = st.number_input("Printed pages per day", 0, 100, 0, key="pages")
+    st.session_state["pages"] = pages
 
     idle = st.radio("When you're not using your computer...", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"])
     st.session_state["idle"] = idle
@@ -870,12 +871,8 @@ def show_virtues():
 
 
     # 7) Zero stampe
-    pages = st.session_state.get("Printed pages per day", 0)
-    try:
-        if int(pages) == 0:
-            virtues.append("You never print. This saves paper, ink, and the energy needed for printing... and the trees thank you!")
-    except Exception:
-        pass
+    if int(st.session_state.get("pages", 0)) == 0:
+        virtues.append("You never print. This saves paper, ink, and the energy needed for printing — and the trees thank you!")
 
     # 8) Uso moderato dell’AI (< 20 query/giorno)
     try:
@@ -917,6 +914,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
