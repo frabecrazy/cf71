@@ -786,7 +786,7 @@ def show_results():
 
     st.markdown(f"""
     <div style="text-align: center; padding: 40px 10px;">
-        <h2 style="color: #1d3557;">💥 {st.session_state.get('name','')} , you are a Hero!</h2>
+        <h2 style="color: #1d3557;">💥 {st.session_state.get('name','')}, you are a Hero!</h2>
         <p style="font-size: 1.1em;">Just by completing this tool, you're already part of the solution.<br>
         Digital emissions are invisible, but not insignificant.</p>
     </div>
@@ -825,13 +825,23 @@ def show_virtues():
             used_devices.append(base)
     if used_devices:
         unique_used = ", ".join(sorted(set(used_devices)))
-        virtues.append(f"💻 **Used devices**: You chose refurbished/used for {unique_used} — this typically reduces manufacturing emissions by **30–50%**.")
+        virtues.append(f"You chose an used device for your {unique_used}! This typically reduces manufacturing emissions by 30–50%.")
 
-    # 2) Meno di 3 devices
-    device_count = len(st.session_state.get("device_list", []))
-    if device_count and device_count < 3:
-        virtues.append("📦 **Lean setup**: You own fewer than 3 devices, lowering embodied emissions.")
+# 2) Device longevity: usati per più di 5 anni
+long_lived_devices = []
+for dev_id, vals in st.session_state.get("device_inputs", {}).items():
+    try:
+        if float(vals.get("years", 0)) > 5:
+            base = dev_id.rsplit("_", 1)[0]
+            long_lived_devices.append(base)
+    except Exception:
+        pass
 
+if long_lived_devices:
+    names = ", ".join(sorted(set(long_lived_devices)))
+    virtues.append(f"You use your {names} for more than 5 years! Extending device life reduces the need for new production and saves valuable resources.")
+
+    
     # 3) End-of-life virtuoso (almeno uno dei device)
     good_eols = {
         "I bring it to a certified e-waste collection center",
@@ -843,26 +853,26 @@ def show_virtues():
         for vals in st.session_state.get("device_inputs", {}).values()
     )
     if has_good_eol:
-        virtues.append("♻️ **Responsible e-waste**: You choose certified collection, return-to-manufacturer, or donation.")
+        virtues.append("You dispose of devices responsibly! UE aims to achieve a correct e-waste disposal rate of 65%, but many countries are still below this threshold.")
 
     # 4) Poche email con allegato (1–10)
     if st.session_state.get("email_attach") == "1–10":
-        virtues.append("📎 **Light on attachments**: You keep attachment emails low and prefer link sharing (e.g., Drive/OneDrive).")
+        virtues.append("You keep the exchange of emails with attachments low. An email with an attachment typically weighs almost ten times more than one without.")
 
     # 5) Cloud storage basso (<5GB o 5–20GB)
     if st.session_state.get("cloud") in ("<5GB", "5–20GB"):
-        virtues.append("☁️ **Minimal cloud footprint**: Your storage stays light — you clean up files you no longer need.")
+        virtues.append("You keep your cloud storage light by cleaning up files you no longer need! This reduces the energy required to store and maintain them.")
 
     # 6) Spegnere il computer quando non usato
     idle_key = "When you're not using your computer..."
     if st.session_state.get(idle_key) == "I turn it off":
-        virtues.append("🔌 **Power saver**: You turn off your computer when not in use, cutting idle energy waste.")
+        virtues.append("You turn off your computer when not in use. This can save over 150 kWh of energy per year for a single computer!")
 
     # 7) Zero stampe
     pages = st.session_state.get("Printed pages per day", 0)
     try:
         if int(pages) == 0:
-            virtues.append("🖨️ **Paperless**: You don’t print — nice save for trees and toner.")
+            virtues.append("You never print. This saves paper, ink, and the energy needed for printing... and the trees thank you!")
     except Exception:
         pass
 
@@ -872,30 +882,24 @@ def show_virtues():
         for task in ai_factors.keys():
             ai_total_queries += int(st.session_state.get(task, 0) or 0)
         if ai_total_queries < 20:
-            virtues.append("🤖 **Mindful AI**: You use AI sparingly (under ~20 queries/day).")
+            virtues.append("You use AI sparingly, staying under 20 queries a day. This reduces the energy consumed by high-compute AI models.")
     except Exception:
         pass
 
-    # Mostra massimo 3 virtù
-    virtues_to_show = virtues[:3]
 
     st.markdown(f"""
         <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc);
                     padding: 28px 16px; border-radius: 12px; margin-bottom: 16px; text-align:center;">
-            <h2 style="margin:0; color:#1d3557;">🌟 {name}, your Digital Virtues</h2>
+            <h2 style="margin:0; color:#1d3557;">{name}, before we reveal your footprint, the good news: you’ve got some planet-friendly moves worth celebrating!</h2>
             <p style="margin:6px 0 0; color:#1b4332;">Here are a few great habits we noticed from your answers.</p>
         </div>
     """, unsafe_allow_html=True)
 
-    if virtues_to_show:
-        for v in virtues_to_show:
+    if virtues:
+        for v in virtues:
             st.markdown(f'<div class="virtue-card">{v}</div>', unsafe_allow_html=True)
     else:
         st.info("No standout virtues detected yet — try tweaking your inputs or complete all sections to see yours!")
-
-    # (Opzionale) Piccolo riepilogo numerico
-    total_found = len(virtues)
-    st.caption(f"Showing up to 3 highlights • {total_found} virtue(s) detected in total.")
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
@@ -912,6 +916,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
