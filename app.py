@@ -801,13 +801,114 @@ def show_results():
         st.session_state.page = "intro"
         st.rerun()
 
+def show_virtues():
+    st.markdown("""
+        <style>
+        .virtue-card {
+            background-color: #e3fced;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-left: 6px solid #52b788;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    name = st.session_state.get("name", "").strip() or "there"
+
+    # Raccogli virtù
+    virtues = []
+
+    # 1) Devices usati: elenca i device usati
+    used_devices = []
+    for dev_id, vals in st.session_state.get("device_inputs", {}).items():
+        if vals.get("used") == "Used":
+            base = dev_id.rsplit("_", 1)[0]
+            used_devices.append(base)
+    if used_devices:
+        unique_used = ", ".join(sorted(set(used_devices)))
+        virtues.append(f"💻 **Used devices**: You chose refurbished/used for {unique_used} — this typically reduces manufacturing emissions by **30–50%**.")
+
+    # 2) Meno di 3 devices
+    device_count = len(st.session_state.get("device_list", []))
+    if device_count and device_count < 3:
+        virtues.append("📦 **Lean setup**: You own fewer than 3 devices, lowering embodied emissions.")
+
+    # 3) End-of-life virtuoso (almeno uno dei device)
+    good_eols = {
+        "I bring it to a certified e-waste collection center",
+        "I return it to manufacturer for recycling or reuse",
+        "I sell or donate it to someone else",
+    }
+    has_good_eol = any(
+        vals.get("eol") in good_eols
+        for vals in st.session_state.get("device_inputs", {}).values()
+    )
+    if has_good_eol:
+        virtues.append("♻️ **Responsible e-waste**: You choose certified collection, return-to-manufacturer, or donation.")
+
+    # 4) Poche email con allegato (1–10)
+    if st.session_state.get("email_attach") == "1–10":
+        virtues.append("📎 **Light on attachments**: You keep attachment emails low and prefer link sharing (e.g., Drive/OneDrive).")
+
+    # 5) Cloud storage basso (<5GB o 5–20GB)
+    if st.session_state.get("cloud") in ("<5GB", "5–20GB"):
+        virtues.append("☁️ **Minimal cloud footprint**: Your storage stays light — you clean up files you no longer need.")
+
+    # 6) Spegnere il computer quando non usato
+    idle_key = "When you're not using your computer..."
+    if st.session_state.get(idle_key) == "I turn it off":
+        virtues.append("🔌 **Power saver**: You turn off your computer when not in use, cutting idle energy waste.")
+
+    # 7) Zero stampe
+    pages = st.session_state.get("Printed pages per day", 0)
+    try:
+        if int(pages) == 0:
+            virtues.append("🖨️ **Paperless**: You don’t print — nice save for trees and toner.")
+    except Exception:
+        pass
+
+    # 8) Uso moderato dell’AI (< 20 query/giorno)
+    try:
+        ai_total_queries = 0
+        for task in ai_factors.keys():
+            ai_total_queries += int(st.session_state.get(task, 0) or 0)
+        if ai_total_queries < 20:
+            virtues.append("🤖 **Mindful AI**: You use AI sparingly (under ~20 queries/day).")
+    except Exception:
+        pass
+
+    # Mostra massimo 3 virtù
+    virtues_to_show = virtues[:3]
+
+    st.markdown(f"""
+        <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc);
+                    padding: 28px 16px; border-radius: 12px; margin-bottom: 16px; text-align:center;">
+            <h2 style="margin:0; color:#1d3557;">🌟 {name}, your Digital Virtues</h2>
+            <p style="margin:6px 0 0; color:#1b4332;">Here are a few great habits we noticed from your answers.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    if virtues_to_show:
+        for v in virtues_to_show:
+            st.markdown(f'<div class="virtue-card">{v}</div>', unsafe_allow_html=True)
+    else:
+        st.info("No standout virtues detected yet — try tweaking your inputs or complete all sections to see yours!")
+
+    # (Opzionale) Piccolo riepilogo numerico
+    total_found = len(virtues)
+    st.caption(f"Showing up to 3 highlights • {total_found} virtue(s) detected in total.")
 
 # === PAGE NAVIGATION ===
 if st.session_state.page == "intro":
     show_intro()
 elif st.session_state.page == "main":
     show_main()
+elif st.session_state.page == "virtues":
+    show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
+
 
 
