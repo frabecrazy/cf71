@@ -661,7 +661,7 @@ def show_results():
                     font-size:4rem;
                     line-height:1;
                     font-weight:900;
-                    color:#1b4332;
+                    color:#ff7f0e;
                     letter-spacing:-0.5px;
                 ">
                     {total:.0f} kg/year
@@ -671,8 +671,8 @@ def show_results():
 
     with right:
         color = "#1b4332" if guessed_right else "#e63946"
-        title = ("✅ Great job! You nailed it —" if guessed_right
-                 else "❌ Nice try — your real match is")
+        title = ("Great job, you guessed it. Your match is" if guessed_right
+         else "Nice try, but your match is")
 
         show_arc = guessed if guessed_right else actual
         arc_name = show_arc["name"] if show_arc else "—"
@@ -681,7 +681,7 @@ def show_results():
         card = st.container(border=True)
         with card:
             st.markdown(f"""
-                <div style="font-size:2rem; font-weight:800; margin-bottom:.7rem; color:#1b4332;">
+                <div style="font-size:1.3rem; font-weight:800; margin-bottom:.7rem; color:#1b4332;">
                     {title}
                 </div>
             """, unsafe_allow_html=True)
@@ -693,7 +693,7 @@ def show_results():
                     unsafe_allow_html=True
                 )
                 st.markdown(
-                    f"<div style='margin-top:.45rem; font-size:2rem; color:#1b4332;'>Top impact area: <b>{actual_top}</b></div>",
+                    f"<div style='margin-top:.45rem; font-size:1.3rem; color:#ff7f0e;'>Top impact area: <b>{actual_top}</b></div>",
                     unsafe_allow_html=True
                 )
             with img_col:
@@ -1089,6 +1089,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
