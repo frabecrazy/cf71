@@ -541,7 +541,7 @@ def show_main():
                 "Digital Activities": digital_total,
                 "AI Tools": ai_total
             }
-            st.session_state.page = "guess"
+            st.session_state.page = ""
             st.rerun()
 
 
@@ -640,7 +640,7 @@ def show_results():
     ed = next((a for a in ARCHETYPES if a["key"] == ed_key), None)
     actual_key = category_to_key.get(actual_top)
     actual = next((a for a in ARCHETYPES if a["key"] == actual_key), None)
-    guessed_right = (guessed and actual and key_to_category.get(guessed["key"]) == actual_top)
+    ed_right = (ed and actual and key_to_category.get(ed["key"]) == actual_top)
 
     left, right = st.columns(2)
 
@@ -669,11 +669,11 @@ def show_results():
         """, unsafe_allow_html=True)
 
     with right:
-        color = "#1b4332" if guessed_right else "#e63946"
-        title = ("Great job, you guessed it. Your match is" if guessed_right
+        color = "#1b4332" if ed_right else "#e63946"
+        title = ("Great job, you ed it. Your match is" if ed_right
          else "Nice try, but your match is")
 
-        show_arc = guessed if guessed_right else actual
+        show_arc = ed if ed_right else actual
         arc_name = show_arc["name"] if show_arc else "—"
         arc_img = show_arc["image"] if show_arc else None
 
@@ -1022,15 +1022,15 @@ def show_virtues():
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
-    if st.button("➡️ Take a quick guess before results", use_container_width=True):
-        st.session_state.page = "guess"
+    if st.button("➡️ Take a quick  before results", use_container_width=True):
+        st.session_state.page = ""
         st.rerun()
 
 def show_guess():
     # ---- Stili ----
     st.markdown("""
         <style>
-        .hero-guess{
+        .hero-{
             background: linear-gradient(to right, #d8f3dc, #a8dadc);
             padding: 28px 18px; border-radius: 12px; text-align: center;
             box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 18px;
@@ -1108,4 +1108,5 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
