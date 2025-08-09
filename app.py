@@ -998,7 +998,7 @@ def show_guess():
             st.markdown(f'<div class="arch-title">{arc["name"]}</div>', unsafe_allow_html=True)
 
             # Immagine al centro
-            st.image(arc["image"], use_column_width=True)
+            st.image(arc["image"], use_container_width=True)
 
             # Categoria in basso
             st.markdown(f'<div class="arch-category">{arc["category"]}</div>', unsafe_allow_html=True)
@@ -1034,6 +1034,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
