@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 st.set_page_config(page_title="Digital Carbon Footprint Calculator", layout="wide")
 
 # Init session state
-if "page" not in st.session_state or st.session_state.page not in ["intro", "main", "virtues", "results"]:
+if "page" not in st.session_state or st.session_state.page not in ["intro", "main", "virtues", "guess", "results"]:
     st.session_state.page = "intro"
 if "role" not in st.session_state:
     st.session_state.role = ""
@@ -16,6 +16,9 @@ if "device_inputs" not in st.session_state:
     st.session_state.device_inputs = {}
 if "results" not in st.session_state:
     st.session_state.results = {}
+if "archetype_guess" not in st.session_state:
+    st.session_state.archetype_guess = None
+
 activity_factors = {
     "Student": {
         "MS Office (e.g. Excel, Word, PPT…)": 0.00901,
@@ -95,7 +98,32 @@ cloud_gb = {
     "50–100GB": 75,
 }
 
-
+ARCHETYPES = [
+    {
+        "key": "Devices",
+        "name": "Lord of the Latest Gadgets",
+        "category": "Devices",
+        "image": "lord_of_the_latest_gadgets.png",   # file nella stessa cartella di app.py
+    },
+    {
+        "key": "ai",
+        "name": "Prompt Pirate, Ruler of the Queries",
+        "category": "Artificial Intelligence",
+        "image": "prompt_pirate.png",
+    },
+    {
+        "key": "weee",
+        "name": "Guardian of the Eternal E-Waste Pile",
+        "category": "E-Waste",
+        "image": "guardian_e_waste.png",
+    },
+    {
+        "key": "activities",
+        "name": "Master of Endless Streams and Scrolls",
+        "category": "Digital Activities",
+        "image": "master_endless_streams.png",
+    },
+]
 
 # INTRO PAGE 
 
@@ -900,9 +928,100 @@ def show_virtues():
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
-    if st.button("➡️ See your detailed results", use_container_width=True):
-        st.session_state.page = "results"
+    if st.button("➡️ Take a quick guess before results", use_container_width=True):
+        st.session_state.page = "guess"
         st.rerun()
+
+def show_guess():
+    # Stili
+    st.markdown("""
+        <style>
+        .hero-guess{
+            background: linear-gradient(to right, #d8f3dc, #a8dadc);
+            padding: 28px 18px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            margin-bottom: 18px;
+        }
+        .card-grid{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .arch-card{
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+            height: 100%;
+        }
+        .arch-card:hover{
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-color: #cfe9dd;
+        }
+        .arch-title{
+            font-weight: 700; color:#1d3557; text-align:center; margin: 4px 6px 8px;
+        }
+        .arch-category{
+            text-align: center; color:#1b4332; font-weight:600; margin-top: 8px;
+            background:#e3fced; border-radius: 8px; padding: 6px 8px;
+        }
+        .picked { outline: 3px solid #52b788; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+        <div class="hero-guess">
+            <h2 style="margin:.2rem 0;">Before you discover your full Digital Carbon Footprint, take a guess!</h2>
+            <p style="margin:.2rem 0; color:#1b4332;">
+                Based on the area where you think you have the biggest impact, which digital archetype matches you best?
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Griglia di carte
+    cols = st.columns(4)
+    for i, arc in enumerate(ARCHETYPES):
+        with cols[i]:
+            picked = (st.session_state.archetype_guess == arc["key"])
+            card_class = "arch-card picked" if picked else "arch-card"
+            st.markdown(f'<div class="{card_class}">', unsafe_allow_html=True)
+
+            # Nome in alto
+            st.markdown(f'<div class="arch-title">{arc["name"]}</div>', unsafe_allow_html=True)
+
+            # Immagine al centro
+            st.image(arc["image"], use_column_width=True)
+
+            # Categoria in basso
+            st.markdown(f'<div class="arch-category">{arc["category"]}</div>', unsafe_allow_html=True)
+
+            # Bottone scelta
+            if st.button("Choose", key=f"choose_{arc['key']}", use_container_width=True):
+                st.session_state.archetype_guess = arc["key"]
+                st.rerun()
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown("### ")
+    left, right = st.columns([1,1])
+    with left:
+        if st.button("⬅️ Back"):
+            st.session_state.page = "virtues"
+            st.rerun()
+    with right:
+        # puoi mettere disabled=False se vuoi permettere di saltare la scelta
+        if st.button("➡️ See your detailed results", disabled=st.session_state.archetype_guess is None):
+            st.session_state.page = "results"
+            st.rerun()
+
 
 # === PAGE NAVIGATION ===
 if st.session_state.page == "intro":
@@ -911,8 +1030,11 @@ elif st.session_state.page == "main":
     show_main()
 elif st.session_state.page == "virtues":
     show_virtues()
+elif st.session_state.page == "guess":
+    show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
