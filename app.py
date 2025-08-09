@@ -541,7 +541,7 @@ def show_main():
                 "Digital Activities": digital_total,
                 "AI Tools": ai_total
             }
-            st.session_state.page = ""
+            st.session_state.page = "guess"
             st.rerun()
 
 
@@ -1108,3 +1108,4 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
