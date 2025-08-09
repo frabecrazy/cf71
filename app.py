@@ -119,7 +119,7 @@ ARCHETYPES = [
     },
     {
         "key": "activities",
-        "name": "Master of Endless Streams and Scrolls",
+        "name": "Master of Endless Streams",
         "category": "Digital Activities",
         "image": "master_endless_streams.png",
     },
@@ -1013,6 +1013,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
