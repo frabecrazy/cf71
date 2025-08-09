@@ -689,11 +689,11 @@ def show_results():
             text_col, img_col = st.columns([3, 1])
             with text_col:
                 st.markdown(
-                    f"<div style='font-weight:800; font-size:2rem; color:#1b4332;'>{arc_name}</div>",
+                    f"<div style='font-weight:800; font-size:2rem; color:#ff7f0e;'>{arc_name}</div>",
                     unsafe_allow_html=True
                 )
                 st.markdown(
-                    f"<div style='margin-top:.45rem; font-size:1.3rem; color:#ff7f0e;'>Top impact area: <b>{actual_top}</b></div>",
+                    f"<div style='margin-top:.45rem; font-size:1.3rem; color:#1b4332;'>Top impact area: <b>{actual_top}</b></div>",
                     unsafe_allow_html=True
                 )
             with img_col:
@@ -1089,6 +1089,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
