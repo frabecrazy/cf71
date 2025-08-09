@@ -115,7 +115,7 @@ ARCHETYPES = [
         "key": "weee",
         "name": "Guardian of the Eternal E-Waste Pile",
         "category": "E-Waste",
-        "image": "guardian_e_waste.png",
+        "image": "guardian_ewaste.png",
     },
     {
         "key": "activities",
@@ -1034,6 +1034,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
