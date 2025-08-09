@@ -502,38 +502,41 @@ def show_main():
 
 
 
-    # Pulsanti centrati: Back a sinistra, Next a destra
+    # === FINAL BUTTONS (BACK + NEXT) ===
     col_back, col_space, col_next = st.columns([1, 4, 1])
 
     with col_back:
-        if st.button("Back", use_container_width=True):
-            st.session_state.page = "intro"  # o "main" se serve
+        if st.button("⬅️ Back", key="main_back_btn", use_container_width=True):
+            st.session_state.page = "intro"  # Oppure "main" se serve tornare a una sottosezione
             st.rerun()
 
     with col_next:
-        button_clicked = st.button(
-            "Next",
-            key="final",
+        next_clicked = st.button(
+            f"🌍 {st.session_state.name}, discover Your Digital Carbon Footprint!",
+            key="main_next_btn",
             use_container_width=True
         )
 
-    # Resto della logica se Next è cliccato...
-    if button_clicked:
-        unconfirmed_devices = [key for key in st.session_state.get("device_expanders", {}) if st.session_state.device_expanders[key]]
+    # --- LOGICA DEL NEXT ---
+    if next_clicked:
+        unconfirmed_devices = [
+            key for key in st.session_state.get("device_expanders", {})
+            if st.session_state.device_expanders[key]
+        ]
 
-        missing_activities = False
-        if st.session_state.get("email_plain", "-- Select option --") == "-- Select option --":
-            missing_activities = True
-        if st.session_state.get("email_attach", "-- Select option --") == "-- Select option --":
-            missing_activities = True
-        if st.session_state.get("cloud", "-- Select option --") == "-- Select option --":
-            missing_activities = True
+        missing_activities = (
+            st.session_state.get("email_plain", "-- Select option --") == "-- Select option --"
+            or st.session_state.get("email_attach", "-- Select option --") == "-- Select option --"
+            or st.session_state.get("cloud", "-- Select option --") == "-- Select option --"
+        )
 
+        # Mostra eventuali warning
         if unconfirmed_devices:
             st.warning("⚠️ You have devices not yet confirmed. Please click 'Confirm' in each box to proceed.")
         if missing_activities:
             st.warning("⚠️ Please complete all digital activity fields before continuing.")
 
+        # Procedi solo se tutto è OK
         if not unconfirmed_devices and not missing_activities:
             st.session_state.results = {
                 "Devices": total_prod,
@@ -541,8 +544,9 @@ def show_main():
                 "Digital Activities": digital_total,
                 "AI Tools": ai_total
             }
-            st.session_state.page = ""
+            st.session_state.page = "guess"
             st.rerun()
+
 
 
 # RESULTS PAGE
@@ -1108,5 +1112,6 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
