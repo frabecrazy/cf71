@@ -617,15 +617,72 @@ def show_results():
         time.sleep(1.2)
 
     # --- RISULTATO TOTALE ---
-    st.markdown(f"""
-        <div style="background-color:#d8f3dc; border-left: 6px solid #1b4332;
-                    padding: 1em 1.5em; margin-top: 20px; border-radius: 10px;">
-            <h3 style="margin: 0; font-size: 1.6em;">🌱 {st.session_state.name}, your total CO₂e is...</h3>
-            <p style="font-size: 2.2em; font-weight: bold; color: #1b4332; margin: 0;">
-                {total:.0f} kg/year
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+    # --- CONFRONTO GUESS vs CATEGORIA REALE + TOTALE AFFIANCATI ---
+
+    # mappa valori per categoria e top
+    cat_by_value = {
+        "Devices": res.get("Devices", 0),
+        "E-Waste": res.get("E-Waste", 0),
+        "Digital Activities": res.get("Digital Activities", 0),
+        "Artificial Intelligence": res.get("AI Tools", 0),
+    }
+    actual_top = max(cat_by_value, key=cat_by_value.get)
+
+    # mapping chiave↔categoria come definito nella pagina guess
+    key_to_category = {
+        "gadgets": "Devices",
+        "weee": "E-Waste",
+        "activities": "Digital Activities",
+        "ai": "Artificial Intelligence",
+    }
+    category_to_key = {v: k for k, v in key_to_category.items()}
+
+    guessed_key = st.session_state.get("archetype_guess")
+    guessed = next((a for a in ARCHETYPES if a["key"] == guessed_key), None)
+    actual_key = category_to_key.get(actual_top)
+    actual = next((a for a in ARCHETYPES if a["key"] == actual_key), None)
+    guessed_right = (guessed and actual and key_to_category.get(guessed["key"]) == actual_top)
+
+    left, right = st.columns(2)
+
+    with left:
+        st.markdown(f"""
+            <div style="background-color:#d8f3dc; border-left: 6px solid #1b4332;
+                        padding: 1em 1.5em; margin-top: 20px; border-radius: 10px;">
+                <h3 style="margin: 0; font-size: 1.6em;">🌱 {st.session_state.name}, your total CO₂e is...</h3>
+                <p style="font-size: 2.2em; font-weight: bold; color: #1b4332; margin: 0;">
+                    {total:.0f} kg/year
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with right:
+        bg = "#e3fced" if guessed_right else "#fff5f5"
+        border = "#52b788" if guessed_right else "#e63946"
+        title = ("✅ Bravo! Hai indovinato —" if guessed_right
+                 else "❌ Bel tentativo — il tuo match è")
+
+        # scegli immagine e testo da mostrare
+        show_arc = guessed if guessed_right else actual
+        arc_name = show_arc["name"] if show_arc else "—"
+        arc_img = show_arc["image"] if show_arc else ""
+        st.markdown(f"""
+            <div style="background-color:{bg}; border-left: 6px solid {border};
+                        padding: 1em 1.2em; margin-top: 20px; border-radius: 10px;">
+                <h3 style="margin:0 0 .4rem 0;">{title}</h3>
+                <div style="display:flex; gap:14px; align-items:center;">
+                    <img src="{arc_img}"
+                         style="width:110px; height:auto; border-radius:10px; border:1px solid #e9ecef;" />
+                    <div style="line-height:1.45;">
+                        <div style="font-weight:800; color:#1d3557;">{arc_name}</div>
+                        <div style="margin-top:6px; font-size:.95rem; color:#1b4332;">
+                            Top impact area: <b>{actual_top}</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+
 
     # --- METRICHE IN GRIGLIA ---
     st.markdown("<br><h4>📦 Breakdown by source:</h4>", unsafe_allow_html=True)
@@ -1014,6 +1071,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
