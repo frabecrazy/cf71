@@ -866,7 +866,7 @@ def show_virtues():
 
     # 6) Spegnere il computer quando non usato
     if st.session_state.get("idle") == "I turn it off":
-        virtues.append("You turn off your computer when not in use. This can save over 150 kWh of energy per year for a single computer!")
+        virtues.append("You turn off your computer when not in use. This single action can save over 150 kWh of energy per year for a single computer!")
 
 
     # 7) Zero stampe
@@ -917,6 +917,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
