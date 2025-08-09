@@ -506,13 +506,13 @@ def show_main():
     col_back, col_space, col_next = st.columns([1, 4, 1])
 
     with col_back:
-        if st.button("⬅️ Back", use_container_width=True):
+        if st.button("Back", use_container_width=True):
             st.session_state.page = "intro"  # o "main" se serve
             st.rerun()
 
     with col_next:
         button_clicked = st.button(
-            f"🌍 {st.session_state.name}, discover Your Digital Carbon Footprint!",
+            "Next",
             key="final",
             use_container_width=True
         )
