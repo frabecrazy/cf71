@@ -900,7 +900,7 @@ def show_virtues():
         for v in virtues:
             st.markdown(f'<div class="virtue-card">{v}</div>', unsafe_allow_html=True)
     else:
-        st.info("No standout virtues detected yet — try tweaking your inputs or complete all sections to see yours!")
+        st.info("We haven’t spotted any standout actions yet, but no worries! On the next page, you’ll get personalized tips to boost your digital habits and lower your footprint.")
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
@@ -917,6 +917,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
