@@ -17,7 +17,7 @@ if "device_inputs" not in st.session_state:
 if "results" not in st.session_state:
     st.session_state.results = {}
 if "archetype_guess" not in st.session_state:
-    st.session_state.archetype_guess = None
+    st.session_state.archetype_ = None
 
 activity_factors = {
     "Student": {
@@ -541,7 +541,7 @@ def show_main():
                 "Digital Activities": digital_total,
                 "AI Tools": ai_total
             }
-            st.session_state.page = "guess"
+            st.session_state.page = ""
             st.rerun()
 
 
@@ -616,7 +616,7 @@ def show_results():
         time.sleep(1.2)
 
     # --- RISULTATO TOTALE ---
-    # --- CONFRONTO GUESS vs CATEGORIA REALE + TOTALE AFFIANCATI ---
+    # --- CONFRONTO  vs CATEGORIA REALE + TOTALE AFFIANCATI ---
 
     # mappa valori per categoria e top
     cat_by_value = {
@@ -627,7 +627,7 @@ def show_results():
     }
     actual_top = max(cat_by_value, key=cat_by_value.get)
 
-    # mapping chiave↔categoria come definito nella pagina guess
+    # mapping chiave↔categoria come definito nella pagina 
     key_to_category = {
         "gadgets": "Devices",
         "weee": "E-Waste",
@@ -636,8 +636,8 @@ def show_results():
     }
     category_to_key = {v: k for k, v in key_to_category.items()}
 
-    guessed_key = st.session_state.get("archetype_guess")
-    guessed = next((a for a in ARCHETYPES if a["key"] == guessed_key), None)
+    ed_key = st.session_state.get("archetype_")
+    ed = next((a for a in ARCHETYPES if a["key"] == ed_key), None)
     actual_key = category_to_key.get(actual_top)
     actual = next((a for a in ARCHETYPES if a["key"] == actual_key), None)
     guessed_right = (guessed and actual and key_to_category.get(guessed["key"]) == actual_top)
@@ -1087,11 +1087,11 @@ def show_guess():
     st.markdown("### ")
     left, right = st.columns([1,1])
     with left:
-        if st.button("⬅️ Back"):
-            st.session_state.page = "virtues"
+        if st.button("Back"):
+            st.session_state.page = "main"
             st.rerun()
     with right:
-        if st.button("➡️ See your detailed results", disabled=st.session_state.archetype_guess is None):
+        if st.button("See your detailed results", disabled=st.session_state.archetype_guess is None):
             st.session_state.page = "results"
             st.rerun()
 
@@ -1108,48 +1108,3 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
