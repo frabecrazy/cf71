@@ -1031,6 +1031,8 @@ def show_virtues():
         st.rerun()
 
 def show_guess():
+    if "archetype_guess" not in st.session_state:
+        st.session_state.archetype_guess = None
     # ---- Stili ----
     st.markdown("""
         <style>
@@ -1112,6 +1114,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
