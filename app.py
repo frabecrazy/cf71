@@ -394,6 +394,7 @@ def show_main():
     pages = st.number_input("Printed pages per day", 0, 100, 0)
 
     idle = st.radio("When you're not using your computer...", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"])
+    st.session_state["idle"] = idle
 
 
 # --- CALCOLI 
@@ -864,9 +865,9 @@ def show_virtues():
         virtues.append("You keep your cloud storage light by cleaning up files you no longer need! This reduces the energy required to store and maintain them.")
 
     # 6) Spegnere il computer quando non usato
-    idle_key = "When you're not using your computer..."
-    if st.session_state.get(idle_key) == "I turn it off":
+    if st.session_state.get("idle") == "I turn it off":
         virtues.append("You turn off your computer when not in use. This can save over 150 kWh of energy per year for a single computer!")
+
 
     # 7) Zero stampe
     pages = st.session_state.get("Printed pages per day", 0)
@@ -916,6 +917,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
