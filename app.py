@@ -786,13 +786,13 @@ def show_results():
 
     # --- FINALE MOTIVAZIONALE ---
 
-    st.markdown("""
-        <div style="text-align: center; padding: 40px 10px;">
-            <h2 style="color: #1d3557;">💥{st.session_state.name}, you are a Hero!</h2>
-            <p style="font-size: 1.1em;">Just by completing this tool, you're already part of the solution.<br>
-            Digital emissions are invisible, but not insignificant.</p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="text-align: center; padding: 40px 10px;">
+        <h2 style="color: #1d3557;">💥 {st.session_state.get('name','')} , you are a Hero!</h2>
+        <p style="font-size: 1.1em;">Just by completing this tool, you're already part of the solution.<br>
+        Digital emissions are invisible, but not insignificant.</p>
+    </div>
+""", unsafe_allow_html=True)
 
     # --- PULSANTE RESTART ---
     st.markdown("### ")
@@ -809,4 +809,5 @@ elif st.session_state.page == "main":
     show_main()
 elif st.session_state.page == "results":
     show_results()
+
 
