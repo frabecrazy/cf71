@@ -655,52 +655,44 @@ def show_results():
                 </p>
             </div>
         """, unsafe_allow_html=True)
+
     with right:
         bg = "#e3fced" if guessed_right else "#fff5f5"
         border = "#52b788" if guessed_right else "#e63946"
-        title = ("Great job, You nailed it! Your match is:" if guessed_right
-                 else "Nice try! But your real match is:")
+        title = ("✅ Great job! You nailed it —" if guessed_right
+                 else "❌ Nice try — your real match is")
 
         show_arc = guessed if guessed_right else actual
         arc_name = show_arc["name"] if show_arc else "—"
         arc_img = show_arc["image"] if show_arc else None
 
-        # Convert local image to data URI so it renders inside the HTML box
-        data_uri = ""
-        if arc_img:
-            import base64
-            with open(arc_img, "rb") as _f:
-                data_uri = "data:image/png;base64," + base64.b64encode(_f.read()).decode("utf-8")
-
-        st.markdown(f"""
-            <div style="
-                background-color:{bg};
-                border-left: 6px solid {border};
-                padding: 1.2em 1.5em;
-                margin-top: 20px;
-                border-radius: 10px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:20px;">
-                    <!-- Testo -->
-                    <div style="flex:1;">
-                        <h3 style="margin:0 0 .6rem 0; font-size:1.6em;">{title}</h3>
-                        <div style="font-weight:800; font-size:1.2em; color:#1d3557;">{arc_name}</div>
-                        <div style="margin-top:6px; font-size:1.05rem; color:#1b4332;">
-                            Top impact area: <b>{actual_top}</b>
-                        </div>
-                    </div>
-
-                    <!-- Immagine -->
-                    <div style="flex-shrink:0;">
-                        <img src="{data_uri}" style="width:140px; height:auto; border-radius:10px; border:1px solid #e9ecef;" />
-                    </div>
+        # Card contenitore (unico box)
+        card = st.container(border=True)
+        with card:
+            # Header della card colorato
+            st.markdown(f"""
+                <div style="background-color:{bg};
+                            border-left:6px solid {border};
+                            border-radius:8px;
+                            padding:.9rem 1.1rem; margin:-.4rem -.4rem 0 -.4rem;">
+                    <div style="font-size:1.25rem; font-weight:800; margin:0;">{title}</div>
                 </div>
-            </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
-
-
-
-
+            # Contenuto: testo a sinistra, immagine a destra
+            text_col, img_col = st.columns([3, 1])
+            with text_col:
+                st.markdown(
+                    f"<div style='margin-top:.6rem; font-weight:800; font-size:1.15rem; color:#1d3557;'>{arc_name}</div>",
+                    unsafe_allow_html=True
+                )
+                st.markdown(
+                    f"<div style='margin-top:.35rem; font-size:1.05rem; color:#1b4332;'>Top impact area: <b>{actual_top}</b></div>",
+                    unsafe_allow_html=True
+                )
+            with img_col:
+                if arc_img:
+                    st.image(arc_img, use_container_width=True)
 
 
     # --- METRICHE IN GRIGLIA ---
@@ -1090,6 +1082,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
