@@ -825,7 +825,7 @@ def show_virtues():
             used_devices.append(base)
     if used_devices:
         unique_used = ", ".join(sorted(set(used_devices)))
-        virtues.append(f"You chose a used device for your {unique_used}! This typically reduces manufacturing emissions by 30–50%.")
+        virtues.append(f"You chose a used device for your {unique_used}! This typically reduces manufacturing emissions by 30–50% per device.")
 
     # 2) Device longevity: usati per più di 5 anni
     long_lived_devices = []
@@ -916,6 +916,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
