@@ -658,7 +658,7 @@ def show_results():
                     🌱 {st.session_state.name}, your total CO₂e is…
                 </div>
                 <div style="
-                    font-size:7rem;    /* ENORME */
+                    font-size:5rem;    /* ENORME */
                     line-height:1;
                     font-weight:900;
                     color:#1b4332;       /* verde scuro */
@@ -1089,6 +1089,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
