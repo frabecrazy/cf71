@@ -392,10 +392,9 @@ def show_main():
 
     wifi = st.slider("Estimated daily Wi-Fi connection time", 0.0, 8.0, 4.0, 0.5)
     pages = st.number_input("Printed pages per day", 0, 100, 0, key="pages")
-    st.session_state["pages"] = pages
 
-    idle = st.radio("When you're not using your computer...", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"])
-    st.session_state["idle"] = idle
+    idle = st.radio("When you're not using your computer...", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"],
+    key="idle")
 
 
 # --- CALCOLI 
@@ -914,6 +913,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
