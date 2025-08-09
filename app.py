@@ -655,33 +655,34 @@ def show_results():
                 </p>
             </div>
         """, unsafe_allow_html=True)
-
     with right:
         bg = "#e3fced" if guessed_right else "#fff5f5"
         border = "#52b788" if guessed_right else "#e63946"
-        title = ("✅ Bravo! Hai indovinato —" if guessed_right
-                 else "❌ Bel tentativo — il tuo match è")
+        title = ("Great job! You nailed it. Your match is" if guessed_right
+                 else "Nice try! But actually your match is")
 
-        # scegli immagine e testo da mostrare
         show_arc = guessed if guessed_right else actual
         arc_name = show_arc["name"] if show_arc else "—"
-        arc_img = show_arc["image"] if show_arc else ""
+        arc_img = show_arc["image"] if show_arc else None
+
         st.markdown(f"""
             <div style="background-color:{bg}; border-left: 6px solid {border};
                         padding: 1em 1.2em; margin-top: 20px; border-radius: 10px;">
                 <h3 style="margin:0 0 .4rem 0;">{title}</h3>
-                <div style="display:flex; gap:14px; align-items:center;">
-                    <img src="{arc_img}"
-                         style="width:110px; height:auto; border-radius:10px; border:1px solid #e9ecef;" />
-                    <div style="line-height:1.45;">
-                        <div style="font-weight:800; color:#1d3557;">{arc_name}</div>
-                        <div style="margin-top:6px; font-size:.95rem; color:#1b4332;">
-                            Top impact area: <b>{actual_top}</b>
-                        </div>
-                    </div>
-                </div>
             </div>
         """, unsafe_allow_html=True)
+
+        img_col, text_col = st.columns([1, 3])
+        with img_col:
+            if arc_img:
+                st.image(arc_img, use_container_width=True)
+        with text_col:
+            st.markdown(f"**{arc_name}**")
+            st.markdown(f"Top impact area: **{actual_top}**")
+
+
+
+
 
 
     # --- METRICHE IN GRIGLIA ---
@@ -1071,6 +1072,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
