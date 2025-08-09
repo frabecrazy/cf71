@@ -175,7 +175,7 @@ def show_intro():
     st.markdown("""
 Welcome to the **Digital Carbon Footprint Calculator**, a tool developed within the *Green DiLT* project to raise awareness about the hidden environmental impact of digital habits in academia.
 
-This calculator is tailored for **university students, professors, and staff members**, helping you estimate your CO₂e emissions from everyday digital activities — often overlooked, but increasingly relevant.
+This calculator is tailored for **university students, professors, and staff members**, helping you estimate your CO₂e emissions from everyday digital activities, often overlooked, but increasingly relevant.
 
 ---
 
@@ -219,11 +219,24 @@ def show_main():
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"""<h1 style='font-size:2.2em; color:#1d3557;'>Hello <b>{st.session_state.name}</b>, it’s time to uncover the impact of your digital world! 🚀<br>""", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="
+        background: linear-gradient(to right, #d8f3dc, #a8dadc);
+        padding: 25px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+        text-align: center;
+        margin-bottom: 20px;
+    ">
+        <h1 style="font-size: 2.2em; color:#1d3557; margin-bottom: 0;">
+            Hello <b>{st.session_state.name}</b>, it’s time to uncover the impact of your digital world! 🚀
+        </h1>
+    </div>
+""", unsafe_allow_html=True)
 
 
     st.markdown(f"""
-        <p style="font-size: 1.5em; color: #6c757d; margin-top: -8px;">
+        <p style="font-size: 1em; color: #6c757d; margin-top: -8px;">
             First, we’ll ask you a few quick questions about your habits. Don't worry, this will take less than <b>5 minutes</b>.
         </p>
     """, unsafe_allow_html=True)
@@ -332,7 +345,15 @@ def show_main():
             total_prod += prod_per_year
             total_eol += eol_impact
 
-            col_confirm, _, col_remove = st.columns([1, 4, 1])
+            col_remove, _, col_confirm = st.columns([1, 4, 1])
+
+            with col_remove:
+                if st.button(f"🗑 Remove {base_device}", key=f"remove_{device_id}"):
+                    st.session_state.device_list.remove(device_id)
+                    st.session_state.device_inputs.pop(device_id, None)
+                    st.session_state.device_expanders.pop(device_id, None)
+                    st.session_state.expander_tokens.pop(device_id, None)  # NEW
+                    st.rerun()
 
             with col_confirm:
                 confirm_key = f"confirm_{device_id}"
@@ -347,15 +368,6 @@ def show_main():
                         st.session_state.device_expanders[device_id] = False
                         st.session_state.expander_tokens[device_id] = st.session_state.expander_tokens.get(device_id, 0) + 1
                         st.rerun()
-
-            with col_remove:
-                if st.button(f"🗑 Remove {base_device}", key=f"remove_{device_id}"):
-                    st.session_state.device_list.remove(device_id)
-                    st.session_state.device_inputs.pop(device_id, None)
-                    st.session_state.device_expanders.pop(device_id, None)
-                    st.session_state.expander_tokens.pop(device_id, None)  # NEW
-                    st.rerun()
-
 
 
 
@@ -490,60 +502,47 @@ def show_main():
 
 
 
-    # === FINAL BUTTON (ALWAYS VISIBLE, VALIDATES ON CLICK) ===
-    col_center = st.columns([1, 2, 1])[1]
-    with col_center:
-        st.markdown("""
-            <style>
-                button[kind="primary"] {
-                    background-color: #52b788 !important;
-                    color: white !important;
-                    padding: 1rem 1.5rem;
-                    font-size: 1.2rem;
-                    font-weight: 700;
-                    border-radius: 10px;
-                    border: none;
-                }
-                button[kind="primary"]:hover {
-                    background-color: #40916c !important;
-                }
-            </style>
-        """, unsafe_allow_html=True)
+    # Pulsanti centrati: Back a sinistra, Next a destra
+    col_back, col_space, col_next = st.columns([1, 4, 1])
 
-        button_clicked = st.button(f"🌍 {st.session_state.name}, discover Your Digital Carbon Footprint!", key="final", use_container_width=True)
+    with col_back:
+        if st.button("⬅️ Back", use_container_width=True):
+            st.session_state.page = "intro"  # o "main" se serve
+            st.rerun()
 
+    with col_next:
+        button_clicked = st.button(
+            f"🌍 {st.session_state.name}, discover Your Digital Carbon Footprint!",
+            key="final",
+            use_container_width=True
+        )
 
-        if button_clicked:
-            unconfirmed_devices = [key for key in st.session_state.get("device_expanders", {}) if st.session_state.device_expanders[key]]
+    # Resto della logica se Next è cliccato...
+    if button_clicked:
+        unconfirmed_devices = [key for key in st.session_state.get("device_expanders", {}) if st.session_state.device_expanders[key]]
 
-            missing_activities = False 
+        missing_activities = False
+        if st.session_state.get("email_plain", "-- Select option --") == "-- Select option --":
+            missing_activities = True
+        if st.session_state.get("email_attach", "-- Select option --") == "-- Select option --":
+            missing_activities = True
+        if st.session_state.get("cloud", "-- Select option --") == "-- Select option --":
+            missing_activities = True
 
+        if unconfirmed_devices:
+            st.warning("⚠️ You have devices not yet confirmed. Please click 'Confirm' in each box to proceed.")
+        if missing_activities:
+            st.warning("⚠️ Please complete all digital activity fields before continuing.")
 
-            if st.session_state.get("email_plain", "-- Select option --") == "-- Select option --":
-                missing_activities = True
-            if st.session_state.get("email_attach", "-- Select option --") == "-- Select option --":
-                missing_activities = True
-            if st.session_state.get("cloud", "-- Select option --") == "-- Select option --":
-                missing_activities = True
-
-            # Show warning(s) if something is missing
-            if unconfirmed_devices:
-                st.warning("⚠️ You have devices not yet confirmed. Please click 'Confirm' in each box to proceed.")
-            if missing_activities:
-                st.warning("⚠️ Please complete all digital activity fields before continuing.")
-
-            # Proceed only if all is okay
-            if not unconfirmed_devices and not missing_activities:
-                st.session_state.results = {
-                    "Devices": total_prod,
-                    "E-Waste": total_eol,
-                    "Digital Activities": digital_total,
-                    "AI Tools": ai_total
-                }
-                st.session_state.page = "guess"
-                st.rerun()
-
-
+        if not unconfirmed_devices and not missing_activities:
+            st.session_state.results = {
+                "Devices": total_prod,
+                "E-Waste": total_eol,
+                "Digital Activities": digital_total,
+                "AI Tools": ai_total
+            }
+            st.session_state.page = "guess"
+            st.rerun()
 
 
 # RESULTS PAGE
@@ -1109,6 +1108,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
