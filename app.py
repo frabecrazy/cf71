@@ -825,21 +825,21 @@ def show_virtues():
             used_devices.append(base)
     if used_devices:
         unique_used = ", ".join(sorted(set(used_devices)))
-        virtues.append(f"You chose an used device for your {unique_used}! This typically reduces manufacturing emissions by 30–50%.")
+        virtues.append(f"You chose a used device for your {unique_used}! This typically reduces manufacturing emissions by 30–50%.")
 
-# 2) Device longevity: usati per più di 5 anni
-long_lived_devices = []
-for dev_id, vals in st.session_state.get("device_inputs", {}).items():
-    try:
-        if float(vals.get("years", 0)) > 5:
-            base = dev_id.rsplit("_", 1)[0]
-            long_lived_devices.append(base)
-    except Exception:
-        pass
+    # 2) Device longevity: usati per più di 5 anni
+    long_lived_devices = []
+    for dev_id, vals in st.session_state.get("device_inputs", {}).items():
+        try:
+            if float(vals.get("years", 0)) > 5:
+                base = dev_id.rsplit("_", 1)[0]
+                long_lived_devices.append(base)
+        except Exception:
+            pass
 
-if long_lived_devices:
-    names = ", ".join(sorted(set(long_lived_devices)))
-    virtues.append(f"You use your {names} for more than 5 years! Extending device life reduces the need for new production and saves valuable resources.")
+    if long_lived_devices:
+        names = ", ".join(sorted(set(long_lived_devices)))
+        virtues.append(f"You use your {names} for more than 5 years! Extending device life reduces the need for new production and saves valuable resources.")
 
     
     # 3) End-of-life virtuoso (almeno uno dei device)
@@ -853,7 +853,7 @@ if long_lived_devices:
         for vals in st.session_state.get("device_inputs", {}).values()
     )
     if has_good_eol:
-        virtues.append("You dispose of devices responsibly! UE aims to achieve a correct e-waste disposal rate of 65%, but many countries are still below this threshold.")
+        virtues.append("You dispose of devices responsibly! EU aims to achieve a correct e-waste disposal rate of 65%, but many countries are still below this threshold.")
 
     # 4) Poche email con allegato (1–10)
     if st.session_state.get("email_attach") == "1–10":
@@ -916,6 +916,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
