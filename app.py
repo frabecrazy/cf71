@@ -647,20 +647,32 @@ def show_results():
 
     with left:
         st.markdown(f"""
-            <div style="background-color:white; border-radius:10px; padding:1em 1.2em;">
-                <h3 style="margin:0; font-size:1.3em; color:#1d3557;">
-                    🌱 {st.session_state.name}, your total CO₂e is...
-                </h3>
-                <p style="font-size:2em; font-weight:bold; color:#1d3557; margin:0;">
+            <div style="
+                background:#ffffff;
+                border-radius:10px;
+                padding: 1.6em 1.8em;
+                min-height: 230px;
+                display:flex; flex-direction:column; justify-content:center;
+            ">
+                <div style="margin:0 0 .5rem 0; font-size:1.35rem; color:#1d3557;">
+                    🌱 {st.session_state.name}, your total CO₂e is…
+                </div>
+                <div style="
+                    font-size:3.4rem;    /* ENORME */
+                    line-height:1;
+                    font-weight:900;
+                    color:#1b4332;       /* verde scuro */
+                    letter-spacing:-0.5px;
+                ">
                     {total:.0f} kg/year
-                </p>
+                </div>
             </div>
         """, unsafe_allow_html=True)
 
     with right:
         color = "#1b4332" if guessed_right else "#e63946"
-        title = ("Great job! You nailed it —" if guessed_right
-                 else "Nice try — your real match is")
+        title = ("✅ Great job! You nailed it —" if guessed_right
+                 else "❌ Nice try — your real match is")
 
         show_arc = guessed if guessed_right else actual
         arc_name = show_arc["name"] if show_arc else "—"
@@ -669,7 +681,7 @@ def show_results():
         card = st.container(border=True)
         with card:
             st.markdown(f"""
-                <div style="font-size:1.25rem; font-weight:800; margin-bottom:.6rem; color:{color};">
+                <div style="font-size:1.3rem; font-weight:800; margin-bottom:.7rem; color:{color};">
                     {title}
                 </div>
             """, unsafe_allow_html=True)
@@ -677,11 +689,11 @@ def show_results():
             text_col, img_col = st.columns([3, 1])
             with text_col:
                 st.markdown(
-                    f"<div style='font-weight:800; font-size:1.15rem; color:#1d3557;'>{arc_name}</div>",
+                    f"<div style='font-weight:800; font-size:1.2rem; color:#1d3557;'>{arc_name}</div>",
                     unsafe_allow_html=True
                 )
                 st.markdown(
-                    f"<div style='margin-top:.35rem; font-size:1.05rem; color:#1b4332;'>Top impact area: <b>{actual_top}</b></div>",
+                    f"<div style='margin-top:.45rem; font-size:1.08rem; color:#1b4332;'>Top impact area: <b>{actual_top}</b></div>",
                     unsafe_allow_html=True
                 )
             with img_col:
@@ -1077,6 +1089,7 @@ elif st.session_state.page == "guess":
     show_guess()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
