@@ -191,13 +191,12 @@ def show_main():
         </style>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"""<h1 style='font-size:2.2em; color:#1d3557;'>Hello <b>{st.session_state.name}</b>, it’s time to uncover the impact of your digital world! 🚀<br></h1>""", unsafe_allow_html=True)
+    st.markdown(f"""<h1 style='font-size:2.2em; color:#1d3557;'>Hello <b>{st.session_state.name}</b>, it’s time to uncover the impact of your digital world! 🚀<br>""", unsafe_allow_html=True)
 
 
     st.markdown(f"""
-        <p style="font-size: 0.95em; color: #6c757d; margin-top: -8px;">
-            First, we’ll ask you a few quick questions about your habits.<br>
-            Din't worry, this won’t take more than <b>5 minutes</b>.
+        <p style="font-size: 1.5em; color: #6c757d; margin-top: -8px;">
+            First, we’ll ask you a few quick questions about your habits. Don't worry, this won’t take more than <b>5 minutes</b>.
         </p>
     """, unsafe_allow_html=True)
 
@@ -907,6 +906,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "results":
     show_results()
+
 
 
 
