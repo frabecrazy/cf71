@@ -772,22 +772,24 @@ def show_results():
         flex-direction: column;
         justify-content: center;  /* centratura verticale */
         align-items: center;      /* centratura orizzontale */
+        gap:.55rem;  
         min-height: 220px;        /* altezza minima uguale per tutte */
         text-align: center;
     """
+    CARD_ACCENT = "border-left:4px solid #52b788; padding-left:12px;"
 
     # Card 1 — Total
     with c1:
         card = st.container(border=True)
         with card:
             st.markdown(
-                f"<div style='{CARD_STYLE}'>"
-                f"<div style='font-size:2rem; color:#1b4332; font-weight:800; margin-bottom:.5rem;'>"
-                f"{st.session_state.get('name','')}, your total CO₂e is…</div>"
-                f"<div style='font-size:clamp(2.6rem,6vw,3.6rem); line-height:1; font-weight:900; "
-                f"color:#ff7f0e; letter-spacing:-0.5px;'>{total:.0f} kg/year</div>"
-                f"</div>",
-                unsafe_allow_html=True
+                f"<div style='{CARD_STYLE} {CARD_ACCENT}'>"
+            f"<div style='font-size:2rem; color:#1b4332; font-weight:800; margin:0;'>"
+            f"{st.session_state.get('name','')}, your total CO₂e is…</div>"
+            f"<div style='font-size:clamp(2.6rem,6vw,3.6rem); line-height:1; font-weight:900; "
+            f"color:#ff7f0e; letter-spacing:-0.5px; margin:0;'>{total:.0f} kg/year</div>"
+            f"</div>",
+            unsafe_allow_html=True
             )
 
     # Card 2 — Comparison vs average
@@ -796,17 +798,17 @@ def show_results():
         with card:
             if msg:
                 st.markdown(
-                    f"<div style='{CARD_STYLE}'>"
-                    f"<div style='font-size:1.3rem; font-weight:800; color:#1b4332; margin-bottom:.6rem;'>Your footprint vs average</div>"
-                    f"<div style='font-size:2rem; font-weight:800; color:{comp_color}; line-height:1.2; margin-bottom:.4rem;'>{msg}</div>"
-                    f"<div style='font-size:1.05rem; color:#1b4332;'>Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b></div>"
-                    f"</div>",
-                    unsafe_allow_html=True
+                    f"<div style='{CARD_STYLE} {CARD_ACCENT}'>"
+                f"<div style='font-size:1.3rem; font-weight:800; color:#1b4332; margin:0;'>Your footprint vs average</div>"
+                f"<div style='font-size:2rem; font-weight:800; color:{comp_color}; line-height:1.15; margin:0;'>{msg}</div>"
+                f"<div style='font-size:1.05rem; color:#1b4332; margin:0;'>Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b></div>"
+                f"</div>",
+                unsafe_allow_html=True
                 )
             else:
                 st.markdown(
-                    f"<div style='{CARD_STYLE}'>No average available for your role.</div>",
-                    unsafe_allow_html=True
+                f"<div style='{CARD_STYLE} {CARD_ACCENT}'>No average available for your role.</div>",
+                unsafe_allow_html=True
                 )
 
 
@@ -1228,6 +1230,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
