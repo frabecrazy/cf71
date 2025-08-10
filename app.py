@@ -835,15 +835,15 @@ def show_results():
     color = "#1b4332" if guessed_right else "#e63946"
     title = "Great job, you guessed it! Your match is" if guessed_right else "Nice try, but your match is"
 
-    # --- Card 3 • Render: testo a sinistra (tutto), immagine grande a destra ---
+    # --- Card 3 • Render: testo a sinistra, immagine in alto a destra ---
     with c3:
         card = st.container(border=True)
         with card:
-            left, right = st.columns([5, 2])  # spazio maggiore all'immagine se vuoi: [4,3]
+            left, right = st.columns([5, 2])  # aumenta il 2 -> 3 se vuoi più spazio all'immagine
 
-            H = 220  # deve combaciare con la min-height delle altre card
+            H = 220  # stessa altezza minima delle altre card
 
-            # SX: titolo + nome + sottotitolo (tutti dentro lo stesso wrapper)
+            # SX: titolo + nome + sottotitolo (in un unico wrapper)
             with left:
                 st.markdown(
                     f"""
@@ -859,15 +859,16 @@ def show_results():
                     unsafe_allow_html=True
                 )
 
-            # DX: immagine grande, centrata verticalmente, dentro la stessa card
+            # DX: immagine in alto a destra (senza min-height per non “abbassarla”)
             with right:
                 st.markdown(
-                    f"<div style='min-height:{H}px; display:flex; align-items:center; justify-content:flex-end;'>",
+                    "<div style='display:flex; align-items:flex-start; justify-content:flex-end; padding-top:4px;'>",
                     unsafe_allow_html=True
                 )
                 if arc_img:
-                    st.image(arc_img, width=180)   # prova 160–200 per trovare la misura perfetta
+                    st.image(arc_img, width=180)  # regola 160–200 a piacere
                 st.markdown("</div>", unsafe_allow_html=True)
+
 
 
     # --- METRICHE IN GRIGLIA ---
@@ -1227,6 +1228,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
