@@ -810,6 +810,20 @@ def show_results():
                 )
 
     # Card 3 — Archetype
+    # --- Prep variabili per la Card 3 (con default sicuri) ---
+    guessed_right = bool(st.session_state.get("guessed_right", False))
+    guessed = st.session_state.get("guessed") or {}
+    actual = st.session_state.get("actual") or {}
+    actual_top = st.session_state.get("actual_top", "Digital Activities")
+
+    show_arc = guessed if guessed_right else actual
+    arc_name = show_arc.get("name", "—")
+    arc_img = show_arc.get("image", None)
+
+    color = "#1b4332" if guessed_right else "#e63946"
+    title = ("Great job, you guessed it! Your match is"
+             if guessed_right else "Nice try, but your match is")
+
     with c3:
         card = st.container(border=True)
         with card:
@@ -1182,6 +1196,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
