@@ -237,7 +237,7 @@ def show_main():
 
     st.markdown(f"""
         <p style="font-size: 1em; color: #6c757d; margin-top: -8px;">
-            First, we’ll ask you a few quick questions about your habits. Don't worry, this will take less than <b>5 minutes</b>.
+            First, we’ll ask you a few quick questions about your habits. This will take less than <b>5 minutes</b>.
         </p>
     """, unsafe_allow_html=True)
 
@@ -401,6 +401,21 @@ def show_main():
             )
             ore_dict[act] = ore
 
+    total_hours_raw = sum(ore_dict.values())
+    color = "#6EA8FE" if total_hours_raw <= 8 else "#e63946"
+    st.markdown(
+        f"<div style='text-align:right; font-size:0.9rem; color:{color}; margin-top:-6px;'>"
+        f"Total: <b>{total_hours_raw:.1f}</b> h/day</div>",
+        unsafe_allow_html=True
+    )
+    if total_hours_raw > 8:
+        st.markdown(
+            "<div style='text-align:right; font-size:0.85rem; color:#6c757d; margin-top:-8px;'>"
+            "You can exceed 8 hours if you multitask.</div>",
+            unsafe_allow_html=True
+        )
+
+    
     for act, ore in ore_dict.items():
         hours_total += ore * activity_factors[role][act] * DAYS
     
@@ -1138,6 +1153,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
