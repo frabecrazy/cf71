@@ -1099,13 +1099,14 @@ def show_virtues():
 
 
     if virtues:
-        st.markdown("#### On top of that, you’re already making smart choices")
+        st.markdown("#### You’re already making smart choices")
         st.markdown(
             "<p style='margin-top:-4px; font-size:0.95rem; color:#1b4332;'>Here are a few great habits we noticed from your answers.</p>",
             unsafe_allow_html=True
         )
         for v in virtues:
             st.markdown(f'<div class="virtue-card">{v}</div>', unsafe_allow_html=True)
+        st.markdown("#### Great job!")
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
@@ -1136,6 +1137,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
