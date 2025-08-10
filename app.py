@@ -765,7 +765,7 @@ def show_results():
             msg = f"You emit ~{abs_pct:.0f}% less than the average {role_label.lower()}."
             comp_color = "#2b8a3e"
 
-   c1, c2, c3 = st.columns(3)
+    c1, c2, c3 = st.columns(3)
  
     CARD_STYLE = """
         display: flex;
