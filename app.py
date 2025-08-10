@@ -125,6 +125,12 @@ ARCHETYPES = [
     },
 ]
 
+AVERAGE_CO2_BY_ROLE = {
+    "Student": 450,        # <-- metti i tuoi numeri
+    "Professor": 700,
+    "Staff member": 550,
+}
+
 # INTRO PAGE 
 
 def show_intro():
@@ -766,6 +772,44 @@ def show_results():
             </div>
         """, unsafe_allow_html=True)
 
+        # --- Comparison vs role average ---
+        role_label = st.session_state.get("role", "")
+        avg = AVERAGE_CO2_BY_ROLE.get(role_label)
+
+        if isinstance(avg, (int, float)) and avg > 0:
+            diff_pct = ((total - avg) / avg) * 100
+            abs_pct = abs(diff_pct)
+
+            if abs_pct < 1:
+                msg = f"You're roughly in line with the average {role_label.lower()}."
+                color = "#6EA8FE"  # blu chiaro
+            elif diff_pct > 0:
+                msg = f"You emit ~{abs_pct:.0f}% more than the average {role_label.lower()}."
+                color = "#e63946"  # ROSSO per > media
+            else:
+                msg = f"You emit ~{abs_pct:.0f}% less than the average {role_label.lower()}."
+                color = "#2b8a3e"  # verde
+
+            st.markdown(
+                f"""
+                <div style="
+                    margin-top:12px;
+                    background:#ffffff;
+                    border:1px solid #e9ecef;
+                    border-radius:10px;
+                    padding:12px 14px;">
+                    <div style="font-size:0.95rem; color:{color}; font-weight:700; margin-bottom:4px;">
+                        {msg}
+                    </div>
+                    <div style="font-size:0.9rem; color:#1b4332;">
+                        Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b><br/>
+                        Your result: <b>{total:.0f} kg/year</b>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
     with right:
         color = "#1b4332" if guessed_right else "#e63946"
         title = ("Great job, you guessed it! Your match is" if guessed_right
@@ -1156,6 +1200,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
