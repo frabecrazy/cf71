@@ -404,8 +404,7 @@ def show_main():
     total_hours_raw = sum(ore_dict.values())
     color = "#6EA8FE" if total_hours_raw <= 8 else "#e63946"
     st.markdown(
-        f"<div style='text-align:right; font-size:0.9rem; color:{color}; margin-top:-6px;'>"
-        f"Total: <b>{total_hours_raw:.1f}</b> h/day</div>",
+        "<div style='text-align:right; font-size:0.85rem; color:#6c757d; margin-top:-8px;'>",
         unsafe_allow_html=True
     )
     if total_hours_raw > 8:
