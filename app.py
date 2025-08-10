@@ -770,7 +770,7 @@ def show_results():
                     unsafe_allow_html=True
                 )
                 st.markdown(
-                    f"<div style='margin-top:.45rem; font-size:1.3rem; color:#1b4332;'>Top impact area: <b>{actual_top}</b></div>",
+                    f"<div style='margin-top:.45rem; font-size:1.3rem; color:#1b4332;'>Your biggest footprint comes from the <b>{actual_top}</b></div>",
                     unsafe_allow_html=True
                 )
             with img_col:
@@ -1124,6 +1124,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
