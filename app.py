@@ -809,13 +809,44 @@ def show_results():
                     unsafe_allow_html=True
                 )
 
-    # --- Render card: testo a sinistra, immagine a destra ---
+
+    # --- Card 3 • Prep variabili (fallback robusto) ---
+    guessed_right = bool(st.session_state.get("guessed_right", False))
+    guessed = st.session_state.get("guessed") or {}
+    actual = st.session_state.get("actual") or {}
+    actual_top = st.session_state.get("actual_top", "Digital Activities")
+
+    # Se vuoi usare direttamente file locali (senza PIL), metti qui i path
+    IMG_FILE_BY_TOP = {
+        "Digital Activities": "assets/archetypes/master_of_endless_streams.png",
+        "Devices":            "assets/archetypes/lord_of_the_latest_gadgets.png",
+        "E-waste":            "assets/archetypes/guardian_e_waste.png",
+        "AI":                 "assets/archetypes/prompt_pirate.png",
+    }
+    NAME_BY_TOP = {
+        "Digital Activities": "Master of Endless Streams",
+        "Devices":            "Lord of the Latest Gadgets",
+        "E-waste":            "Guardian of the Eternal E-Waste Pile",
+        "AI":                 "Prompt Pirate, Ruler of the Queries",
+    }
+
+    # Se 'actual' è vuoto, deriva nome+immagine da actual_top
+    if not actual and actual_top in NAME_BY_TOP:
+        actual = {"name": NAME_BY_TOP[actual_top], "image": IMG_FILE_BY_TOP.get(actual_top)}
+
+    show_arc = guessed if guessed_right else actual
+    arc_name = (show_arc or {}).get("name", "")
+    arc_img  = (show_arc or {}).get("image", None)   # può essere path string o None
+
+    color = "#1b4332" if guessed_right else "#e63946"
+    title = "Great job, you guessed it! Your match is" if guessed_right else "Nice try, but your match is"
+
+    # --- Card 3 • Render: testo a sinistra, immagine a destra dentro la card ---
     with c3:
         card = st.container(border=True)
         with card:
             txt_col, img_col = st.columns([5, 1])
 
-            # Testo (centrato verticalmente/orizzontalmente) nella colonna sinistra
             with txt_col:
                 st.markdown(
                     f"""
@@ -830,15 +861,62 @@ def show_results():
                     unsafe_allow_html=True
                 )
 
-            # Immagine piccola nella colonna destra (file locale o PIL/bytes)
             with img_col:
-                if arc_img is not None:
-                    st.markdown(
-                        "<div style='min-height:220px; display:flex; align-items:center; justify-content:flex-end;'>",
-                        unsafe_allow_html=True
-                    )
-                    st.image(arc_img, width=72)  # regola la dimensione a piacere
-                    st.markdown("</div>", unsafe_allow_html=True)
+                # wrapper per allineare al centro vertica
+    # --- Card 3 • Prep variabili (fallback robusto) ---
+    guessed_right = bool(st.session_state.get("guessed_right", False))
+    guessed = st.session_state.get("guessed") or {}
+    actual = st.session_state.get("actual") or {}
+    actual_top = st.session_state.get("actual_top", "Digital Activities")
+
+    # Se vuoi usare direttamente file locali (senza PIL), metti qui i path
+    IMG_FILE_BY_TOP = {
+        "Digital Activities": "assets/archetypes/master_of_endless_streams.png",
+        "Devices":            "assets/archetypes/lord_of_the_latest_gadgets.png",
+        "E-waste":            "assets/archetypes/guardian_e_waste.png",
+        "AI":                 "assets/archetypes/prompt_pirate.png",
+    }
+    NAME_BY_TOP = {
+        "Digital Activities": "Master of Endless Streams",
+        "Devices":            "Lord of the Latest Gadgets",
+        "E-waste":            "Guardian of the Eternal E-Waste Pile",
+        "AI":                 "Prompt Pirate, Ruler of the Queries",
+    }
+
+    # Se 'actual' è vuoto, deriva nome+immagine da actual_top
+    if not actual and actual_top in NAME_BY_TOP:
+        actual = {"name": NAME_BY_TOP[actual_top], "image": IMG_FILE_BY_TOP.get(actual_top)}
+
+    show_arc = guessed if guessed_right else actual
+    arc_name = (show_arc or {}).get("name", "")
+    arc_img  = (show_arc or {}).get("image", None)   # può essere path string o None
+
+    color = "#1b4332" if guessed_right else "#e63946"
+    title = "Great job, you guessed it! Your match is" if guessed_right else "Nice try, but your match is"
+
+    # --- Card 3 • Render: testo a sinistra, immagine a destra dentro la card ---
+    with c3:
+        card = st.container(border=True)
+        with card:
+            txt_col, img_col = st.columns([5, 1])
+
+            with txt_col:
+                st.markdown(
+                    f"""
+                    <div style='{CARD_STYLE}'>
+                        <div style='font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};'>{title}</div>
+                        {(f"<div style='font-weight:800; font-size:2rem; color:#ff7f0e;'>{arc_name}</div>" if arc_name else "")}
+                        <div style='margin-top:.45rem; font-size:1.05rem; color:#1b4332;'>
+                            Your biggest footprint comes from <b>{actual_top}</b>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+            with img_col:
+                # wrapper per allineare al centro vertica
+
 
     # --- METRICHE IN GRIGLIA ---
     st.markdown("<br><h4>Breakdown by source:</h4>", unsafe_allow_html=True)
@@ -1197,6 +1275,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
