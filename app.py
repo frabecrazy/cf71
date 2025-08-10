@@ -1108,15 +1108,17 @@ def show_virtues():
     # Pulsante per passare ai risultati
     st.markdown("### ")
 
-    left, _, medium, _, right = st.columns([1, 2, 1, 2, 1])
+    left, _, right = st.columns([1, 4, 1])
     with left:
         if st.button("⬅️ Back to Results", key="virt_back_btn", use_container_width=True):
             st.session_state.page = "results"
             st.rerun()
-    with medium:
+    with right:
         if st.button("✏️ Edit your answers", key="virt_edit_btn", use_container_width=True):
             st.session_state.page = "main"
-            st.rerun()    
+            st.rerun()   
+    
+    _, _, right = st.columns([1, 4, 1])        
     with right:
         if st.button("🔄Restart", key="virt_restart_btn", use_container_width=True):
             st.session_state.clear() 
@@ -1134,6 +1136,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
