@@ -1123,7 +1123,7 @@ def show_virtues():
             "<p style='margin-top:-4px; font-size:0.95rem; color:#1b4332;'>Moreover, just by completing this tool, you're already part of the solution.</p>",
             unsafe_allow_html=True
         )
-        st.markdown(f"#### Great job, {name}! Keep going💪")
+    st.markdown(f"#### Great job, {name}! Keep going💪")
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
@@ -1156,6 +1156,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
