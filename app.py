@@ -783,7 +783,7 @@ def show_results():
             st.markdown(
                 f"<div style='{CARD_STYLE}'>"
                 f"<div style='font-size:2rem; color:#1b4332; font-weight:800; margin-bottom:.5rem;'>"
-                f"🌱 {st.session_state.get('name','')}, your total CO₂e is…</div>"
+                f"{st.session_state.get('name','')}, your total CO₂e is…</div>"
                 f"<div style='font-size:clamp(2.6rem,6vw,3.6rem); line-height:1; font-weight:900; "
                 f"color:#ff7f0e; letter-spacing:-0.5px;'>{total:.0f} kg/year</div>"
                 f"</div>",
@@ -809,78 +809,36 @@ def show_results():
                     unsafe_allow_html=True
                 )
 
-    # Card 3 — Archetype
-    # --- Prep variabili per la Card 3 (fallback robusto) ---
-    guessed_right = bool(st.session_state.get("guessed_right", False))
-    guessed = st.session_state.get("guessed") or {}
-    actual = st.session_state.get("actual") or {}
-    actual_top = st.session_state.get("actual_top", "Digital Activities")
-
-    IMG_BY_TOP = {
-        "Digital Activities": st.session_state.get("img_streams"),
-        "Devices":            st.session_state.get("img_gadgets"),
-        "E-waste":            st.session_state.get("img_waste"),
-        "AI":                 st.session_state.get("img_prompt"),
-    }
-    NAME_BY_TOP = {
-        "Digital Activities": "Master of Endless Streams",
-        "Devices":            "Lord of the Latest Gadgets",
-        "E-waste":            "Guardian of the Eternal E-Waste Pile",
-        "AI":                 "Prompt Pirate, Ruler of the Queries",
-    }
-
-    # Se 'actual' è vuoto, prova a ricavarlo da actual_top
-    if not actual and actual_top in NAME_BY_TOP:
-        actual = {"name": NAME_BY_TOP[actual_top], "image": IMG_BY_TOP.get(actual_top)}
-
-    show_arc = guessed if guessed_right else actual
-    arc_name = (show_arc or {}).get("name")
-    arc_img  = (show_arc or {}).get("image")
-
-    color = "#1b4332" if guessed_right else "#e63946"
-    title = "Great job, you guessed it! Your match is" if guessed_right else "Nice try, but your match is"
-
-    # --- Pezzi HTML (niente f-string annidate) ---
-    name_html = f"<div style='font-weight:800; font-size:2rem; color:#ff7f0e;'>{arc_name}</div>" if arc_name else ""
-    subtitle_html = (
-        f"<div style='margin-top:.45rem; font-size:1.05rem; color:#1b4332;'>"
-        f"Your biggest footprint comes from <b>{actual_top}</b></div>"
-    )
-
-    # --- Render card ---
+    # --- Render card: testo a sinistra, immagine a destra ---
     with c3:
         card = st.container(border=True)
         with card:
-            st.markdown(
-                f"""
-                <div style='{CARD_STYLE}'>
-                    <div style='font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};'>{title}</div>
-                    {name_html}
-                    {subtitle_html}
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            txt_col, img_col = st.columns([5, 1])
 
-            # immagine centrata (funziona con URL/percorso o con oggetto immagine)
-            if arc_img:
-                if isinstance(arc_img, str):
-                    st.markdown(
-                        f"""
-                        <div style='width:100%; display:flex; justify-content:center; margin-top:1rem;'>
-                            <img src="{arc_img}" style='max-width:80px;'/>
+            # Testo (centrato verticalmente/orizzontalmente) nella colonna sinistra
+            with txt_col:
+                st.markdown(
+                    f"""
+                    <div style='{CARD_STYLE}'>
+                        <div style='font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};'>{title}</div>
+                        {(f"<div style='font-weight:800; font-size:2rem; color:#ff7f0e;'>{arc_name}</div>" if arc_name else "")}
+                        <div style='margin-top:.45rem; font-size:1.05rem; color:#1b4332;'>
+                            Your biggest footprint comes from <b>{actual_top}</b>
                         </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                else:
-                    st.markdown(
-                        "<div style='width:100%; display:flex; justify-content:center; margin-top:1rem;'>",
-                        unsafe_allow_html=True
-                    )
-                    st.image(arc_img, width=80)
-                    st.markdown("</div>", unsafe_allow_html=True)
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
+            # Immagine piccola nella colonna destra (file locale o PIL/bytes)
+            with img_col:
+                if arc_img is not None:
+                    st.markdown(
+                        "<div style='min-height:220px; display:flex; align-items:center; justify-content:flex-end;'>",
+                        unsafe_allow_html=True
+                    )
+                    st.image(arc_img, width=72)  # regola la dimensione a piacere
+                    st.markdown("</div>", unsafe_allow_html=True)
 
     # --- METRICHE IN GRIGLIA ---
     st.markdown("<br><h4>Breakdown by source:</h4>", unsafe_allow_html=True)
@@ -1239,6 +1197,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
