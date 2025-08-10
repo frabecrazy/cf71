@@ -623,6 +623,7 @@ def show_guess():
             st.session_state.page = "results"
             st.rerun()
 
+
 # RESULTS PAGE
 
 def show_results():
@@ -927,6 +928,7 @@ def show_results():
             st.session_state.page = "virtues"
             st.rerun()
 
+
 def show_virtues():
 
     # =======================
@@ -973,7 +975,7 @@ def show_virtues():
 
         st.markdown(f"### 💡 Personalized Tips based on your biggest impact: <b>{most_impact_cat}</b>", unsafe_allow_html=True)
 
-        with st.expander("📌 Tips to reduce your footprint", expanded=True, key="virt_tips_exp"):
+        with st.expander("📌 Tips to reduce your footprint", expanded=True):
             for tip in detailed_tips.get(most_impact_cat, []):
                 st.markdown(f"""
                     <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
@@ -989,7 +991,7 @@ def show_virtues():
         extra_pool = random.sample(other_categories, k) if k > 0 else []
 
         st.markdown("### 💡 Some Extra Tips:")
-        with st.expander("📌 Bonus advice from other categories", expanded=False, key="virt_bonus_exp"):
+        with st.expander("📌 Bonus advice from other categories", expanded=False):
             for cat in extra_pool:
                 tip = random.choice(detailed_tips[cat])
                 st.markdown(f"""
@@ -1122,6 +1124,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
