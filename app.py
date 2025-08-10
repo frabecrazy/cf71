@@ -909,7 +909,7 @@ def show_results():
 
     st.markdown(f"""
     <div style="text-align: center; padding: 40px 10px;">
-        <h2 style="color: #1d3557;">💥 Visit the next page to discover useful tips for reducing your footprint!</h2>
+        <h2 style="color: #1d3557;"> Visit the next page to discover useful tips for reducing your footprint!💥</h2>
     </div>
 """, unsafe_allow_html=True)
 
@@ -1101,6 +1101,10 @@ def show_virtues():
         )
         for v in virtues:
             st.markdown(f'<div class="virtue-card">{v}</div>', unsafe_allow_html=True)
+        st.markdown(
+            "<p style='margin-top:-4px; font-size:0.95rem; color:#1b4332;'>Moreover, just by completing this tool, you're already part of the solution.</p>",
+            unsafe_allow_html=True
+        )
         st.markdown(f"#### Great job, {name}! Keep going💥")
 
     # Pulsante per passare ai risultati
@@ -1134,6 +1138,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
