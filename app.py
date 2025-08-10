@@ -909,9 +909,7 @@ def show_results():
 
     st.markdown(f"""
     <div style="text-align: center; padding: 40px 10px;">
-        <h2 style="color: #1d3557;">💥 {st.session_state.get('name','')}, you are a Hero!</h2>
-        <p style="font-size: 1.1em;">Just by completing this tool, you're already part of the solution.<br>
-        Visit the next page to discover useful tips for reducing your footprint.</p>
+        <h2 style="color: #1d3557;">💥 Visit the next page to discover useful tips for reducing your footprint!</h2>
     </div>
 """, unsafe_allow_html=True)
 
@@ -1136,6 +1134,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
