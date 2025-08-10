@@ -479,16 +479,16 @@ def show_main():
 
 
     # === AI TOOLS ===
-
     st.markdown("""
     <h3 style="margin-top: 25px; color:#1d3557;">🦾 AI Tools</h3>
     <p>
         Estimate how many queries you make for each AI-powered task on a typical 8-hour study/working day.
         As a reference, users submit approximately 15 to 20 queries during a half-hour interaction with an AI assistant.
     </p>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     ai_total = 0
+    ai_queries_count = 0
     cols = st.columns(4)
 
     for i, (task, ef) in enumerate(ai_factors.items()):
@@ -503,7 +503,7 @@ def show_main():
                 '>
                     {task}
                 </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
             q = st.number_input(
                 label="",
@@ -515,12 +515,11 @@ def show_main():
                 label_visibility="collapsed"
             )
             ai_total += q * ef * DAYS
+            ai_queries_count += int(q)
 
-            st.markdown("""
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
+    st.session_state.ai_total_queries = ai_queries_count
 
 
     # === FINAL BUTTONS (BACK + NEXT) ===
@@ -1159,6 +1158,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
