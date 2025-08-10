@@ -402,17 +402,24 @@ def show_main():
             ore_dict[act] = ore
 
     total_hours_raw = sum(ore_dict.values())
-    color = "#6EA8FE" if total_hours_raw <= 8 else "#B58900"
+    warn_color = "#B58900"  # giallo scuro
+    color = "#6EA8FE" if total_hours_raw <= 8 else warn_color
+
+    # Riga totale ore (con colore condizionale)
     st.markdown(
-        "<div style='text-align:right; font-size:0.85rem; color:#6c757d; margin-top:-8px;'>",
+        f"<div style='text-align:right; font-size:0.9rem; color:{color}; margin-top:-6px;'>"
+        f"Total: <b>{total_hours_raw:.1f}</b> h/day</div>",
         unsafe_allow_html=True
     )
+
+    # Nota esplicativa se supera 8h
     if total_hours_raw > 8:
         st.markdown(
-        "<div style='text-align:right; font-size:0.85rem; color:#6c757d; margin-top:-8px;'>"
-        "Overlapping activities can push the total above 8 hours.</div>",
-        unsafe_allow_html=True
+            "<div style='text-align:right; font-size:0.85rem; color:#B58900; margin-top:-8px;'>"
+            "Overlapping activities can push the total above 8 hours.</div>",
+            unsafe_allow_html=True
         )
+
 
     
     for act, ore in ore_dict.items():
@@ -1152,6 +1159,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
