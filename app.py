@@ -748,7 +748,7 @@ def show_results():
 
     with right:
         color = "#1b4332" if guessed_right else "#e63946"
-        title = ("Great job, you guessed it. Your match is" if guessed_right
+        title = ("Great job, you guessed it! Your match is" if guessed_right
                  else "Nice try, but your match is")
 
         show_arc = guessed if guessed_right else actual
@@ -780,7 +780,7 @@ def show_results():
 
 
     # --- METRICHE IN GRIGLIA ---
-    st.markdown("<br><h4>📦 Breakdown by source:</h4>", unsafe_allow_html=True)
+    st.markdown("<br><h4>Breakdown by source:</h4>", unsafe_allow_html=True)
     st.markdown(f"""
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
             <div class="tip-card" style="text-align:center;">
@@ -809,7 +809,7 @@ def show_results():
     st.divider()
 
     # --- GRAFICO ---
-    st.subheader("📊 Breakdown by Category")
+    st.subheader("Breakdown by Category")
     df_plot = pd.DataFrame({
         "Category": ["Devices", "Digital Activities", "Artificial Intelligence", "E-Waste"],
         "CO₂e (kg)": [res["Devices"], res["Digital Activities"], res["AI Tools"], res["E-Waste"]]
@@ -834,7 +834,7 @@ def show_results():
     st.divider()
 
     # --- EQUIVALENZE VISUALI ---
-    st.markdown("### ♻️ With the same emissions, you could…")
+    st.markdown("### With the same emissions, you could…")
 
     burger_eq = total / 4.6
     led_days_eq = (total / 0.256) / 24
@@ -911,7 +911,7 @@ def show_results():
     <div style="text-align: center; padding: 40px 10px;">
         <h2 style="color: #1d3557;">💥 {st.session_state.get('name','')}, you are a Hero!</h2>
         <p style="font-size: 1.1em;">Just by completing this tool, you're already part of the solution.<br>
-        Digital emissions are invisible, but not insignificant.</p>
+        Visit the next page to discover useful tips for reducing your footprint.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -922,7 +922,7 @@ def show_results():
             st.session_state.page = "guess"  # oppure "main" se preferisci
             st.rerun()
     with right:
-        if st.button("➡️ Continue to your Virtues & Tips",
+        if st.button("➡️ Discover Tips",
                      key="res_continue_btn",
                      use_container_width=True):
             st.session_state.page = "virtues"
@@ -931,6 +931,14 @@ def show_results():
 
 def show_virtues():
 
+    st.markdown(f"""
+        <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc);
+                    padding: 28px 16px; border-radius: 12px; margin-bottom: 16px; text-align:center;">
+            <h2 style="margin:0; color:#1d3557;">{name}, here are some practical tips to shrink your digital footprint!</h2>
+            <p style="margin:6px 0 0; color:#1b4332;">We’ll start with actions tailored to your highest-impact area, followed by general tips you can apply every day.</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
     # =======================
     # PERSONALIZED TIPS
     # =======================
@@ -1086,31 +1094,31 @@ def show_virtues():
         pass
 
 
-    st.markdown(f"""
-        <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc);
-                    padding: 28px 16px; border-radius: 12px; margin-bottom: 16px; text-align:center;">
-            <h2 style="margin:0; color:#1d3557;">{name}, before we reveal your footprint, the good news: you’ve got some planet-friendly moves worth celebrating!</h2>
-            <p style="margin:6px 0 0; color:#1b4332;">Here are a few great habits we noticed from your answers.</p>
-        </div>
-    """, unsafe_allow_html=True)
-
     if virtues:
+        st.markdown("#### On top of that, you’re already making smart choices")
+        st.markdown(
+            "<p style='margin-top:-4px; font-size:0.95rem; color:#1b4332;'>Here are a few great habits we noticed from your answers.</p>",
+            unsafe_allow_html=True
+        )
         for v in virtues:
             st.markdown(f'<div class="virtue-card">{v}</div>', unsafe_allow_html=True)
-    else:
-        st.info("We haven’t spotted any standout actions yet, but no worries! On the next page, you’ll get personalized tips to boost your digital habits and lower your footprint.")
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
 
-    left, _, right = st.columns([1, 4, 1])
+    left, _, medium, _, right = st.columns([1, 2, 1, 2, 1])
     with left:
         if st.button("⬅️ Back to Results", key="virt_back_btn", use_container_width=True):
             st.session_state.page = "results"
             st.rerun()
-    with right:
+    with medium:
         if st.button("✏️ Edit your answers", key="virt_edit_btn", use_container_width=True):
             st.session_state.page = "main"
+            st.rerun()    
+    with right:
+        if st.button("🔄Restart", key="virt_restart_btn", use_container_width=True):
+            st.session_state.clear() 
+            st.session_state.page = "intro"
             st.rerun()
 
 # === PAGE NAVIGATION ===
@@ -1124,6 +1132,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
