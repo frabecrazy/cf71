@@ -746,21 +746,9 @@ def show_results():
     # ha indovinato?
     guessed_right = bool(guessed) and (key_to_category.get(guessed["key"]) == actual_top)
 
-    # --- Stili per card uniformi ---
-    st.markdown("""
-        <style>
-        .card{background:#fff;border-radius:12px;padding:1.6em 1.8em;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
-        .card--tall{min-height:260px;display:flex;flex-direction:column;justify-content:space-between;}
-        .big-total{font-size:clamp(2.6rem,6vw,3.6rem);line-height:1;font-weight:900;color:#ff7f0e;letter-spacing:-0.5px;}
-        .avg-box{margin-top:10px;background:#ffffff;border:1px solid #e9ecef;border-radius:10px;padding:10px 12px;}
-        .break-row{display:grid;grid-template-columns:1fr;row-gap:10px}
-        .break-item{display:flex;align-items:center;justify-content:space-between;font-size:1.0rem}
-        .break-label{color:#1b4332}
-        .break-val{font-weight:700;color:#1d3557}
-        </style>
-    """, unsafe_allow_html=True)
+    # --- 3 CARD: Total, Comparison, Archetype ---
 
-    # --- Confronto con media del ruolo (precompute) ---
+    # Precompute confronto con media
     role_label = st.session_state.get("role", "")
     avg = AVERAGE_CO2_BY_ROLE.get(role_label)
     msg, comp_color = None, "#6EA8FE"
@@ -772,79 +760,83 @@ def show_results():
             comp_color = "#6EA8FE"
         elif diff_pct > 0:
             msg = f"You emit ~{abs_pct:.0f}% more than the average {role_label.lower()}."
-            comp_color = "#e63946"   # rosso per > media
+            comp_color = "#e63946"  # rosso per > media
         else:
             msg = f"You emit ~{abs_pct:.0f}% less than the average {role_label.lower()}."
-            comp_color = "#2b8a3e"   # verde
+            comp_color = "#2b8a3e"
 
-    # --- 3 CARD ALLINEATE ---
     c1, c2, c3 = st.columns(3)
 
-    # Card 1: Totale + confronto media
+    # Card 1 — Total
     with c1:
-        st.markdown(f"""
-            <div class="card card--tall">
-                <div style="margin:0 0 .5rem 0; font-size:2rem; color:#1b4332; font-weight:800;">
-                    🌱 {st.session_state.get('name','')}, your total CO₂e is…
-                </div>
-                <div class="big-total">{total:.0f} kg/year</div>
-                {f'''
-                <div class="avg-box">
-                    <div style="font-size:0.95rem; color:{comp_color}; font-weight:700; margin-bottom:4px;">{msg}</div>
-                    <div style="font-size:0.9rem; color:#1b4332;">
-                        Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b><br/>
-                        Your result: <b>{total:.0f} kg/year</b>
-                    </div>
-                </div>
-                ''' if msg else ''}
-            </div>
-        """, unsafe_allow_html=True)
+        card = st.container(border=True)
+        with card:
+            st.markdown(
+                f"<div style='font-size:2rem; color:#1b4332; font-weight:800; margin-bottom:.5rem;'>"
+                f"🌱 {st.session_state.get('name','')}, your total CO₂e is…</div>",
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f"<div style='font-size:clamp(2.6rem,6vw,3.6rem); line-height:1; font-weight:900; "
+                f"color:#ff7f0e; letter-spacing:-0.5px;'>{total:.0f} kg/year</div>",
+                unsafe_allow_html=True
+            )
 
-    # Card 2: Archetype (guess vs actual)
+    # Card 2 — Comparison vs average
     with c2:
-        color = "#1b4332" if guessed_right else "#e63946"
-        title = ("Great job, you guessed it! Your match is" if guessed_right
-                 else "Nice try, but your match is")
-        show_arc = guessed if guessed_right else actual
-        arc_name = show_arc["name"] if show_arc else "—"
-        arc_img = show_arc["image"] if show_arc else None
+        card = st.container(border=True)
+        with card:
+            st.markdown(
+                "<div style='font-size:1.2rem; font-weight:800; color:#1b4332; margin-bottom:.6rem;'>"
+                "How you compare</div>",
+                unsafe_allow_html=True
+            )
+            if msg:
+                st.markdown(
+                    f"<div style='font-size:0.95rem; font-weight:700; color:{comp_color}; margin-bottom:6px;'>{msg}</div>",
+                    unsafe_allow_html=True
+                )
+                st.markdown(
+                    f"<div style='font-size:0.9rem; color:#1b4332;'>"
+                    f"Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b><br/>"
+                    f"Your result: <b>{total:.0f} kg/year</b></div>",
+                    unsafe_allow_html=True
+                )
+            else:
+                st.markdown(
+                    "<div style='font-size:0.9rem; color:#6c757d;'>No average available for your role.</div>",
+                    unsafe_allow_html=True
+                )
 
-        st.markdown(f"""
-            <div class="card card--tall">
-                <div style="font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};">
-                    {title}
-                </div>
-                <div style="display:grid; grid-template-columns:3fr 1fr; gap:12px; align-items:center;">
-                    <div>
-                        <div style="font-weight:800; font-size:2rem; color:#ff7f0e;">{arc_name}</div>
-                        <div style="margin-top:.45rem; font-size:1.05rem; color:#1b4332;">
-                            Your biggest footprint comes from <b>{actual_top}</b>
-                        </div>
-                    </div>
-                    <div>
-                        {f"<img src='{arc_img}' style='width:100%;border-radius:8px;'/>" if arc_img else ""}
-                    </div>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    # Card 3: Breakdown sintetico
+    # Card 3 — Archetype
     with c3:
-        st.markdown(f"""
-            <div class="card card--tall">
-                <div style="font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:#1b4332;">
-                    Breakdown at a glance
-                </div>
-                <div class="break-row">
-                    <div class="break-item"><span class="break-label">💻 Devices</span><span class="break-val">{res['Devices']:.1f} kg</span></div>
-                    <div class="break-item"><span class="break-label">🔌 Digital Activities</span><span class="break-val">{res['Digital Activities']:.1f} kg</span></div>
-                    <div class="break-item"><span class="break-label">🦾 AI Tools</span><span class="break-val">{res['AI Tools']:.1f} kg</span></div>
-                    <div class="break-item"><span class="break-label">🗑️ E-Waste</span><span class="break-val">{res['E-Waste']:.1f} kg</span></div>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
+        card = st.container(border=True)
+        with card:
+            color = "#1b4332" if guessed_right else "#e63946"
+            title = ("Great job, you guessed it! Your match is"
+                     if guessed_right else "Nice try, but your match is")
+            show_arc = guessed if guessed_right else actual
+            arc_name = show_arc['name'] if show_arc else "—"
+            arc_img = show_arc['image'] if show_arc else None
 
-
+            st.markdown(
+                f"<div style='font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};'>{title}</div>",
+                unsafe_allow_html=True
+            )
+            txt_col, img_col = st.columns([3, 1])
+            with txt_col:
+                st.markdown(
+                    f"<div style='font-weight:800; font-size:2rem; color:#ff7f0e;'>{arc_name}</div>",
+                    unsafe_allow_html=True
+                )
+                st.markdown(
+                    f"<div style='margin-top:.45rem; font-size:1.05rem; color:#1b4332;'>"
+                    f"Your biggest footprint comes from <b>{actual_top}</b></div>",
+                    unsafe_allow_html=True
+                )
+            with img_col:
+                if arc_img:
+                    st.image(arc_img, use_container_width=True)
 
 
     # --- METRICHE IN GRIGLIA ---
@@ -1204,6 +1196,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
