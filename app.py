@@ -411,7 +411,6 @@ def show_main():
     if total_hours_raw > 8:
         st.markdown(
             "<div style='text-align:right; font-size:0.85rem; color:#6c757d; margin-top:-8px;'>"
-            "You can exceed 8 hours if you multitask.</div>",
             unsafe_allow_html=True
         )
 
@@ -1153,6 +1152,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
