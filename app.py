@@ -402,15 +402,16 @@ def show_main():
             ore_dict[act] = ore
 
     total_hours_raw = sum(ore_dict.values())
-    color = "#6EA8FE" if total_hours_raw <= 8 else "#e63946"
+    color = "#6EA8FE" if total_hours_raw <= 8 else "#B58900"
     st.markdown(
         "<div style='text-align:right; font-size:0.85rem; color:#6c757d; margin-top:-8px;'>",
         unsafe_allow_html=True
     )
     if total_hours_raw > 8:
         st.markdown(
-            "<div style='text-align:right; font-size:0.85rem; color:#6c757d; margin-top:-8px;'>"
-            unsafe_allow_html=True
+        "<div style='text-align:right; font-size:0.85rem; color:#6c757d; margin-top:-8px;'>"
+        "Overlapping activities can push the total above 8 hours.</div>",
+        unsafe_allow_html=True
         )
 
     
@@ -1151,6 +1152,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
