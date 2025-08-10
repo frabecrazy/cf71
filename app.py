@@ -199,7 +199,7 @@ This calculator is tailored for **university students, professors, and staff mem
             st.session_state.page = "main"
             st.rerun()
         else:
-            st.warning("Please enter your name and select your role before continuing.")
+            st.warning("⚠️ Please enter your name and select your role before continuing.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -242,7 +242,7 @@ def show_main():
     """, unsafe_allow_html=True)
 
     st.markdown("""
-        <h3 style="margin-top: 25px; color:#1d3557;">💻 Devices</h3>
+        <h3 style="margin-top: 25px; color:#1d3557;">💻 Devices & E-Waste</h3>
         <p>Choose the digital devices you currently use, and for each one, provide a few details about how you use it and what you do when it's no longer needed.</p>
     """, unsafe_allow_html=True)
 
@@ -345,10 +345,10 @@ def show_main():
             total_prod += prod_per_year
             total_eol += eol_impact
 
-            col_remove, _, col_confirm = st.columns([1, 4, 1])
+            col_remove, _, col_confirm = st.columns([1, 5, 1])
 
             with col_remove:
-                if st.button(f"🗑 Remove {base_device}", key=f"remove_{device_id}"):
+                if st.button(f"🗑 Remove", key=f"remove_{device_id}"):
                     st.session_state.device_list.remove(device_id)
                     st.session_state.device_inputs.pop(device_id, None)
                     st.session_state.device_expanders.pop(device_id, None)
@@ -512,7 +512,7 @@ def show_main():
 
     with col_next:
         next_clicked = st.button(
-            f"🌍 {st.session_state.name}, discover Your Digital Carbon Footprint!",
+            f"Next ➡️",
             key="main_next_btn",
             use_container_width=True
         )
@@ -547,6 +547,82 @@ def show_main():
             st.session_state.page = "guess"
             st.rerun()
 
+def show_guess():
+    if "archetype_guess" not in st.session_state:
+        st.session_state.archetype_guess = None
+
+    # ---- Stili ---- (aggiunta intro-box, senza rimuovere il resto)
+    st.markdown("""
+        <style>
+        .intro-box {
+            background: linear-gradient(to right, #d8f3dc, #a8dadc);
+            padding: 40px 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+            margin-bottom: 30px;
+        }
+        .arc-card h4{
+            margin: 6px 0 10px; text-align:center; color:#1d3557;
+            font-weight:800; font-size:1.05rem;
+        }
+        .arc-badge{
+            display:inline-block; margin:10px auto 12px; padding:6px 12px;
+            border:1px solid #e9ecef; border-radius:999px; background:#fff;
+            color:#1b4332; font-weight:700; font-size:.9rem;
+        }
+        .picked { box-shadow: 0 0 0 3px #52b788 inset; border-radius: 12px; }
+        div[data-testid="stVerticalBlockBorderWrapper"] > div:empty { display:none; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # --- Box identico a intro ---
+    st.markdown("""
+        <div class="intro-box">
+            <h2 style="margin:.2rem 0;">{st.session_state.get('name','')}, before you discover your full Digital Carbon Footprint, take a guess!</h2>
+            <p style="margin:.2rem 0; color:#1b4332;">
+                Based on the area where you think you have the biggest impact, which digital archetype matches you best?
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+
+    cols = st.columns(4)
+    for i, arc in enumerate(ARCHETYPES):
+        with cols[i]:
+            # contenitore unico con bordo (titolo+img+badge+bottone)
+            cont = st.container(border=True)
+            with cont:
+                # aggiungo una classe 'picked' al contenitore se selezionato
+                if st.session_state.get("archetype_guess") == arc["key"]:
+                    st.markdown('<div class="picked">', unsafe_allow_html=True)
+
+                st.markdown(f"<div class='arc-card'><h4>{arc['name']}</h4></div>", unsafe_allow_html=True)
+                st.image(arc["image"], use_container_width=True)
+                st.markdown(f"<div style='text-align:center;'><span class='arc-badge'>{arc['category']}</span></div>",
+                            unsafe_allow_html=True)
+
+                if st.button("Choose", key=f"choose_{arc['key']}", use_container_width=True):
+                    st.session_state.archetype_guess = arc["key"]
+                    st.rerun()
+
+                if st.session_state.get("archetype_guess") == arc["key"]:
+                    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("### ")
+    left, middle, right = st.columns([1,4,1])
+    with left:
+        if st.button("⬅️ Back"):
+            st.session_state.page = "main"
+            st.rerun()
+
+    with middle:
+        st.write("")
+    
+    with right:
+        if st.button("See your detailed results➡️", disabled=st.session_state.archetype_guess is None):
+            st.session_state.page = "results"
+            st.rerun()
 
 
 # RESULTS PAGE
@@ -1029,77 +1105,6 @@ def show_virtues():
         st.session_state.page = ""
         st.rerun()
 
-def show_guess():
-    if "archetype_guess" not in st.session_state:
-        st.session_state.archetype_guess = None
-    # ---- Stili ----
-    st.markdown("""
-        <style>
-        .hero-{
-            background: linear-gradient(to right, #d8f3dc, #a8dadc);
-            padding: 28px 18px; border-radius: 12px; text-align: center;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.06); margin-bottom: 18px;
-        }
-        /* Card pulita: un solo box per titolo+img+categoria+bottone */
-        .arc-card h4{
-            margin: 6px 0 10px; text-align:center; color:#1d3557;
-            font-weight:800; font-size:1.05rem;
-        }
-        .arc-badge{
-            display:inline-block; margin:10px auto 12px; padding:6px 12px;
-            border:1px solid #e9ecef; border-radius:999px; background:#fff;
-            color:#1b4332; font-weight:700; font-size:.9rem;
-        }
-        /* evidenzia la card selezionata */
-        .picked { box-shadow: 0 0 0 3px #52b788 inset; border-radius: 12px; }
-        /* togli qualsiasi “pill” vuota extra */
-        div[data-testid="stVerticalBlockBorderWrapper"] > div:empty { display:none; }
-        </style>
-    """, unsafe_allow_html=True)
-
-
-    st.markdown("""
-        <div class="hero-guess">
-            <h2 style="margin:.2rem 0;">Before you discover your full Digital Carbon Footprint, take a guess!</h2>
-            <p style="margin:.2rem 0; color:#1b4332;">
-                Based on the area where you think you have the biggest impact, which digital archetype matches you best?
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
-
-    cols = st.columns(4)
-    for i, arc in enumerate(ARCHETYPES):
-        with cols[i]:
-            # contenitore unico con bordo (titolo+img+badge+bottone)
-            cont = st.container(border=True)
-            with cont:
-                # aggiungo una classe 'picked' al contenitore se selezionato
-                if st.session_state.get("archetype_guess") == arc["key"]:
-                    st.markdown('<div class="picked">', unsafe_allow_html=True)
-
-                st.markdown(f"<div class='arc-card'><h4>{arc['name']}</h4></div>", unsafe_allow_html=True)
-                st.image(arc["image"], use_container_width=True)
-                st.markdown(f"<div style='text-align:center;'><span class='arc-badge'>{arc['category']}</span></div>",
-                            unsafe_allow_html=True)
-
-                if st.button("Choose", key=f"choose_{arc['key']}", use_container_width=True):
-                    st.session_state.archetype_guess = arc["key"]
-                    st.rerun()
-
-                if st.session_state.get("archetype_guess") == arc["key"]:
-                    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("### ")
-    left, right = st.columns([1,1])
-    with left:
-        if st.button("Back"):
-            st.session_state.page = "main"
-            st.rerun()
-    with right:
-        if st.button("See your detailed results", disabled=st.session_state.archetype_guess is None):
-            st.session_state.page = "results"
-            st.rerun()
-
 
 
 # === PAGE NAVIGATION ===
@@ -1113,6 +1118,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
