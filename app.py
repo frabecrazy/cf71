@@ -835,39 +835,40 @@ def show_results():
     color = "#1b4332" if guessed_right else "#e63946"
     title = "Great job, you guessed it! Your match is" if guessed_right else "Nice try, but your match is"
 
-    # --- Card 3 • Render: testo a sinistra, immagine grande a destra dentro la card ---
+    # --- Card 3 • Render: titolo, poi riga con NOME + IMMAGINE affiancati, poi sottotitolo ---
     with c3:
         card = st.container(border=True)
         with card:
-            txt_col, img_col = st.columns([5, 2])  # più spazio all'immagine
+            # Titolo (riga intera)
+            st.markdown(
+                f"<div style='font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};'>{title}</div>",
+                unsafe_allow_html=True
+            )
 
-            # Stili per mantenere stessa altezza delle altre card
-            H = 220  # deve combaciare con min-height di CARD_STYLE
-            TEXT_STYLE = f"display:flex; flex-direction:column; justify-content:center; align-items:flex-start; min-height:{H}px; text-align:left;"
-            IMG_WRAP_STYLE = f"min-height:{H}px; display:flex; align-items:center; justify-content:flex-end;"
-
-            # Testo a sinistra (allineato a sinistra)
-            with txt_col:
+            # Riga: NOME (sx) + IMMAGINE (dx)
+            row_l, row_r = st.columns([5, 3])  # aumenta il 2 -> 3 per rendere l'immagine ancora più grande
+            with row_l:
                 st.markdown(
-                    f"""
-                    <div style="{TEXT_STYLE}">
-                        <div style="font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};">{title}</div>
-                        {(f"<div style='font-weight:800; font-size:2rem; color:#ff7f0e;'>{arc_name}</div>" if arc_name else "")}
-                        <div style="margin-top:.45rem; font-size:1.05rem; color:#1b4332;">
-                            Your biggest footprint comes from <b>{actual_top}</b>
-                        </div>
-                    </div>
-                    """,
+                    f"<div style='display:flex; align-items:center; min-height:220px; text-align:left;'>"
+                    f"<div style='font-weight:800; font-size:2rem; line-height:1.1; color:#ff7f0e;'>{arc_name}</div>"
+                    f"</div>",
                     unsafe_allow_html=True
                 )
-
-            # Immagine a destra (più grande) dentro la stessa card
-            with img_col:
-                st.markdown(f"<div style='{IMG_WRAP_STYLE}'>", unsafe_allow_html=True)
+            with row_r:
+                st.markdown(
+                    "<div style='display:flex; align-items:center; justify-content:flex-end; min-height:220px;'>",
+                    unsafe_allow_html=True
+                )
                 if arc_img:
-                    st.image(arc_img, width=140)   # <-- più grande; regola 140–180 se vuoi
+                    st.image(arc_img, width=160)  # 160–180 se la vuoi ancora più grande
                 st.markdown("</div>", unsafe_allow_html=True)
 
+            # Sottotitolo (riga intera)
+            st.markdown(
+                f"<div style='margin-top:.45rem; font-size:1.05rem; color:#1b4332;'>"
+                f"Your biggest footprint comes from <b>{actual_top}</b></div>",
+                unsafe_allow_html=True
+            )
 
 
     # --- METRICHE IN GRIGLIA ---
@@ -1227,6 +1228,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
