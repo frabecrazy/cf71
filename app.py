@@ -930,12 +930,12 @@ def show_results():
 
 
 def show_virtues():
-    
+    name = (st.session_state.get("name") or "").strip()
     st.markdown(f"""
         <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc);
                     padding: 28px 16px; border-radius: 12px; margin-bottom: 16px; text-align:center;">
             <h2 style="margin:0; color:#1d3557; font-size:2.2rem; line-height:1.2;">
-                Here are some practical tips to shrink your digital footprint!
+                {name}, here are some practical tips to shrink your digital footprint!
             </h2>
             <p style="margin:8px 0 0; color:#1b4332; font-size:1.05rem;">
                 We’ll start with actions tailored to your highest-impact area, followed by general tips you can apply every day.
@@ -985,15 +985,13 @@ def show_virtues():
             ]
         }
 
-        st.markdown(f"### 💡 Personalized Tips based on your biggest impact: <b>{most_impact_cat}</b>", unsafe_allow_html=True)
-
-        with st.expander("📌 Tips to reduce your footprint", expanded=True):
-            for tip in detailed_tips.get(most_impact_cat, []):
-                st.markdown(f"""
-                    <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-                        {tip}
-                    </div>
-                """, unsafe_allow_html=True)
+        with st.expander(f"📌 Tips to reduce your {most_impact_cat} footprint", expanded=True):
+        for tip in detailed_tips.get(most_impact_cat, []):
+            st.markdown(f"""
+                <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                    {tip}
+                </div>
+            """, unsafe_allow_html=True)
 
         # Bonus tips da altre categorie
         other_categories = [cat for cat in detailed_tips if cat != most_impact_cat]
@@ -1002,8 +1000,7 @@ def show_virtues():
         k = min(3, len(other_categories))
         extra_pool = random.sample(other_categories, k) if k > 0 else []
 
-        st.markdown("### 💡 Some Extra Tips:")
-        with st.expander("📌 Bonus advice from other categories", expanded=False):
+        with st.expander("📌 Some Extra Tips", expanded=False):
             for cat in extra_pool:
                 tip = random.choice(detailed_tips[cat])
                 st.markdown(f"""
@@ -1106,7 +1103,7 @@ def show_virtues():
         )
         for v in virtues:
             st.markdown(f'<div class="virtue-card">{v}</div>', unsafe_allow_html=True)
-        st.markdown("#### Great job!")
+        st.markdown("#### Great job, {name}! Keep going💥")
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
@@ -1137,6 +1134,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
