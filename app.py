@@ -835,19 +835,25 @@ def show_results():
     color = "#1b4332" if guessed_right else "#e63946"
     title = "Great job, you guessed it! Your match is" if guessed_right else "Nice try, but your match is"
 
+    # --- Card 3 • Render: testo a sinistra, immagine grande a destra dentro la card ---
     with c3:
         card = st.container(border=True)
         with card:
-            txt_col, img_col = st.columns([5, 1])
+            txt_col, img_col = st.columns([5, 2])  # più spazio all'immagine
 
-            # Testo a sinistra, centrato verticalmente/orizzontalmente
+            # Stili per mantenere stessa altezza delle altre card
+            H = 220  # deve combaciare con min-height di CARD_STYLE
+            TEXT_STYLE = f"display:flex; flex-direction:column; justify-content:center; align-items:flex-start; min-height:{H}px; text-align:left;"
+            IMG_WRAP_STYLE = f"min-height:{H}px; display:flex; align-items:center; justify-content:flex-end;"
+
+            # Testo a sinistra (allineato a sinistra)
             with txt_col:
                 st.markdown(
                     f"""
-                    <div style='{CARD_STYLE}'>
-                        <div style='font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};'>{title}</div>
+                    <div style="{TEXT_STYLE}">
+                        <div style="font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};">{title}</div>
                         {(f"<div style='font-weight:800; font-size:2rem; color:#ff7f0e;'>{arc_name}</div>" if arc_name else "")}
-                        <div style='margin-top:.45rem; font-size:1.05rem; color:#1b4332;'>
+                        <div style="margin-top:.45rem; font-size:1.05rem; color:#1b4332;">
                             Your biggest footprint comes from <b>{actual_top}</b>
                         </div>
                     </div>
@@ -855,18 +861,11 @@ def show_results():
                     unsafe_allow_html=True
                 )
 
-            # Immagine a destra, dentro la stessa card
+            # Immagine a destra (più grande) dentro la stessa card
             with img_col:
-                st.markdown(
-                    "<div style='min-height:220px; display:flex; align-items:center; justify-content:flex-end;'>",
-                    unsafe_allow_html=True
-                )
+                st.markdown(f"<div style='{IMG_WRAP_STYLE}'>", unsafe_allow_html=True)
                 if arc_img:
-                    try:
-                        st.image(arc_img, width=72)
-                    except Exception:
-                        # se il path relativo non esiste nel runtime, evita il crash
-                        pass
+                    st.image(arc_img, width=140)   # <-- più grande; regola 140–180 se vuoi
                 st.markdown("</div>", unsafe_allow_html=True)
 
 
@@ -1228,6 +1227,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
