@@ -1103,14 +1103,12 @@ def show_virtues():
         virtues.append("You never print. This saves paper, ink, and the energy needed for printing... the trees thank you!")
 
     # 8) Uso moderato dell’AI (< 20 query/giorno)
-    try:
-        ai_total_queries = 0
-        for task in ai_factors.keys():
-            ai_total_queries += int(st.session_state.get(task, 0) or 0)
-        if ai_total_queries < 20:
-            virtues.append("You use AI sparingly, staying under 20 queries a day. This reduces the energy consumed by high-compute AI models.")
-    except Exception:
-        pass
+    ai_total_queries = int(st.session_state.get("ai_total_queries", 0))
+    if ai_total_queries <= 20:
+        virtues.append(
+            "You use AI sparingly, staying under 20 queries a day. This reduces the energy consumed by high-compute AI models."
+        )
+
 
 
     if virtues:
@@ -1158,6 +1156,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
