@@ -616,7 +616,7 @@ def show_guess():
             st.session_state.page = "main"
             st.rerun()
     with right:
-        if st.button("See your detailed results",
+        if st.button("Discover your Carbon Footprint➡️",
                      key="guess_continue_btn",
                      use_container_width=True,
                      disabled=st.session_state.get("archetype_guess") is None):
@@ -1124,6 +1124,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
