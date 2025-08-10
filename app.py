@@ -345,7 +345,7 @@ def show_main():
             total_prod += prod_per_year
             total_eol += eol_impact
 
-            col_remove, _, col_confirm = st.columns([1, 5, 1])
+            col_remove, _, col_confirm = st.columns([1, 5.5, 1])
 
             with col_remove:
                 if st.button(f"🗑 Remove", key=f"remove_{device_id}"):
@@ -1073,7 +1073,7 @@ def show_virtues():
 
     # 7) Zero stampe
     if int(st.session_state.get("pages", 0)) == 0:
-        virtues.append("You never print. This saves paper, ink, and the energy needed for printing — and the trees thank you!")
+        virtues.append("You never print. This saves paper, ink, and the energy needed for printing... the trees thank you!")
 
     # 8) Uso moderato dell’AI (< 20 query/giorno)
     try:
@@ -1124,6 +1124,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
