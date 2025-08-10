@@ -841,31 +841,28 @@ def show_results():
     with c3:
         card = st.container(border=True)
         with card:
-            left, right = st.columns([5, 2])  # aumenta il 2 -> 3 se vuoi più spazio all'immagine
-
-            H = 220  # stessa altezza minima delle altre card
-
-            # SX: titolo + nome + sottotitolo (in un unico wrapper)
+            left, right = st.columns([5, 3])  
+            H = 220 
             with left:
                 st.markdown(
-                    f"""
-                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
-                                min-height:{H}px; text-align:left;">
-                        <div style="font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};">{title}</div>
-                        <div style="font-weight:800; font-size:2rem; line-height:1.1; color:#ff7f0e;">{arc_name}</div>
-                        <div style="margin-top:.45rem; font-size:1.05rem; color:#1b4332;">
-                            Your biggest footprint comes from <b>{actual_top}</b>
-                        </div>
+                f"""
+                <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+                            min-height:{H}px; text-align:left; gap:.45rem; {CARD_ACCENT}">
+                    <div style="font-size:1.2rem; font-weight:800; color:{color}; margin:0;">{title}</div>
+                    <div style="font-weight:800; font-size:2rem; line-height:1.1; color:#ff7f0e; margin:0;">{arc_name}</div>
+                    <div style="font-size:1.05rem; color:#1b4332; margin:0;">
+                        Your biggest footprint comes from <b>{actual_top}</b>
                     </div>
-                    """,
-                    unsafe_allow_html=True
+                </div>
+                """,
+                unsafe_allow_html=True
                 )
 
             # DX: immagine in alto a destra (senza min-height per non “abbassarla”)
             with right:
                 st.markdown(
-                    "<div style='display:flex; align-items:flex-start; justify-content:flex-end; padding-top:4px;'>",
-                    unsafe_allow_html=True
+                "<div style='display:flex; align-items:flex-start; justify-content:flex-end; padding-top:4px;'>",
+                unsafe_allow_html=True
                 )
                 if arc_img:
                     st.image(arc_img, width=180)  # regola 160–200 a piacere
@@ -1230,6 +1227,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
