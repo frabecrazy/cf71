@@ -430,7 +430,7 @@ def show_main():
 
     cloud = st.selectbox("Cloud storage you currently use for academic or work-related files (e.g., on iCloud, Google Drive, OneDrive)", cloud_opts, index=0, key="cloud")
 
-    wifi = st.slider("Estimated daily Wi-Fi connection time", 0.0, 8.0, 4.0, 0.5)
+    wifi = st.slider("Estimated daily Wi-Fi connection time", 0.0, 8.0, 4.0, 0.5, key="wifi")
     pages = st.number_input("Printed pages per day", 0, 100, 0, key="pages")
 
     idle = st.radio("When you're not using your computer...", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"],
@@ -438,18 +438,18 @@ def show_main():
 
 
 # --- CALCOLI 
-    mail_total = (
-        emails[email_plain] * 0.004 * DAYS
-        + emails[email_attach] * 0.035 * DAYS
-        + cloud_gb[cloud] * 0.01 * DAYS
-    )
+    em_plain  = emails.get(st.session_state.get("email_plain"), 0)
+    em_attach = emails.get(st.session_state.get("email_attach"), 0)
+    cld = cloud_gb.get(st.session_state.get("cloud"), 0)
 
-    wifi_total  = wifi  * 0.00584 * DAYS
-    print_total = pages * 0.0045  * DAYS
+    mail_total = (em_plain * 0.004 + em_attach * 0.035 + cld * 0.01) * DAYS
+    wifi_total  = st.session_state.get("wifi", 4.0) * 0.00584 * DAYS
+    print_total = st.session_state.get("pages", 0) * 0.0045 * DAYS
 
-    if idle == "I leave it on (idle mode)":
+    idle_val = st.session_state.get("idle")
+    if idle_val == "I leave it on (idle mode)":
         idle_total = DAYS * 0.0104 * 16
-    elif idle == "I turn it off":
+    elif idle_val == "I turn it off":
         idle_total = DAYS * 0.0005204 * 16
     else:
         idle_total = 0
@@ -610,20 +610,18 @@ def show_guess():
                     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("### ")
-    left, middle, right = st.columns([1,4,1])
+    left, _, right = st.columns([1, 4, 1])
     with left:
-        if st.button("⬅️ Back"):
+        if st.button("⬅️ Back", key="guess_back_btn", use_container_width=True):
             st.session_state.page = "main"
             st.rerun()
-
-    with middle:
-        st.write("")
-    
     with right:
-        if st.button("See your detailed results➡️", disabled=st.session_state.archetype_guess is None):
+        if st.button("See your detailed results",
+                     key="guess_continue_btn",
+                     use_container_width=True,
+                     disabled=st.session_state.get("archetype_guess") is None):
             st.session_state.page = "results"
             st.rerun()
-
 
 # RESULTS PAGE
 
@@ -917,21 +915,22 @@ def show_results():
 """, unsafe_allow_html=True)
 
     st.markdown("### ")
-    if st.button("➡️ Continue to your Virtues & Tips", use_container_width=True):
-        st.session_state.page = "virtues"
-        st.rerun()
-
-    # --- PULSANTE RESTART ---
-    st.markdown("### ")
-    if st.button("🔁 Restart the Calculator"):
-        st.session_state.clear()
-        st.session_state.page = "intro"
-        st.rerun()
+    left, _, right = st.columns([1, 4, 1])
+    with left:
+        if st.button("⬅️ Back", key="res_back_btn", use_container_width=True):
+            st.session_state.page = "guess"  # oppure "main" se preferisci
+            st.rerun()
+    with right:
+        if st.button("➡️ Continue to your Virtues & Tips",
+                     key="res_continue_btn",
+                     use_container_width=True):
+            st.session_state.page = "virtues"
+            st.rerun()
 
 def show_virtues():
 
     # =======================
-    # PERSONALIZED TIPS (spostati qui dai Results)
+    # PERSONALIZED TIPS
     # =======================
 
     # Prendi i risultati
@@ -974,7 +973,7 @@ def show_virtues():
 
         st.markdown(f"### 💡 Personalized Tips based on your biggest impact: <b>{most_impact_cat}</b>", unsafe_allow_html=True)
 
-        with st.expander("📌 Tips to reduce your footprint"):
+        with st.expander("📌 Tips to reduce your footprint", expanded=True, key="virt_tips_exp"):
             for tip in detailed_tips.get(most_impact_cat, []):
                 st.markdown(f"""
                     <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
@@ -990,7 +989,7 @@ def show_virtues():
         extra_pool = random.sample(other_categories, k) if k > 0 else []
 
         st.markdown("### 💡 Some Extra Tips:")
-        with st.expander("📌 Bonus advice from other categories"):
+        with st.expander("📌 Bonus advice from other categories", expanded=False, key="virt_bonus_exp"):
             for cat in extra_pool:
                 tip = random.choice(detailed_tips[cat])
                 st.markdown(f"""
@@ -1101,11 +1100,16 @@ def show_virtues():
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
-    if st.button("➡️ Take a quick  before results", use_container_width=True):
-        st.session_state.page = ""
-        st.rerun()
 
-
+    left, _, right = st.columns([1, 4, 1])
+    with left:
+        if st.button("⬅️ Back to Results", key="virt_back_btn", use_container_width=True):
+            st.session_state.page = "results"
+            st.rerun()
+    with right:
+        if st.button("✏️ Edit your answers", key="virt_edit_btn", use_container_width=True):
+            st.session_state.page = "main"
+            st.rerun()
 
 # === PAGE NAVIGATION ===
 if st.session_state.page == "intro":
@@ -1118,6 +1122,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
