@@ -930,11 +930,10 @@ def show_results():
 
 
 def show_virtues():
-
     st.markdown(f"""
         <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc);
                     padding: 28px 16px; border-radius: 12px; margin-bottom: 16px; text-align:center;">
-            <h2 style="margin:0; color:#1d3557;">{name}, here are some practical tips to shrink your digital footprint!</h2>
+            <h2 style="margin:0; color:#1d3557;"Here are some practical tips to shrink your digital footprint!</h2>
             <p style="margin:6px 0 0; color:#1b4332;">We’ll start with actions tailored to your highest-impact area, followed by general tips you can apply every day.</p>
         </div>
     """, unsafe_allow_html=True)
@@ -1132,6 +1131,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
