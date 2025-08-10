@@ -577,7 +577,7 @@ def show_guess():
     """, unsafe_allow_html=True)
 
     # --- Box identico a intro ---
-    st.markdown("""
+    st.markdown(f"""
         <div class="intro-box">
             <h2 style="margin:.2rem 0;">{st.session_state.get('name','')}, before you discover your full Digital Carbon Footprint, take a guess!</h2>
             <p style="margin:.2rem 0; color:#1b4332;">
@@ -1124,6 +1124,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
