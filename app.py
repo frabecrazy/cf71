@@ -782,31 +782,36 @@ def show_results():
                 unsafe_allow_html=True
             )
 
-    # Card 2 — Comparison vs average
+    # Card 2 — Comparison vs average (restyled)
     with c2:
         card = st.container(border=True)
         with card:
+            # Title same size as the match title
             st.markdown(
-                "<div style='font-size:1.2rem; font-weight:800; color:#1b4332; margin-bottom:.6rem;'>"
-                "How you compare</div>",
+                "<div style='font-size:1.3rem; font-weight:800; color:#1b4332; margin-bottom:.6rem;'>"
+                "Your footprint vs average</div>",
                 unsafe_allow_html=True
             )
+
             if msg:
+                # Big statement (same size as archetype name)
                 st.markdown(
-                    f"<div style='font-size:0.95rem; font-weight:700; color:{comp_color}; margin-bottom:6px;'>{msg}</div>",
+                    f"<div style='font-size:2rem; font-weight:800; color:{comp_color}; line-height:1.2; margin-bottom:.4rem;'>"
+                    f"{msg}</div>",
                     unsafe_allow_html=True
                 )
+                # Secondary line (same size as 'Your biggest footprint...' text)
                 st.markdown(
-                    f"<div style='font-size:0.9rem; color:#1b4332;'>"
-                    f"Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b><br/>"
-                    f"Your result: <b>{total:.0f} kg/year</b></div>",
+                    f"<div style='font-size:1.05rem; color:#1b4332;'>"
+                    f"Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b></div>",
                     unsafe_allow_html=True
                 )
             else:
                 st.markdown(
-                    "<div style='font-size:0.9rem; color:#6c757d;'>No average available for your role.</div>",
+                    "<div style='font-size:1.05rem; color:#6c757d;'>No average available for your role.</div>",
                     unsafe_allow_html=True
                 )
+
 
     # Card 3 — Archetype
     with c3:
@@ -1196,6 +1201,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
