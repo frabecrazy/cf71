@@ -237,7 +237,7 @@ def show_main():
 
     st.markdown(f"""
         <p style="font-size: 1em; color: #6c757d; margin-top: -8px;">
-            First, we’ll ask you a few quick questions about your habits. This will take less than <b>5 minutes</b>.
+            First, we’ll ask you a few quick questions about your studying/working habits. This will take less than <b>5 minutes</b>.
         </p>
     """, unsafe_allow_html=True)
 
@@ -451,7 +451,7 @@ def show_main():
 
     cloud = st.selectbox("Cloud storage you currently use for academic or work-related files (e.g., on iCloud, Google Drive, OneDrive)", cloud_opts, index=0, key="cloud")
 
-    wifi = st.slider("Estimated daily Wi-Fi connection time", 0.0, 8.0, 4.0, 0.5, key="wifi")
+    wifi = st.slider("Estimate your daily Wi-Fi connection time during a typical 8-hour study or work day, including hours when you're not actively using your device (e.g., background apps, idle mode)", 0.0, 8.0, 4.0, 0.5, key="wifi")
     pages = st.number_input("Printed pages per day", 0, 100, 0, key="pages")
 
     idle = st.radio("When you're not using your computer...", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"],
@@ -1159,6 +1159,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
