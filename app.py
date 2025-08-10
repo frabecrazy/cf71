@@ -345,7 +345,7 @@ def show_main():
             total_prod += prod_per_year
             total_eol += eol_impact
 
-            col_remove, _, col_confirm = st.columns([1, 5.5, 1])
+            col_remove, _, col_confirm = st.columns([1, 7, 1])
 
             with col_remove:
                 if st.button(f"🗑 Remove", key=f"remove_{device_id}"):
@@ -1124,6 +1124,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
