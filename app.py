@@ -1015,11 +1015,11 @@ def show_virtues():
     st.markdown("""
         <style>
         .virtue-card {
-            background-color: #d0ebff;
+            background-color: #e7f5ff;
             border-radius: 12px;
             padding: 14px 16px;
             margin-bottom: 10px;
-            border-left: 6px solid #52b788;
+            border-left: 6px solid #74C0FC;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -1134,6 +1134,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
