@@ -834,7 +834,6 @@ def show_results():
             # fallback: prova comunque la stringa relativa (se il working dir combacia)
             arc_img = arc_img_rel
 
-    color = "#1b4332" if guessed_right else "#e63946"
     title = "Great job, you guessed it! Your match is" if guessed_right else "Nice try, but your match is"
 
     # --- Card 3 • Render: testo a sinistra, immagine in alto a destra ---
@@ -1227,6 +1226,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
