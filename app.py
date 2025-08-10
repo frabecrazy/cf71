@@ -986,12 +986,12 @@ def show_virtues():
         }
 
         with st.expander(f"📌 Tips to reduce your {most_impact_cat} footprint", expanded=True):
-        for tip in detailed_tips.get(most_impact_cat, []):
-            st.markdown(f"""
-                <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-                    {tip}
-                </div>
-            """, unsafe_allow_html=True)
+            for tip in detailed_tips.get(most_impact_cat, []):
+                st.markdown(f"""
+                    <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                        {tip}
+                    </div>
+                """, unsafe_allow_html=True)
 
         # Bonus tips da altre categorie
         other_categories = [cat for cat in detailed_tips if cat != most_impact_cat]
@@ -1134,6 +1134,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
