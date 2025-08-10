@@ -1103,7 +1103,7 @@ def show_virtues():
         )
         for v in virtues:
             st.markdown(f'<div class="virtue-card">{v}</div>', unsafe_allow_html=True)
-        st.markdown("#### Great job, {name}! Keep going💥")
+        st.markdown(f"#### Great job, {name}! Keep going💥")
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
@@ -1134,6 +1134,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
