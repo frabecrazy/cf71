@@ -810,13 +810,12 @@ def show_results():
                 )
 
     # Card 3 — Archetype
-    # --- Prep variabili per la Card 3 (con fallback robusto) ---
+    # --- Prep variabili per la Card 3 (fallback robusto) ---
     guessed_right = bool(st.session_state.get("guessed_right", False))
     guessed = st.session_state.get("guessed") or {}
     actual = st.session_state.get("actual") or {}
     actual_top = st.session_state.get("actual_top", "Digital Activities")
 
-    # immagini eventualmente salvate in sessione
     IMG_BY_TOP = {
         "Digital Activities": st.session_state.get("img_streams"),
         "Devices":            st.session_state.get("img_gadgets"),
@@ -832,49 +831,55 @@ def show_results():
 
     # Se 'actual' è vuoto, prova a ricavarlo da actual_top
     if not actual and actual_top in NAME_BY_TOP:
-        actual = {
-            "name": NAME_BY_TOP[actual_top],
-            "image": IMG_BY_TOP.get(actual_top)
-        }
+        actual = {"name": NAME_BY_TOP[actual_top], "image": IMG_BY_TOP.get(actual_top)}
 
     show_arc = guessed if guessed_right else actual
     arc_name = (show_arc or {}).get("name")
-    arc_img = (show_arc or {}).get("image")
+    arc_img  = (show_arc or {}).get("image")
 
     color = "#1b4332" if guessed_right else "#e63946"
-    title = ("Great job, you guessed it! Your match is"
-             if guessed_right else "Nice try, but your match is")
+    title = "Great job, you guessed it! Your match is" if guessed_right else "Nice try, but your match is"
 
+    # --- Pezzi HTML (niente f-string annidate) ---
+    name_html = f"<div style='font-weight:800; font-size:2rem; color:#ff7f0e;'>{arc_name}</div>" if arc_name else ""
+    subtitle_html = (
+        f"<div style='margin-top:.45rem; font-size:1.05rem; color:#1b4332;'>"
+        f"Your biggest footprint comes from <b>{actual_top}</b></div>"
+    )
+
+    # --- Render card ---
     with c3:
         card = st.container(border=True)
         with card:
-            # blocco testo centrato
             st.markdown(
-                f"<div style='{CARD_STYLE}'>"
-                f"<div style='font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};'>{title}</div>"
-                f"{(f\"<div style='font-weight:800; font-size:2rem; color:#ff7f0e;'>{arc_name}</div>\" if arc_name else '')}"
-                f"<div style='margin-top:.45rem; font-size:1.05rem; color:#1b4332;'>"
-                f"Your biggest footprint comes from <b>{actual_top}</b></div>"
-                f"</div>",
+                f"""
+                <div style='{CARD_STYLE}'>
+                    <div style='font-size:1.2rem; font-weight:800; margin-bottom:.6rem; color:{color};'>{title}</div>
+                    {name_html}
+                    {subtitle_html}
+                </div>
+                """,
                 unsafe_allow_html=True
             )
 
-            # immagine centrata (funziona con URL/percorso o oggetti immagine)
+            # immagine centrata (funziona con URL/percorso o con oggetto immagine)
             if arc_img:
                 if isinstance(arc_img, str):
                     st.markdown(
-                        f"<div style='width:100%; display:flex; justify-content:center; margin-top:1rem;'>"
-                        f"<img src='{arc_img}' style='max-width:80px;'/>"
-                        f"</div>",
+                        f"""
+                        <div style='width:100%; display:flex; justify-content:center; margin-top:1rem;'>
+                            <img src="{arc_img}" style='max-width:80px;'/>
+                        </div>
+                        """,
                         unsafe_allow_html=True
                     )
                 else:
-                    st.markdown("<div style='width:100%; display:flex; justify-content:center; margin-top:1rem;'>",
-                                unsafe_allow_html=True)
+                    st.markdown(
+                        "<div style='width:100%; display:flex; justify-content:center; margin-top:1rem;'>",
+                        unsafe_allow_html=True
+                    )
                     st.image(arc_img, width=80)
                     st.markdown("</div>", unsafe_allow_html=True)
-
-
 
 
     # --- METRICHE IN GRIGLIA ---
@@ -1234,6 +1239,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
