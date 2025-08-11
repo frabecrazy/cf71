@@ -164,6 +164,7 @@ AVERAGE_CO2_BY_ROLE = {
 # INTRO PAGE 
 
 def show_intro():
+    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
     # --- STILE GLOBALE ---
     st.markdown("""
         <style>
@@ -241,8 +242,8 @@ This calculator is tailored for **university students, professors, and staff mem
 
 # MAIN PAGE
 def show_main():
-    with st.spinner("🔍 Loading..."):
-        time.sleep(1.2)
+    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
+
     st.markdown("""
         <style>
             .device-box {
@@ -606,8 +607,8 @@ def show_main():
             st.rerun()
 
 def show_guess():
-    with st.spinner("🔍 Loading..."):
-        time.sleep(1.2)
+    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
+
     if "archetype_guess" not in st.session_state:
         st.session_state.archetype_guess = None
 
@@ -687,6 +688,7 @@ def show_guess():
 # RESULTS PAGE
 
 def show_results():
+    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
     if "saved_once" not in st.session_state:
         st.session_state.saved_once = False
 
@@ -1101,8 +1103,8 @@ def show_results():
 
 
 def show_virtues():
-    with st.spinner("🔍 Loading..."):
-        time.sleep(1.2)
+    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
+
     name = (st.session_state.get("name") or "").strip()
     st.markdown(f"""
         <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc);
@@ -1311,6 +1313,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
