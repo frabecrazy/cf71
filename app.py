@@ -7,6 +7,7 @@ import streamlit.components.v1 as components
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from gspread.exceptions import SpreadsheetNotFound, APIError
 
 # === Google Sheets config ===
 SHEET_NAME = "CFC Test"              # <--- usa proprio il nome che hai messo
@@ -24,14 +25,13 @@ HEADERS = [
 ]
 
 def get_gsheet_client():
-    # st.secrets["gcp_service_account"] deve essere un BLOCCO TOML (dict), non una stringa JSON
     sa = st.secrets["gcp_service_account"]
     if not isinstance(sa, dict):
-        st.error("⚠️ 'gcp_service_account' nei Secrets non è in formato TOML (dict). Ricontrolla i Secrets.")
+        st.error("⚠️ 'gcp_service_account' non è un dict (secrets TOML).")
         st.stop()
-
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(sa, GSCOPE)
+    creds = Credentials.from_service_account_info(sa, scopes=GSCOPE)
     return gspread.authorize(creds)
+
 
 def save_results_to_gsheet(role, devices_kg, ewaste_kg, digital_kg, ai_kg, total_kg, top_category):
     try:
@@ -56,21 +56,22 @@ def save_results_to_gsheet(role, devices_kg, ewaste_kg, digital_kg, ai_kg, total
 
 
 def open_sheet_and_prepare():
-    """
-    Apre lo Sheet 'CFC Test' e si assicura che ci sia l'header (prima riga).
-    """
     client = get_gsheet_client()
     try:
-        sh = client.open(SHEET_NAME)
-    except gspread.SpreadsheetNotFound:
-        # Se non esiste, lo crea (sarà nel Drive del service account)
+        sh = client.open_by_key(SHEET_ID) if SHEET_ID else client.open(SHEET_NAME)
+    except SpreadsheetNotFound:
+        # non trovato: crealo nel Drive del SA e (opzionale) condividilo con te
         sh = client.create(SHEET_NAME)
-        # opzionale: condivide con te per vederlo nel tuo Drive personale
-        # sh.share("tua_email@gmail.com", perm_type="user", role="writer")
+        if SHARE_WITH:
+            try:
+                sh.share(SHARE_WITH, perm_type="user", role="writer")
+            except Exception as e:
+                st.warning(f"Creato file nel Drive del SA ma non condiviso: {e}")
+    except APIError as e:
+        st.error(f"APIError aprendo lo Sheet: {e}")
+        raise
 
     ws = sh.sheet1
-
-    # header coerente
     existing = ws.row_values(1)
     if existing != HEADERS:
         ws.clear()
@@ -79,31 +80,18 @@ def open_sheet_and_prepare():
             ws.freeze(rows=1)
         except Exception:
             pass
-
     return ws
 
-def build_submission_row():
-    res = st.session_state.get("results", {}) or {}
-    total = sum(res.values()) if res else 0
-    top_cat = max(res, key=res.get) if res else ""
-
-    return {
-        "timestamp": datetime.now().isoformat(timespec="seconds"),
-        "name": (st.session_state.get("name") or "").strip(),
-        "role": st.session_state.get("role") or "",
-        "devices_kg": round(res.get("Devices", 0), 2),
-        "ewaste_kg": round(res.get("E-Waste", 0), 2),
-        "digital_kg": round(res.get("Digital Activities", 0), 2),
-        "ai_kg": round(res.get("AI Tools", 0), 2),
-        "total_kg": round(total, 2),
-        "top_category": top_cat
-    }
-
 def append_submission_row_to_gsheet():
-    ws = open_sheet_and_prepare()
-    row = build_submission_row()
-    values = [row.get(h, "") for h in HEADERS]
-    ws.append_row(values, value_input_option="USER_ENTERED")
+    try:
+        ws = open_sheet_and_prepare()
+        row = build_submission_row()
+        values = [row.get(h, "") for h in HEADERS]
+        ws.append_row(values, value_input_option="USER_ENTERED")
+        st.success("✅ Riga inserita su Google Sheets")
+    except Exception as e:
+        st.error(f"❌ Append fallito: {type(e).__name__} - {e}")
+        raise
 
 # --------
 
@@ -1350,6 +1338,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
