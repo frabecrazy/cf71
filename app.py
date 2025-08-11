@@ -683,6 +683,9 @@ def show_guess():
 # RESULTS PAGE
 
 def show_results():
+    if "saved_once" not in st.session_state:
+        st.session_state.saved_once = False
+
 
     # --- STILE GLOBALE ---
     st.markdown("""
@@ -745,32 +748,6 @@ def show_results():
 
     res = st.session_state.results
     total = sum(res.values())
-
-    # --- Salva su Google Sheet (via Sheet.best) ---
-    if "saved_once" not in st.session_state:
-        st.session_state.saved_once = False
-
-    col_save, _ = st.columns([1, 4])
-    with col_save:
-        if st.button("💾 Save my results to shared sheet", disabled=st.session_state.saved_once, use_container_width=True):
-            try:
-                role_label = st.session_state.get("role", "")
-                save_row(
-                    role_label,
-                    res.get("Devices", 0),
-                    res.get("E-Waste", 0),
-                    res.get("AI Tools", 0),
-                    res.get("Digital Activities", 0),
-                    total
-                )
-                st.session_state.saved_once = True
-                st.success("Salvato sul Google Sheet via Sheet.best ✅")
-            except requests.HTTPError as e:
-                st.error(f"Errore HTTP: {e.response.text}")
-            except KeyError:
-                st.error("SHEETBEST_URL mancante nei secrets.")
-            except Exception as e:
-                st.error(f"Errore: {e}")
 
 
     # --- CARICAMENTO ---
@@ -1070,9 +1047,20 @@ def show_results():
             st.session_state.page = "guess"  # oppure "main" se preferisci
             st.rerun()
     with right:
-        if st.button("➡️ Discover Tips",
-                     key="res_continue_btn",
-                     use_container_width=True):
+        if st.button("➡️ Discover Tips", key="res_continue_btn", use_container_width=True):
+            if not st.session_state.saved_once:
+                st.session_state.saved_once = True
+                role_label = st.session_state.get("role", "")
+                res = st.session_state.results
+                total = sum(res.values())
+                save_row(
+                    role_label,
+                    res.get("Devices", 0),
+                    res.get("E-Waste", 0),
+                    res.get("AI Tools", 0),
+                    res.get("Digital Activities", 0),
+                    total
+                )
             st.session_state.page = "virtues"
             st.rerun()
 
@@ -1286,6 +1274,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
