@@ -241,6 +241,8 @@ This calculator is tailored for **university students, professors, and staff mem
 
 # MAIN PAGE
 def show_main():
+    with st.spinner("🔍 Loading..."):
+        time.sleep(1.2)
     st.markdown("""
         <style>
             .device-box {
@@ -1305,6 +1307,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
