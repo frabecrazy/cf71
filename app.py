@@ -5,6 +5,7 @@ import plotly.express as px
 import time
 import streamlit.components.v1 as components
 import requests
+import math
 
 API_URL = st.secrets["SHEETBEST_URL"]
 
@@ -13,11 +14,11 @@ def save_row(role, co2_devices, co2_ewaste, co2_ai, co2_digital, co2_total):
     def norm_str(x):
         try:
             v = float(x)
-            if abs(v) < 1e-12:
-                return "0"
-            return f"{v:.6f}"
+            if not math.isfinite(v):
+                return 0.0
+            return round(v, 6)   # numero, non stringa
         except Exception:
-            return "0"
+            return 0.0
 
     payload = [{
         "Role": str(role or ""),
@@ -1284,6 +1285,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
