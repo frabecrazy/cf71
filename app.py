@@ -23,21 +23,15 @@ HEADERS = [
     "devices_kg", "ewaste_kg", "digital_kg", "ai_kg", "total_kg", "top_category"
 ]
 
-import json
-
 def get_gsheet_client():
-    """Return an authorized gspread client from Streamlit secrets."""
-    creds_dict = st.secrets["gcp_service_account"]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(
-        json.loads(json.dumps(creds_dict)),
-        [
-            "https://spreadsheets.google.com/feeds",
-            "https://www.googleapis.com/auth/spreadsheets",
-            "https://www.googleapis.com/auth/drive",
-        ],
-    )
-    client = gspread.authorize(creds)
-    return client
+    # st.secrets["gcp_service_account"] deve essere un BLOCCO TOML (dict), non una stringa JSON
+    sa = st.secrets["gcp_service_account"]
+    if not isinstance(sa, dict):
+        st.error("⚠️ 'gcp_service_account' nei Secrets non è in formato TOML (dict). Ricontrolla i Secrets.")
+        st.stop()
+
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(sa, GSCOPE)
+    return gspread.authorize(creds)
 
 def save_results_to_gsheet(role, devices_kg, ewaste_kg, digital_kg, ai_kg, total_kg, top_category):
     try:
@@ -1356,6 +1350,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
