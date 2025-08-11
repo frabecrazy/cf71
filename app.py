@@ -1048,19 +1048,50 @@ def show_results():
             st.rerun()
     with right:
         if st.button("➡️ Discover Tips", key="res_continue_btn", use_container_width=True):
-            if not st.session_state.saved_once:
-                st.session_state.saved_once = True
-                role_label = st.session_state.get("role", "")
-                res = st.session_state.results
-                total = sum(res.values())
-                save_row(
-                    role_label,
-                    res.get("Devices", 0),
-                    res.get("E-Waste", 0),
-                    res.get("AI Tools", 0),
-                    res.get("Digital Activities", 0),
-                    total
-                )
+            try:
+                if not st.session_state.get("saved_once", False):
+                    # --- sanity checks (non rompono la UI, ma alzano se qualcosa manca)
+                    import sys
+                    api_url = st.secrets.get("SHEETBEST_URL", None)
+                    assert api_url, "SHEETBEST_URL not found in st.secrets"
+
+                    role_label = st.session_state.get("role", "")
+                    res = st.session_state.results
+                    total = float(sum(res.values()))
+
+                    # log solo in console server (non visibile utente)
+                    print("[autosave] URL:", api_url, file=sys.stderr)
+                    print("[autosave] payload:", {
+                        "Role": role_label,
+                        "CO2 Devices": res.get("Devices", 0),
+                        "CO2 E-Waste": res.get("E-Waste", 0),
+                        "CO2 AI": res.get("AI Tools", 0),
+                        "CO2 Digital Activities": res.get("Digital Activities", 0),
+                        "CO2 Total": total,
+                    }, file=sys.stderr)
+
+                    # chiamata reale
+                    resp = save_row(
+                        role_label,
+                        res.get("Devices", 0),
+                        res.get("E-Waste", 0),
+                        res.get("AI Tools", 0),
+                        res.get("Digital Activities", 0),
+                        total
+                    )
+
+                    # log dell’esito
+                    print("[autosave] response:", resp, file=sys.stderr)
+
+                    st.session_state.saved_once = True
+
+            except Exception as e:
+                # log in console, nessun feedback in UI
+                import traceback, sys
+                print("[autosave][ERROR]", e, file=sys.stderr)
+                traceback.print_exc()
+                # non settare saved_once, così ritenta al prossimo click
+
             st.session_state.page = "virtues"
             st.rerun()
 
@@ -1274,6 +1305,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
