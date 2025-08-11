@@ -10,24 +10,25 @@ import math
 API_URL = st.secrets["SHEETBEST_URL"]
 
 def save_row(role, co2_devices, co2_ewaste, co2_ai, co2_digital, co2_total):
-    # Scrivi "0" invece di celle vuote e formattazione uniforme
-    def norm_str(x):
+    # restituisce numeri (float), non stringhe
+    def norm_val(x):
         try:
             v = float(x)
             if abs(v) < 1e-12:
-                return "0"
-            return f"{v:.6f}"
+                return 0.0
+            # arrotonda ma resta numero
+            return round(v, 6)
         except Exception:
-            return "0"
+            return 0.0
 
-    payload = [{
+    payload = {
         "Role": str(role or ""),
-        "CO2 Devices": norm_str(co2_devices),
-        "CO2 E-Waste": norm_str(co2_ewaste),
-        "CO2 AI": norm_str(co2_ai),
-        "CO2 Digital Activities": norm_str(co2_digital),
-        "CO2 Total": norm_str(co2_total),
-    }]
+        "CO2 Devices": norm_val(co2_devices),
+        "CO2 E-Waste": norm_val(co2_ewaste),
+        "CO2 AI": norm_val(co2_ai),
+        "CO2 Digital Activities": norm_val(co2_digital),
+        "CO2 Total": norm_val(co2_total),
+    }
 
     r = requests.post(API_URL, json=payload, timeout=10)
     r.raise_for_status()
@@ -1285,6 +1286,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
