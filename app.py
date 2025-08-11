@@ -9,6 +9,19 @@ import math
 
 API_URL = st.secrets["SHEETBEST_URL"]
 
+def scroll_top():
+    st.markdown(
+        """
+        <script>
+        setTimeout(function(){
+            var body = window.parent.document.querySelector(".main");
+            if(body){ body.scrollTop = 0; }
+        }, 50);
+        </script>
+        """,
+        unsafe_allow_html=True
+    )
+
 def save_row(role, co2_devices, co2_ewaste, co2_ai, co2_digital, co2_total):
     # restituisce numeri (float), non stringhe
     def norm_val(x):
@@ -164,7 +177,7 @@ AVERAGE_CO2_BY_ROLE = {
 # INTRO PAGE 
 
 def show_intro():
-    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
+    scroll_top()
     # --- STILE GLOBALE ---
     st.markdown("""
         <style>
@@ -242,7 +255,7 @@ This calculator is tailored for **university students, professors, and staff mem
 
 # MAIN PAGE
 def show_main():
-    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
+    scroll_top()
 
     st.markdown("""
         <style>
@@ -607,7 +620,7 @@ def show_main():
             st.rerun()
 
 def show_guess():
-    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
+    scroll_top()
 
     if "archetype_guess" not in st.session_state:
         st.session_state.archetype_guess = None
@@ -688,7 +701,7 @@ def show_guess():
 # RESULTS PAGE
 
 def show_results():
-    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
+    scroll_top()
     if "saved_once" not in st.session_state:
         st.session_state.saved_once = False
 
@@ -1103,7 +1116,7 @@ def show_results():
 
 
 def show_virtues():
-    st.markdown("<script>window.scrollTo(0,0);</script>", unsafe_allow_html=True)
+    scroll_top()
 
     name = (st.session_state.get("name") or "").strip()
     st.markdown(f"""
@@ -1313,6 +1326,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
