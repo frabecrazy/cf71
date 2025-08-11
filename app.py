@@ -9,7 +9,6 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
 # === Google Sheets config ===
-CREDS_FILE = "cfc-test-468708-ba77cd22a8f7.json"      # locale; su Streamlit Cloud userai st.secrets
 SHEET_NAME = "CFC Test"              # <--- usa proprio il nome che hai messo
 
 GSCOPE = [
@@ -24,22 +23,43 @@ HEADERS = [
     "devices_kg", "ewaste_kg", "digital_kg", "ai_kg", "total_kg", "top_category"
 ]
 
+import json
+
 def get_gsheet_client():
-    """
-    Usa st.secrets['gcp_service_account'] se presente (consigliato su Streamlit Cloud),
-    altrimenti il file locale cfc-test-468708-ba77cd22a8f7.json.
-    """
+    """Return an authorized gspread client from Streamlit secrets."""
+    creds_dict = st.secrets["gcp_service_account"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(
+        json.loads(json.dumps(creds_dict)),
+        [
+            "https://spreadsheets.google.com/feeds",
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive",
+        ],
+    )
+    client = gspread.authorize(creds)
+    return client
+
+def save_results_to_gsheet(role, devices_kg, ewaste_kg, digital_kg, ai_kg, total_kg, top_category):
     try:
-        sa_dict = st.secrets.get("gcp_service_account", None)
-    except Exception:
-        sa_dict = None
+        client = get_gsheet_client()
+        sheet = client.open("CFC Test").sheet1  # primo foglio
 
-    if sa_dict:
-        creds = ServiceAccountCredentials.from_json_keyfile_dict(sa_dict, GSCOPE)
-    else:
-        creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_FILE, GSCOPE)
+        new_row = [
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),  # timestamp
+            role,
+            devices_kg,
+            ewaste_kg,
+            digital_kg,
+            ai_kg,
+            total_kg,
+            top_category
+        ]
 
-    return gspread.authorize(creds)
+        sheet.append_row(new_row)
+        st.success("✅ Dati salvati su Google Sheets!")
+    except Exception as e:
+        st.error(f"❌ Errore nel salvataggio su Google Sheets: {e}")
+
 
 def open_sheet_and_prepare():
     """
@@ -658,7 +678,6 @@ def show_main():
                 "Digital Activities": digital_total,
                 "AI Tools": ai_total
             }
-            append_submission_row_to_gsheet()
             st.session_state.page = "guess"
             st.rerun()
 
@@ -1102,11 +1121,30 @@ def show_results():
             st.session_state.page = "guess"  # oppure "main" se preferisci
             st.rerun()
     with right:
-        if st.button("➡️ Discover Tips",
-                     key="res_continue_btn",
-                     use_container_width=True):
+        if st.button("➡️ Discover Tips", key="res_continue_btn", use_container_width=True):
+            # Salva una sola volta per sessione
+            if not st.session_state.get("saved_results_to_sheet", False):
+                # Prepara i valori dalle variabili già calcolate in questa pagina
+                role = st.session_state.get("role", "")
+                devices_kg = res.get("Devices", 0)
+                ewaste_kg = res.get("E-Waste", 0)
+                digital_kg = res.get("Digital Activities", 0)
+                ai_kg = res.get("AI Tools", 0)
+                total_kg = total
+                top_category = actual_top
+
+                # Se stai usando i tuoi helper già definiti (build_submission_row + append_submission_row_to_gsheet)
+                # basta chiamare questo:
+                append_submission_row_to_gsheet()
+
+                # Oppure, se preferisci passare i valori "a mano", usa la tua funzione custom (se l'hai creata)
+                # save_results_to_gsheet(role, devices_kg, ewaste_kg, digital_kg, ai_kg, total_kg, top_category)
+
+                st.session_state.saved_results_to_sheet = True
+
             st.session_state.page = "virtues"
             st.rerun()
+
 
 
 def show_virtues():
@@ -1318,6 +1356,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
