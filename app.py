@@ -25,14 +25,6 @@ def save_row(role, co2_devices, co2_ewaste, co2_ai, co2_digital, co2_total):
         "CO2 Total": norm(co2_total),
     }]
 
-    # DEBUG: mostra cosa stai inviando (puoi rimuoverlo dopo il test)
-    st.write("DEBUG payload →", payload)
-
-    r = requests.post(API_URL, json=payload, timeout=10)
-    r.raise_for_status()
-    return r.json()
-
-
 st.set_page_config(page_title="Digital Carbon Footprint Calculator", layout="wide")
 
 # Init session state
@@ -1284,5 +1276,6 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
