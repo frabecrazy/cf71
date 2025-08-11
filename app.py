@@ -26,16 +26,50 @@ HEADERS = [
 
 from google.oauth2.service_account import Credentials
 
+import pprint, json
+from collections.abc import Mapping
+
+v = st.secrets.get("gcp_service_account", None)
+st.write("SECRETS KEYS:", list(st.secrets.keys()))
+st.write("TYPE:", type(v).__name__)
+st.write("IS MAPPING:", isinstance(v, Mapping))
+st.write("PREVIEW:", (str(v)[:200] + "...") if v is not None else "MISSING")
+
+
+import json
+import gspread
+from collections.abc import Mapping
+from google.oauth2.service_account import Credentials
+
 def get_gsheet_client():
+    if "gcp_service_account" not in st.secrets:
+        st.error("⚠️ Nei secrets NON esiste la chiave 'gcp_service_account'. Controlla il nome della sezione.")
+        st.stop()
+
     raw = st.secrets["gcp_service_account"]
-    # Accetta sia TOML (dict) che JSON (stringa)
-    if isinstance(raw, str):
-        import json
-        sa = json.loads(raw)        # <-- PARSO la stringa JSON
-    elif isinstance(raw, dict):
-        sa = raw
+
+    # 1) Blocchi tipo mapping (TOML section, config dict-like)
+    if isinstance(raw, Mapping):
+        sa = dict(raw)
+
+    # 2) Stringa -> prova JSON
+    elif isinstance(raw, str):
+        try:
+            sa = json.loads(raw)
+        except json.JSONDecodeError:
+            st.error("⚠️ 'gcp_service_account' è una stringa ma NON è JSON valido. Incolla il JSON con virgolette doppie.")
+            st.stop()
+
+    # 3) Bytes -> decodifica + JSON
+    elif isinstance(raw, (bytes, bytearray)):
+        try:
+            sa = json.loads(raw.decode("utf-8"))
+        except Exception as e:
+            st.error(f"⚠️ 'gcp_service_account' è bytes ma non decodificabile/parsabile come JSON: {e}")
+            st.stop()
+
     else:
-        st.error("⚠️ gcp_service_account non è né dict né stringa JSON.")
+        st.error(f"⚠️ Tipo non supportato per gcp_service_account: {type(raw).__name__}")
         st.stop()
 
     creds = Credentials.from_service_account_info(sa, scopes=GSCOPE)
@@ -1347,6 +1381,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
