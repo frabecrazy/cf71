@@ -24,11 +24,20 @@ HEADERS = [
     "devices_kg", "ewaste_kg", "digital_kg", "ai_kg", "total_kg", "top_category"
 ]
 
+from google.oauth2.service_account import Credentials
+
 def get_gsheet_client():
-    sa = st.secrets["gcp_service_account"]
-    if not isinstance(sa, dict):
-        st.error("⚠️ 'gcp_service_account' non è un dict (secrets TOML).")
+    raw = st.secrets["gcp_service_account"]
+    # Accetta sia TOML (dict) che JSON (stringa)
+    if isinstance(raw, str):
+        import json
+        sa = json.loads(raw)        # <-- PARSO la stringa JSON
+    elif isinstance(raw, dict):
+        sa = raw
+    else:
+        st.error("⚠️ gcp_service_account non è né dict né stringa JSON.")
         st.stop()
+
     creds = Credentials.from_service_account_info(sa, scopes=GSCOPE)
     return gspread.authorize(creds)
 
@@ -1338,6 +1347,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
