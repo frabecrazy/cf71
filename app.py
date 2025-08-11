@@ -4,118 +4,6 @@ import random
 import plotly.express as px
 import time
 import streamlit.components.v1 as components
-from datetime import datetime
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-from gspread.exceptions import SpreadsheetNotFound, APIError
-
-# === Google Sheets config ===
-SHEET_NAME = "CFC Test"              # <--- usa proprio il nome che hai messo
-
-GSCOPE = [
-    "https://spreadsheets.google.com/feeds",
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive",
-]
-
-# Solo i campi che hai chiesto + meta base
-HEADERS = [
-    "timestamp", "name", "role",
-    "devices_kg", "ewaste_kg", "digital_kg", "ai_kg", "total_kg", "top_category"
-]
-
-from google.oauth2.service_account import Credentials
-
-import pprint, json
-from collections.abc import Mapping
-
-v = st.secrets.get("gcp_service_account", None)
-st.write("SECRETS KEYS:", list(st.secrets.keys()))
-st.write("TYPE:", type(v).__name__)
-st.write("IS MAPPING:", isinstance(v, Mapping))
-st.write("PREVIEW:", (str(v)[:200] + "...") if v is not None else "MISSING")
-
-
-import json, gspread
-from google.oauth2.service_account import Credentials
-
-GSCOPE = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive"
-]
-
-def get_gsheet_client():
-    raw = st.secrets.get("gcp_service_account")
-    if raw is None:
-        st.error("Manca gcp_service_account nei secrets.")
-        st.stop()
-
-    sa = json.loads(raw) if isinstance(raw, str) else raw  # gestisce stringa JSON o dict
-    creds = Credentials.from_service_account_info(sa, scopes=GSCOPE)
-    return gspread.authorize(creds)
-
-
-def save_results_to_gsheet(role, devices_kg, ewaste_kg, digital_kg, ai_kg, total_kg, top_category):
-    try:
-        client = get_gsheet_client()
-        sheet = client.open("CFC Test").sheet1  # primo foglio
-
-        new_row = [
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),  # timestamp
-            role,
-            devices_kg,
-            ewaste_kg,
-            digital_kg,
-            ai_kg,
-            total_kg,
-            top_category
-        ]
-
-        sheet.append_row(new_row)
-        st.success("✅ Dati salvati su Google Sheets!")
-    except Exception as e:
-        st.error(f"❌ Errore nel salvataggio su Google Sheets: {e}")
-
-
-def open_sheet_and_prepare():
-    client = get_gsheet_client()
-    try:
-        sh = client.open_by_key(SHEET_ID) if SHEET_ID else client.open(SHEET_NAME)
-    except SpreadsheetNotFound:
-        # non trovato: crealo nel Drive del SA e (opzionale) condividilo con te
-        sh = client.create(SHEET_NAME)
-        if SHARE_WITH:
-            try:
-                sh.share(SHARE_WITH, perm_type="user", role="writer")
-            except Exception as e:
-                st.warning(f"Creato file nel Drive del SA ma non condiviso: {e}")
-    except APIError as e:
-        st.error(f"APIError aprendo lo Sheet: {e}")
-        raise
-
-    ws = sh.sheet1
-    existing = ws.row_values(1)
-    if existing != HEADERS:
-        ws.clear()
-        ws.append_row(HEADERS)
-        try:
-            ws.freeze(rows=1)
-        except Exception:
-            pass
-    return ws
-
-def append_submission_row_to_gsheet():
-    try:
-        ws = open_sheet_and_prepare()
-        row = build_submission_row()
-        values = [row.get(h, "") for h in HEADERS]
-        ws.append_row(values, value_input_option="USER_ENTERED")
-        st.success("✅ Riga inserita su Google Sheets")
-    except Exception as e:
-        st.error(f"❌ Append fallito: {type(e).__name__} - {e}")
-        raise
-
-# --------
 
 st.set_page_config(page_title="Digital Carbon Footprint Calculator", layout="wide")
 
@@ -1125,30 +1013,11 @@ def show_results():
             st.session_state.page = "guess"  # oppure "main" se preferisci
             st.rerun()
     with right:
-        if st.button("➡️ Discover Tips", key="res_continue_btn", use_container_width=True):
-            # Salva una sola volta per sessione
-            if not st.session_state.get("saved_results_to_sheet", False):
-                # Prepara i valori dalle variabili già calcolate in questa pagina
-                role = st.session_state.get("role", "")
-                devices_kg = res.get("Devices", 0)
-                ewaste_kg = res.get("E-Waste", 0)
-                digital_kg = res.get("Digital Activities", 0)
-                ai_kg = res.get("AI Tools", 0)
-                total_kg = total
-                top_category = actual_top
-
-                # Se stai usando i tuoi helper già definiti (build_submission_row + append_submission_row_to_gsheet)
-                # basta chiamare questo:
-                append_submission_row_to_gsheet()
-
-                # Oppure, se preferisci passare i valori "a mano", usa la tua funzione custom (se l'hai creata)
-                # save_results_to_gsheet(role, devices_kg, ewaste_kg, digital_kg, ai_kg, total_kg, top_category)
-
-                st.session_state.saved_results_to_sheet = True
-
+        if st.button("➡️ Discover Tips",
+                     key="res_continue_btn",
+                     use_container_width=True):
             st.session_state.page = "virtues"
             st.rerun()
-
 
 
 def show_virtues():
@@ -1360,70 +1229,3 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
