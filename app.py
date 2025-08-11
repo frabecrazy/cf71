@@ -27,7 +27,7 @@ HEADERS = [
 def get_gsheet_client():
     """
     Usa st.secrets['gcp_service_account'] se presente (consigliato su Streamlit Cloud),
-    altrimenti il file locale credentials.json.
+    altrimenti il file locale cfc-test-468708-ba77cd22a8f7.json.
     """
     try:
         sa_dict = st.secrets.get("gcp_service_account", None)
@@ -1318,6 +1318,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
