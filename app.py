@@ -36,55 +36,23 @@ st.write("IS MAPPING:", isinstance(v, Mapping))
 st.write("PREVIEW:", (str(v)[:200] + "...") if v is not None else "MISSING")
 
 
-import json, re
-import gspread
-from collections.abc import Mapping
+import json, gspread
 from google.oauth2.service_account import Credentials
 
+GSCOPE = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
+
 def get_gsheet_client():
-    # 1) prendi il valore dai secrets (accetta dict o stringa JSON)
-    if "gcp_service_account" not in st.secrets:
-        st.error("Manca 'gcp_service_account' nei secrets.")
-        st.stop()
-    raw = st.secrets["gcp_service_account"]
-
-    if isinstance(raw, Mapping):
-        sa = dict(raw)
-    elif isinstance(raw, str):
-        sa = json.loads(raw)  # deve essere JSON valido con doppi apici
-    else:
-        st.error(f"Tipo non supportato: {type(raw).__name__}")
+    raw = st.secrets.get("gcp_service_account")
+    if raw is None:
+        st.error("Manca gcp_service_account nei secrets.")
         st.stop()
 
-    # 2) normalizza la private_key
-    pk = sa.get("private_key", "")
-    if not pk:
-        st.error("private_key mancante nei secrets.")
-        st.stop()
-
-    # se contiene backslash-n letterali, trasformali in veri a-capo
-    if "\\n" in pk:
-        pk = pk.replace("\\n", "\n")
-
-    # togli \r e spazi strani
-    pk = pk.replace("\r", "").strip()
-
-    # assicurati che header/footer siano giusti (aggiungi newline se serve)
-    if not pk.startswith("-----BEGIN PRIVATE KEY-----"):
-        st.error("private_key non inizia con '-----BEGIN PRIVATE KEY-----'.")
-        st.stop()
-    if not pk.endswith("-----END PRIVATE KEY-----") and not pk.endswith("-----END PRIVATE KEY-----\n"):
-        pk = pk + "\n-----END PRIVATE KEY-----"
-    # assicurati che finisca con newline
-    if not pk.endswith("\n"):
-        pk += "\n"
-
-    sa["private_key"] = pk
-
-    # 3) crea le credenziali e autorizza
+    sa = json.loads(raw) if isinstance(raw, str) else raw  # gestisce stringa JSON o dict
     creds = Credentials.from_service_account_info(sa, scopes=GSCOPE)
     return gspread.authorize(creds)
-
 
 
 def save_results_to_gsheet(role, devices_kg, ewaste_kg, digital_kg, ai_kg, total_kg, top_category):
@@ -1392,6 +1360,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
