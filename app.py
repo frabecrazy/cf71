@@ -4,6 +4,94 @@ import random
 import plotly.express as px
 import time
 import streamlit.components.v1 as components
+from datetime import datetime
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+# === Google Sheets config ===
+CREDS_FILE = "cfc-test-468708-ba77cd22a8f7.json"      # locale; su Streamlit Cloud userai st.secrets
+SHEET_NAME = "CFC Test"              # <--- usa proprio il nome che hai messo
+
+GSCOPE = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
+]
+
+# Solo i campi che hai chiesto + meta base
+HEADERS = [
+    "timestamp", "name", "role",
+    "devices_kg", "ewaste_kg", "digital_kg", "ai_kg", "total_kg", "top_category"
+]
+
+def get_gsheet_client():
+    """
+    Usa st.secrets['gcp_service_account'] se presente (consigliato su Streamlit Cloud),
+    altrimenti il file locale credentials.json.
+    """
+    try:
+        sa_dict = st.secrets.get("gcp_service_account", None)
+    except Exception:
+        sa_dict = None
+
+    if sa_dict:
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(sa_dict, GSCOPE)
+    else:
+        creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_FILE, GSCOPE)
+
+    return gspread.authorize(creds)
+
+def open_sheet_and_prepare():
+    """
+    Apre lo Sheet 'CFC Test' e si assicura che ci sia l'header (prima riga).
+    """
+    client = get_gsheet_client()
+    try:
+        sh = client.open(SHEET_NAME)
+    except gspread.SpreadsheetNotFound:
+        # Se non esiste, lo crea (sarà nel Drive del service account)
+        sh = client.create(SHEET_NAME)
+        # opzionale: condivide con te per vederlo nel tuo Drive personale
+        # sh.share("tua_email@gmail.com", perm_type="user", role="writer")
+
+    ws = sh.sheet1
+
+    # header coerente
+    existing = ws.row_values(1)
+    if existing != HEADERS:
+        ws.clear()
+        ws.append_row(HEADERS)
+        try:
+            ws.freeze(rows=1)
+        except Exception:
+            pass
+
+    return ws
+
+def build_submission_row():
+    res = st.session_state.get("results", {}) or {}
+    total = sum(res.values()) if res else 0
+    top_cat = max(res, key=res.get) if res else ""
+
+    return {
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "name": (st.session_state.get("name") or "").strip(),
+        "role": st.session_state.get("role") or "",
+        "devices_kg": round(res.get("Devices", 0), 2),
+        "ewaste_kg": round(res.get("E-Waste", 0), 2),
+        "digital_kg": round(res.get("Digital Activities", 0), 2),
+        "ai_kg": round(res.get("AI Tools", 0), 2),
+        "total_kg": round(total, 2),
+        "top_category": top_cat
+    }
+
+def append_submission_row_to_gsheet():
+    ws = open_sheet_and_prepare()
+    row = build_submission_row()
+    values = [row.get(h, "") for h in HEADERS]
+    ws.append_row(values, value_input_option="USER_ENTERED")
+
+# --------
 
 st.set_page_config(page_title="Digital Carbon Footprint Calculator", layout="wide")
 
@@ -570,6 +658,7 @@ def show_main():
                 "Digital Activities": digital_total,
                 "AI Tools": ai_total
             }
+            append_submission_row_to_gsheet()
             st.session_state.page = "guess"
             st.rerun()
 
@@ -1229,6 +1318,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
