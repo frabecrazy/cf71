@@ -36,44 +36,55 @@ st.write("IS MAPPING:", isinstance(v, Mapping))
 st.write("PREVIEW:", (str(v)[:200] + "...") if v is not None else "MISSING")
 
 
-import json
+import json, re
 import gspread
 from collections.abc import Mapping
 from google.oauth2.service_account import Credentials
 
 def get_gsheet_client():
+    # 1) prendi il valore dai secrets (accetta dict o stringa JSON)
     if "gcp_service_account" not in st.secrets:
-        st.error("⚠️ Nei secrets NON esiste la chiave 'gcp_service_account'. Controlla il nome della sezione.")
+        st.error("Manca 'gcp_service_account' nei secrets.")
         st.stop()
-
     raw = st.secrets["gcp_service_account"]
 
-    # 1) Blocchi tipo mapping (TOML section, config dict-like)
     if isinstance(raw, Mapping):
         sa = dict(raw)
-
-    # 2) Stringa -> prova JSON
     elif isinstance(raw, str):
-        try:
-            sa = json.loads(raw)
-        except json.JSONDecodeError:
-            st.error("⚠️ 'gcp_service_account' è una stringa ma NON è JSON valido. Incolla il JSON con virgolette doppie.")
-            st.stop()
-
-    # 3) Bytes -> decodifica + JSON
-    elif isinstance(raw, (bytes, bytearray)):
-        try:
-            sa = json.loads(raw.decode("utf-8"))
-        except Exception as e:
-            st.error(f"⚠️ 'gcp_service_account' è bytes ma non decodificabile/parsabile come JSON: {e}")
-            st.stop()
-
+        sa = json.loads(raw)  # deve essere JSON valido con doppi apici
     else:
-        st.error(f"⚠️ Tipo non supportato per gcp_service_account: {type(raw).__name__}")
+        st.error(f"Tipo non supportato: {type(raw).__name__}")
         st.stop()
 
+    # 2) normalizza la private_key
+    pk = sa.get("private_key", "")
+    if not pk:
+        st.error("private_key mancante nei secrets.")
+        st.stop()
+
+    # se contiene backslash-n letterali, trasformali in veri a-capo
+    if "\\n" in pk:
+        pk = pk.replace("\\n", "\n")
+
+    # togli \r e spazi strani
+    pk = pk.replace("\r", "").strip()
+
+    # assicurati che header/footer siano giusti (aggiungi newline se serve)
+    if not pk.startswith("-----BEGIN PRIVATE KEY-----"):
+        st.error("private_key non inizia con '-----BEGIN PRIVATE KEY-----'.")
+        st.stop()
+    if not pk.endswith("-----END PRIVATE KEY-----") and not pk.endswith("-----END PRIVATE KEY-----\n"):
+        pk = pk + "\n-----END PRIVATE KEY-----"
+    # assicurati che finisca con newline
+    if not pk.endswith("\n"):
+        pk += "\n"
+
+    sa["private_key"] = pk
+
+    # 3) crea le credenziali e autorizza
     creds = Credentials.from_service_account_info(sa, scopes=GSCOPE)
     return gspread.authorize(creds)
+
 
 
 def save_results_to_gsheet(role, devices_kg, ewaste_kg, digital_kg, ai_kg, total_kg, top_category):
@@ -1381,6 +1392,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
