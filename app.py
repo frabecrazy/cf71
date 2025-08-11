@@ -10,16 +10,13 @@ import math
 API_URL = st.secrets["SHEETBEST_URL"]
 
 def scroll_top():
-    st.markdown(
+    components.html(
         """
         <script>
-        setTimeout(function(){
-            var body = window.parent.document.querySelector(".main");
-            if(body){ body.scrollTop = 0; }
-        }, 50);
+        window.parent.scrollTo({top: 0, behavior: 'smooth'});
         </script>
         """,
-        unsafe_allow_html=True
+        height=0,
     )
 
 def save_row(role, co2_devices, co2_ewaste, co2_ai, co2_digital, co2_total):
@@ -1326,6 +1323,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
