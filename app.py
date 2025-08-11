@@ -4,6 +4,24 @@ import random
 import plotly.express as px
 import time
 import streamlit.components.v1 as components
+import requests  # se non l'hai già
+
+API_URL = st.secrets["SHEETBEST_URL"]
+
+def save_row(role, co2_devices, co2_ewaste, co2_ai, co2_digital, co2_total):
+    """Scrive una riga sul foglio via Sheet.best (le chiavi = intestazioni foglio)."""
+    payload = [{
+        "Role": role,
+        "CO2 Devices": float(co2_devices),
+        "CO2 E-Waste": float(co2_ewaste),
+        "CO2 AI": float(co2_ai),
+        "CO2 Digital Activities": float(co2_digital),
+        "CO2 Total": float(co2_total),
+    }]
+    r = requests.post(API_URL, json=payload, timeout=10)
+    r.raise_for_status()
+    return r.json()
+
 
 st.set_page_config(page_title="Digital Carbon Footprint Calculator", layout="wide")
 
@@ -716,6 +734,33 @@ def show_results():
     res = st.session_state.results
     total = sum(res.values())
 
+    # --- Salva su Google Sheet (via Sheet.best) ---
+    if "saved_once" not in st.session_state:
+        st.session_state.saved_once = False
+
+    col_save, _ = st.columns([1, 4])
+    with col_save:
+        if st.button("💾 Save my results to shared sheet", disabled=st.session_state.saved_once, use_container_width=True):
+            try:
+                role_label = st.session_state.get("role", "")
+                save_row(
+                    role_label,
+                    res.get("Devices", 0),
+                    res.get("E-Waste", 0),
+                    res.get("AI Tools", 0),
+                    res.get("Digital Activities", 0),
+                    total
+                )
+                st.session_state.saved_once = True
+                st.success("Salvato sul Google Sheet via Sheet.best ✅")
+            except requests.HTTPError as e:
+                st.error(f"Errore HTTP: {e.response.text}")
+            except KeyError:
+                st.error("SHEETBEST_URL mancante nei secrets.")
+            except Exception as e:
+                st.error(f"Errore: {e}")
+
+
     # --- CARICAMENTO ---
     with st.spinner("🔍 Calculating your footprint..."):
         time.sleep(1.2)
@@ -1229,3 +1274,4 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
