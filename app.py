@@ -606,6 +606,8 @@ def show_main():
             st.rerun()
 
 def show_guess():
+    with st.spinner("🔍 Loading..."):
+        time.sleep(1.2)
     if "archetype_guess" not in st.session_state:
         st.session_state.archetype_guess = None
 
@@ -1099,6 +1101,8 @@ def show_results():
 
 
 def show_virtues():
+    with st.spinner("🔍 Loading..."):
+        time.sleep(1.2)
     name = (st.session_state.get("name") or "").strip()
     st.markdown(f"""
         <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc);
@@ -1307,6 +1311,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
