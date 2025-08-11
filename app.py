@@ -9,15 +9,25 @@ import requests  # se non l'hai già
 API_URL = st.secrets["SHEETBEST_URL"]
 
 def save_row(role, co2_devices, co2_ewaste, co2_ai, co2_digital, co2_total):
-    """Scrive una riga sul foglio via Sheet.best (le chiavi = intestazioni foglio)."""
+    # normalizza i valori (0 compresi) e arrotonda un po'
+    def norm(x):
+        try:
+            return round(float(x), 6)
+        except Exception:
+            return 0.0
+
     payload = [{
-        "Role": role,
-        "CO2 Devices": float(co2_devices),
-        "CO2 E-Waste": float(co2_ewaste),
-        "CO2 AI": float(co2_ai),
-        "CO2 Digital Activities": float(co2_digital),
-        "CO2 Total": float(co2_total),
+        "Role": str(role or ""),
+        "CO2 Devices": norm(co2_devices),
+        "CO2 E-Waste": norm(co2_ewaste),
+        "CO2 AI": norm(co2_ai),
+        "CO2 Digital Activities": norm(co2_digital),
+        "CO2 Total": norm(co2_total),
     }]
+
+    # DEBUG: mostra cosa stai inviando (puoi rimuoverlo dopo il test)
+    st.write("DEBUG payload →", payload)
+
     r = requests.post(API_URL, json=payload, timeout=10)
     r.raise_for_status()
     return r.json()
@@ -1274,4 +1284,5 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
