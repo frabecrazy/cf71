@@ -306,17 +306,69 @@ def show_main():
     if "expander_tokens" not in st.session_state:
         st.session_state.expander_tokens = {}
 
-    device_to_add = st.selectbox("Select a device and click 'Add Device', repeat for all the devices you own", ["-- Select --"] + list(device_ef.keys()))
-    if st.button("➕ Add Device"):
-        if device_to_add == "-- Select --":
-            st.warning("Please select a valid device before adding.")
+    # --- Device picker più chiaro (quantità per tipo) ---
+    st.markdown("""
+        <style>
+        .chips{margin:.25rem 0 .5rem}
+        .chip{display:inline-block;background:#f1faee;border:1px solid #e6ebe9;border-radius:999px;
+              padding:4px 10px;margin:4px 6px 0 0;font-size:.85rem;color:#1b4332}
+        </style>
+    """, unsafe_allow_html=True)
+
+    device_emoji = {
+        "Desktop Computer": "🖥️", "Laptop Computer": "💻", "Smartphone": "📱", "Tablet": "📲",
+        "External Monitor": "🖥️", "Headphones": "🎧", "Printer": "🖨️", "Router/Modem": "📶"
+    }
+
+    st.markdown("**Pick your devices**")
+    st.caption("Set a quantity for each device you own, then click **Add selected**.")
+
+    types = list(device_ef.keys())
+    cols = st.columns(4)
+    for i, t in enumerate(types):
+        with cols[i % 4]:
+            st.markdown(f"{device_emoji.get(t, '•')} **{t}**")
+            st.number_input(
+                "Qty",
+                min_value=0,
+                max_value=10,
+                value=0,
+                step=1,
+                key=f"picker_qty_{t}",
+                label_visibility="collapsed"
+            )
+
+    if st.button("➕ Add selected devices"):
+        added = False
+        for t in types:
+            qty = int(st.session_state.get(f"picker_qty_{t}", 0) or 0)
+            for _ in range(qty):
+                count = sum(d.startswith(t) for d in st.session_state.device_list)
+                new_id = f"{t}_{count}"
+                st.session_state.device_list.insert(0, new_id)
+                st.session_state.device_inputs[new_id] = {
+                    "years": 1.0, "used": "-- Select --", "shared": "-- Select --", "eol": "-- Select --"
+                }
+                st.session_state.device_expanders[new_id] = True
+                st.session_state.expander_tokens[new_id] = 0
+                added = True
+            # reset qty
+            st.session_state[f"picker_qty_{t}"] = 0
+        if added:
+            st.rerun()
         else:
-            count = sum(d.startswith(device_to_add) for d in st.session_state.device_list)
-            new_id = f"{device_to_add}_{count}"
-            st.session_state.device_list.insert(0, new_id)
-            st.session_state.device_inputs[new_id] = {"years": 1.0, "used": "-- Select --", "shared": "-- Select --", "eol": "-- Select --"}
-            st.session_state.device_expanders[new_id] = True       # aggiungo aperto
-            st.session_state.expander_tokens[new_id] = 0            # NEW
+            st.info("Select at least one device quantity.")
+
+    # Riepilogo compatto dei device già aggiunti
+    from collections import Counter
+    if st.session_state.device_list:
+        counts = Counter(d.rsplit("_", 1)[0] for d in st.session_state.device_list)
+        chips = "".join(
+            f"<span class='chip'>{device_emoji.get(k, '•')} {k} × {v}</span>"
+            for k, v in counts.items()
+        )
+        st.markdown(f"<div class='chips'>{chips}</div>", unsafe_allow_html=True)
+
 
     total_prod, total_eol = 0, 0
 
@@ -1244,6 +1296,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
