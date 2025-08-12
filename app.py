@@ -615,19 +615,23 @@ def show_main():
             or st.session_state.get("email_attach", "-- Select option --") == "-- Select option --"
             or st.session_state.get("cloud", "-- Select option --") == "-- Select option --"
         )
+        no_devices = len(st.session_state.get("device_list", [])) == 0
 
         missing_devices = _devices_missing()
 
         # Mostra eventuali warning
+        if no_devices:
+            st.warning("⚠️ Please add at least one device.")
         if unconfirmed_devices:
             st.warning("⚠️ You have devices not yet confirmed. Please click 'Confirm' in each box to proceed.")
-        if missing_devices:
-            st.warning("⚠️ Please add at least one device.")
+        if _devices_missing() and not no_devices:
+            st.warning("⚠️ Please complete Ownership, Condition, and End-of-life for all devices, then press 'Confirm'.")
         if missing_activities:
             st.warning("⚠️ Please complete all digital activity fields before continuing.")
 
+
         # Procedi solo se tutto è OK
-        if not (unconfirmed_devices or missing_devices or missing_activities):
+        if not (no_devices or unconfirmed_devices or _devices_missing() or missing_activities):
             st.session_state.results = {
                 "Devices": total_prod,
                 "E-Waste": total_eol,
@@ -1345,6 +1349,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
