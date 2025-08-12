@@ -324,6 +324,12 @@ def show_main():
     st.caption("Set a quantity for each device you own, then click **Add selected**.")
 
     types = list(device_ef.keys())
+    # reset sicuro delle qty dopo "Add selected devices"
+    if st.session_state.get("_picker_reset"):
+        for t in types:
+            st.session_state.pop(f"picker_qty_{t}", None)
+        st.session_state["_picker_reset"] = False
+
     cols = st.columns(4)
     for i, t in enumerate(types):
         with cols[i % 4]:
@@ -347,17 +353,21 @@ def show_main():
                 new_id = f"{t}_{count}"
                 st.session_state.device_list.insert(0, new_id)
                 st.session_state.device_inputs[new_id] = {
-                    "years": 1.0, "used": "-- Select --", "shared": "-- Select --", "eol": "-- Select --"
+                    "years": 1.0,
+                    "used": "-- Select --",
+                    "shared": "-- Select --",
+                    "eol": "-- Select --",
                 }
                 st.session_state.device_expanders[new_id] = True
                 st.session_state.expander_tokens[new_id] = 0
                 added = True
-            # reset qty
-            st.session_state[f"picker_qty_{t}"] = 0
         if added:
+            st.session_state["_picker_reset"] = True
             st.rerun()
         else:
             st.info("Select at least one device quantity.")
+
+
 
     # Riepilogo compatto dei device già aggiunti
     from collections import Counter
@@ -1296,6 +1306,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
