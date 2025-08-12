@@ -1215,7 +1215,7 @@ def show_virtues():
     left, _, right = st.columns([1, 4, 1])
     with left:
         if st.button("⬅️ Back to Results", key="virt_back_btn", use_container_width=True):
-            st.session_state.page = "results"
+            st.session_state.page = "results_equiv"
             st.rerun()
     with right:
         if st.button("✏️ Edit your answers", key="virt_edit_btn", use_container_width=True):
@@ -1244,6 +1244,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
