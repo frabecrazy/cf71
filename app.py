@@ -851,7 +851,7 @@ def show_results_cards():
             st.session_state.page = "guess"
             st.rerun()
     with right:
-        if st.button("See the category breakdown ➡️", key="res_cards_next", use_container_width=True):
+        if st.button("Next ➡️", key="res_cards_next", use_container_width=True):
             st.session_state.page = "results_breakdown"
             st.rerun()
 
@@ -919,11 +919,11 @@ def show_results_breakdown():
     st.markdown("### ")
     left, _, right = st.columns([1, 4, 1])
     with left:
-        if st.button("⬅️ Back to Cards", key="res_brk_back", use_container_width=True):
+        if st.button("⬅️ Back", key="res_brk_back", use_container_width=True):
             st.session_state.page = "results_cards"
             st.rerun()
     with right:
-        if st.button("Next ➡️ Equivalences", key="res_brk_next", use_container_width=True):
+        if st.button("Next ➡️", key="res_brk_next", use_container_width=True):
             st.session_state.page = "results_equiv"
             st.rerun()
 
@@ -996,7 +996,7 @@ def show_results_equiv():
     st.markdown("### ")
     left, _, right = st.columns([1, 4, 1])
     with left:
-        if st.button("⬅️ Back to Breakdown", key="res_eq_back", use_container_width=True):
+        if st.button("⬅️ Back", key="res_eq_back", use_container_width=True):
             st.session_state.page = "results_breakdown"
             st.rerun()
     with right:
@@ -1214,7 +1214,7 @@ def show_virtues():
 
     left, _, right = st.columns([1, 4, 1])
     with left:
-        if st.button("⬅️ Back to Results", key="virt_back_btn", use_container_width=True):
+        if st.button("⬅️ Back", key="virt_back_btn", use_container_width=True):
             st.session_state.page = "results_equiv"
             st.rerun()
     with right:
@@ -1244,6 +1244,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
