@@ -851,7 +851,7 @@ def show_results_cards():
             st.session_state.page = "guess"
             st.rerun()
     with right:
-        if st.button("Next ➡️ Breakdown", key="res_cards_next", use_container_width=True):
+        if st.button("See the category breakdown ➡️", key="res_cards_next", use_container_width=True):
             st.session_state.page = "results_breakdown"
             st.rerun()
 
@@ -868,13 +868,13 @@ def show_results_breakdown():
     """, unsafe_allow_html=True)
     st.markdown("""
         <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc); padding: 28px 16px; border-radius: 12px; text-align: center; margin-bottom: 16px;">
-            <h2 style="margin:0;">Breakdown by source & category</h2>
+            <h2 style="margin:0;">Breakdown by Category & Bar Graph</h2>
         </div>
     """, unsafe_allow_html=True)
 
     res = st.session_state.results
 
-    st.markdown("<br><h4>Breakdown by source:</h4>", unsafe_allow_html=True)
+    st.markdown("<br><h3>Breakdown by Category:</h3>", unsafe_allow_html=True)
     st.markdown(f"""
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
             <div class="tip-card" style="text-align:center;">
@@ -902,7 +902,7 @@ def show_results_breakdown():
 
     st.divider()
 
-    st.subheader("Breakdown by Category")
+    st.subheader("Bar Graph")
     df_plot = pd.DataFrame({
         "Category": ["Devices", "Digital Activities", "Artificial Intelligence", "E-Waste"],
         "CO₂e (kg)": [res["Devices"], res["Digital Activities"], res["AI Tools"], res["E-Waste"]]
@@ -1244,6 +1244,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
