@@ -346,7 +346,6 @@ def show_main():
                 "Qty",
                 min_value=0,
                 max_value=10,
-                value=0,
                 value=st.session_state.picker_prev.get(t, 0),
                 step=1,
                 key=f"picker_qty_{t}",
@@ -1341,6 +1340,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
