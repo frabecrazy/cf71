@@ -868,7 +868,7 @@ def show_results_breakdown():
     """, unsafe_allow_html=True)
     st.markdown("""
         <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc); padding: 28px 16px; border-radius: 12px; text-align: center; margin-bottom: 16px;">
-            <h2 style="margin:0;">Breakdown by Category & Bar Graph</h2>
+            <h2 style="margin:0;">Your footprint breakdown📊</h2>
         </div>
     """, unsafe_allow_html=True)
 
@@ -902,7 +902,7 @@ def show_results_breakdown():
 
     st.divider()
 
-    st.subheader("Bar Graph")
+    st.subheader("Hotspots at a glance")
     df_plot = pd.DataFrame({
         "Category": ["Devices", "Digital Activities", "Artificial Intelligence", "E-Waste"],
         "CO₂e (kg)": [res["Devices"], res["Digital Activities"], res["AI Tools"], res["E-Waste"]]
@@ -1244,6 +1244,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
