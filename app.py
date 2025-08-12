@@ -320,8 +320,7 @@ def show_main():
         "External Monitor": "🖥️", "Headphones": "🎧", "Printer": "🖨️", "Router/Modem": "📶"
     }
 
-    st.markdown("**Pick your devices**")
-    st.caption("Set a quantity for each device you own, then click **Add selected**.")
+    st.markdown("**Set a quantity for each device you own**")
 
     types = list(device_ef.keys())
         # memorizza le quantità precedenti per rilevare cambi (no bottone)
@@ -1340,6 +1339,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
