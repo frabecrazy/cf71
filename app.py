@@ -48,7 +48,7 @@ def save_row(role, co2_devices, co2_ewaste, co2_ai, co2_digital, co2_total):
 st.set_page_config(page_title="Digital Carbon Footprint Calculator", layout="wide")
 
 # Init session state
-if "page" not in st.session_state or st.session_state.page not in ["intro", "main", "guess", "results", "virtues"]:
+if "page" not in st.session_state or st.session_state.page not in ["intro", "main", "guess", "results_cards", "results_breakdown", "results_equiv", "virtues"]:
     st.session_state.page = "intro"
 if "role" not in st.session_state:
     st.session_state.role = ""
@@ -717,72 +717,24 @@ def show_guess():
                      key="guess_continue_btn",
                      use_container_width=True,
                      disabled=st.session_state.get("archetype_guess") is None):
-            st.session_state.page = "results"
+            st.session_state.page = "results_cards"
             st.rerun()
 
 
-# RESULTS PAGE
+# RESULTS PAGES
 
-def show_results():
+def show_results_cards():
     scroll_top()
-    if "saved_once" not in st.session_state:
-        st.session_state.saved_once = False
-
-
-    # --- STILE GLOBALE ---
+    # stile + header
     st.markdown("""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
-        html, body, [class*="css"] {
-            font-family: 'Inter', sans-serif;
-        }
-
-        h1, h2, h3, h4 {
-            color: #1d3557;
-        }
-
-        .tip-card {
-            background-color: #e3fced;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-        }
-
-        .equiv-card {
-            background-color: white;
-            border-left: 6px solid #52b788;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-
-        .equiv-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        footer {
-            text-align: center;
-            font-size: 0.8em;
-            color: #999;
-            margin-top: 40px;
-        }
+        html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { color: #1d3557; }
         </style>
     """, unsafe_allow_html=True)
-
-    # --- HERO SECTION ---
     st.markdown("""
-        <div style="
-            background: linear-gradient(to right, #d8f3dc, #a8dadc);
-            padding: 40px 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-        ">
+        <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc); padding: 40px 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 30px;">
             <h1 style="font-size: 2.8em; margin-bottom: 0.1em;">🌍 Your Digital Carbon Footprint</h1>
             <p style="font-size: 1.2em; color: #1b4332;">Discover your impact — and what to do about it.</p>
         </div>
@@ -791,15 +743,9 @@ def show_results():
     res = st.session_state.results
     total = sum(res.values())
 
-
-    # --- CARICAMENTO ---
     with st.spinner("🔍 Calculating your footprint..."):
         time.sleep(1.2)
 
-    # --- RISULTATO TOTALE ---
-    # --- CONFRONTO  vs CATEGORIA REALE + TOTALE AFFIANCATI ---
-
-    # mappa valori per categoria e top
     cat_by_value = {
         "Devices": res.get("Devices", 0),
         "E-Waste": res.get("E-Waste", 0),
@@ -807,24 +753,13 @@ def show_results():
         "Artificial Intelligence": res.get("AI Tools", 0),
     }
     actual_top = max(cat_by_value, key=cat_by_value.get)
-
-    # mappe derivate dagli ARCHETYPES (no hardcode)
     key_to_category = {a["key"]: a["category"] for a in ARCHETYPES}
     category_to_arc = {a["category"]: a for a in ARCHETYPES}
-
-    # guess scelto dall'utente
     guessed_key = st.session_state.get("archetype_guess")
     guessed = next((a for a in ARCHETYPES if a["key"] == guessed_key), None)
-
-    # archetipo reale in base alla categoria più impattante
     actual = category_to_arc.get(actual_top)
-
-    # ha indovinato?
     guessed_right = bool(guessed) and (key_to_category.get(guessed["key"]) == actual_top)
 
-    # --- 3 CARD: Total, Comparison, Archetype ---
-
-    # Precompute confronto con media
     role_label = st.session_state.get("role", "")
     avg = AVERAGE_CO2_BY_ROLE.get(role_label)
     msg, comp_color = None, "#6EA8FE"
@@ -836,21 +771,15 @@ def show_results():
             comp_color = "#6EA8FE"
         elif diff_pct > 0:
             msg = f"You emit ~{abs_pct:.0f}% more than the average {role_label.lower()}."
-            comp_color = "#e63946"  # rosso per > media
+            comp_color = "#e63946"
         else:
             msg = f"You emit ~{abs_pct:.0f}% less than the average {role_label.lower()}."
             comp_color = "#2b8a3e"
 
     c1, c2, c3 = st.columns(3)
- 
     CARD_STYLE = """
-        display: flex;
-        flex-direction: column;
-        justify-content: center;  /* centratura verticale */
-        align-items: center;      /* centratura orizzontale */
-        gap:.55rem;  
-        min-height: 220px;        /* altezza minima uguale per tutte */
-        text-align: center;
+        display:flex; flex-direction:column; justify-content:center; align-items:center;
+        gap:.55rem; min-height:220px; text-align:center;
     """
     CARD_ACCENT = "border-left:4px solid #52b788; padding-left:12px;"
 
@@ -860,95 +789,91 @@ def show_results():
         with card:
             st.markdown(
                 f"<div style='{CARD_STYLE} {CARD_ACCENT}'>"
-            f"<div style='font-size:2rem; color:#1b4332; font-weight:800; margin:0;'>"
-            f"{st.session_state.get('name','')}, your total CO₂e is…</div>"
-            f"<div style='font-size:clamp(2.6rem,6vw,3.6rem); line-height:1; font-weight:900; "
-            f"color:#ff7f0e; letter-spacing:-0.5px; margin:0;'>{total:.0f} kg/year</div>"
-            f"</div>",
-            unsafe_allow_html=True
+                f"<div style='font-size:2rem; color:#1b4332; font-weight:800; margin:0;'>{st.session_state.get('name','')}, your total CO₂e is…</div>"
+                f"<div style='font-size:clamp(2.6rem,6vw,3.6rem); line-height:1; font-weight:900; color:#ff7f0e; letter-spacing:-0.5px; margin:0;'>{total:.0f} kg/year</div>"
+                f"</div>", unsafe_allow_html=True
             )
-
-    # Card 2 — Comparison vs average
+    # Card 2 — Comparison
     with c2:
         card = st.container(border=True)
         with card:
             if msg:
                 st.markdown(
                     f"<div style='{CARD_STYLE} {CARD_ACCENT}'>"
-                f"<div style='font-size:1.3rem; font-weight:800; color:#1b4332; margin:0;'>Your footprint vs average</div>"
-                f"<div style='font-size:2rem; font-weight:800; color:{comp_color}; line-height:1.15; margin:0;'>{msg}</div>"
-                f"<div style='font-size:1.05rem; color:#1b4332; margin:0;'>Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b></div>"
-                f"</div>",
-                unsafe_allow_html=True
+                    f"<div style='font-size:1.3rem; font-weight:800; color:#1b4332; margin:0;'>Your footprint vs average</div>"
+                    f"<div style='font-size:2rem; font-weight:800; color:{comp_color}; line-height:1.15; margin:0;'>{msg}</div>"
+                    f"<div style='font-size:1.05rem; color:#1b4332; margin:0;'>Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b></div>"
+                    f"</div>", unsafe_allow_html=True
                 )
             else:
-                st.markdown(
-                f"<div style='{CARD_STYLE} {CARD_ACCENT}'>No average available for your role.</div>",
-                unsafe_allow_html=True
-                )
+                st.markdown(f"<div style='{CARD_STYLE} {CARD_ACCENT}'>No average available for your role.</div>", unsafe_allow_html=True)
 
-
-    # --- Card 3 • Archetype (usa i file immagine definiti in ARCHETYPES) ---
+    # Card 3 — Archetype
     from pathlib import Path
-
-    # Fallback nel caso 'actual' non fosse valorizzato (dovrebbe esserlo)
     if actual is None and actual_top in category_to_arc:
         actual = category_to_arc[actual_top]
-
-    # scegli cosa mostrare: se ha indovinato e c'è guessed → guessed, altrimenti actual
     show_arc = guessed if (guessed_right and guessed) else (actual or {})
     arc_name = show_arc.get("name", "")
-    arc_img_rel = show_arc.get("image")  # es. 'lord_of_the_latest_gadgets.png'
-
-    # Costruisci path assoluto per evitare MediaFileStorageError sul cloud
+    arc_img_rel = show_arc.get("image")
     arc_img = None
     if arc_img_rel:
         p = (Path(__file__).parent / arc_img_rel).resolve()
-        if p.exists():
-            arc_img = str(p)
-        else:
-            # fallback: prova comunque la stringa relativa (se il working dir combacia)
-            arc_img = arc_img_rel
-
-    TITLE_COLOR = "#1b4332"   # scegli tu (es. #1b4332)
-    color = TITLE_COLOR
-
+        arc_img = str(p) if p.exists() else arc_img_rel
     title = "Great job, you guessed it! Your match is" if guessed_right else "Nice try, but your match is"
 
-    # --- Card 3 • Render: testo a sinistra, immagine in alto a destra ---
     with c3:
         card = st.container(border=True)
         with card:
-            left, right = st.columns([5, 3])  
-            H = 220 
+            left, right = st.columns([5, 3])
+            H = 220
             with left:
                 st.markdown(
-                f"""
-                <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
-                            min-height:{H}px; text-align:left; gap:.45rem; {CARD_ACCENT}">
-                    <div style="font-size:1.2rem; font-weight:800; color:{color}; margin:0;">{title}</div>
-                    <div style="font-weight:800; font-size:2rem; line-height:1.1; color:#ff7f0e; margin:0;">{arc_name}</div>
-                    <div style="font-size:1.05rem; color:#1b4332; margin:0;">
-                        Your biggest footprint comes from <b>{actual_top}</b>
+                    f"""
+                    <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+                                min-height:{H}px; text-align:left; gap:.45rem; {CARD_ACCENT}">
+                        <div style="font-size:1.2rem; font-weight:800; color:#1b4332; margin:0;">{title}</div>
+                        <div style="font-weight:800; font-size:2rem; line-height:1.1; color:#ff7f0e; margin:0;">{arc_name}</div>
+                        <div style="font-size:1.05rem; color:#1b4332; margin:0;">Your biggest footprint comes from <b>{actual_top}</b></div>
                     </div>
-                </div>
-                """,
-                unsafe_allow_html=True
+                    """, unsafe_allow_html=True
                 )
-
-            # DX: immagine in alto a destra (senza min-height per non “abbassarla”)
             with right:
-                st.markdown(
-                "<div style='display:flex; align-items:flex-start; justify-content:flex-end; padding-top:4px;'>",
-                unsafe_allow_html=True
-                )
+                st.markdown("<div style='display:flex; align-items:flex-start; justify-content:flex-end; padding-top:4px;'>", unsafe_allow_html=True)
                 if arc_img:
-                    st.image(arc_img, width=180)  # regola 160–200 a piacere
+                    st.image(arc_img, width=180)
                 st.markdown("</div>", unsafe_allow_html=True)
 
+    # Nav
+    st.markdown("### ")
+    left, _, right = st.columns([1, 4, 1])
+    with left:
+        if st.button("⬅️ Back", key="res_cards_back", use_container_width=True):
+            st.session_state.page = "guess"
+            st.rerun()
+    with right:
+        if st.button("Next ➡️ Breakdown", key="res_cards_next", use_container_width=True):
+            st.session_state.page = "results_breakdown"
+            st.rerun()
 
+def show_results_breakdown():
+    scroll_top()
+    # stile + header
+    st.markdown("""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { color: #1d3557; }
+        .tip-card { background-color: #e3fced; border-radius: 10px; padding: 15px; margin-bottom: 10px; }
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown("""
+        <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc); padding: 28px 16px; border-radius: 12px; text-align: center; margin-bottom: 16px;">
+            <h2 style="margin:0;">Breakdown by source & category</h2>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # --- METRICHE IN GRIGLIA ---
+    res = st.session_state.results
+
     st.markdown("<br><h4>Breakdown by source:</h4>", unsafe_allow_html=True)
     st.markdown(f"""
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
@@ -977,33 +902,53 @@ def show_results():
 
     st.divider()
 
-    # --- GRAFICO ---
     st.subheader("Breakdown by Category")
     df_plot = pd.DataFrame({
         "Category": ["Devices", "Digital Activities", "Artificial Intelligence", "E-Waste"],
         "CO₂e (kg)": [res["Devices"], res["Digital Activities"], res["AI Tools"], res["E-Waste"]]
     })
-
-    fig = px.bar(df_plot,
-                 x="CO₂e (kg)",
-                 y="Category",
-                 orientation="h",
+    fig = px.bar(df_plot, x="CO₂e (kg)", y="Category", orientation="h",
                  color="Category",
                  color_discrete_sequence=["#95d5b2", "#74c69d", "#52b788", "#1b4332"],
                  height=400)
-
-    fig.update_layout(showlegend=False, 
-                      plot_bgcolor="#f1faee", 
-                      paper_bgcolor="#f1faee",
-                      font_family="Inter")
-
+    fig.update_layout(showlegend=False, plot_bgcolor="#f1faee", paper_bgcolor="#f1faee", font_family="Inter")
     fig.update_traces(marker=dict(line=dict(width=1.5, color='white')))
     st.plotly_chart(fig, use_container_width=True)
 
-    st.divider()
+    # Nav
+    st.markdown("### ")
+    left, _, right = st.columns([1, 4, 1])
+    with left:
+        if st.button("⬅️ Back to Cards", key="res_brk_back", use_container_width=True):
+            st.session_state.page = "results_cards"
+            st.rerun()
+    with right:
+        if st.button("Next ➡️ Equivalences", key="res_brk_next", use_container_width=True):
+            st.session_state.page = "results_equiv"
+            st.rerun()
 
-    # --- EQUIVALENZE VISUALI ---
-    st.markdown("### With the same emissions, you could…")
+def show_results_equiv():
+    scroll_top()
+    if "saved_once" not in st.session_state:
+        st.session_state.saved_once = False
+
+    # stile + header
+    st.markdown("""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { color: #1d3557; }
+        .equiv-card { background-color: white; border-left: 6px solid #52b788; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-align: center; }
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown("""
+        <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc); padding: 28px 16px; border-radius: 12px; text-align: center; margin-bottom: 16px;">
+            <h2 style="margin:0;">With the same emissions, you could…</h2>
+        </div>
+    """, unsafe_allow_html=True)
+
+    res = st.session_state.results
+    total = sum(res.values())
 
     burger_eq = total / 4.6
     led_days_eq = (total / 0.256) / 24
@@ -1013,129 +958,75 @@ def show_results():
     st.markdown(f"""
         <style>
         .equiv-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-top: 25px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px; margin-top: 25px;
         }}
-        .equiv-card {{
-            background-color: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border-left: 6px solid #52b788;
-            text-align: center;
-            transition: transform 0.2s ease;
-        }}
-        .equiv-card:hover {{
-            transform: scale(1.02);
-        }}
-        .equiv-emoji {{
-            font-size: 3.5em;
-            margin-bottom: 15px;
-        }}
-        .equiv-text {{
-            font-size: 1.05em;
-            line-height: 1.6;
-            color: #333;
-        }}
-        .equiv-value {{
-            font-weight: 600;
-            font-size: 1.2em;
-            color: #1b4332;
-        }}
+        .equiv-emoji {{ font-size: 3.5em; margin-bottom: 15px; }}
+        .equiv-text {{ font-size: 1.05em; line-height: 1.6; color: #333; }}
+        .equiv-value {{ font-weight: 600; font-size: 1.2em; color: #1b4332; }}
         </style>
 
         <div class="equiv-grid">
             <div class="equiv-card">
                 <div class="equiv-emoji">🍔</div>
-                <div class="equiv-text">
-                    Produce <span class="equiv-value">~{burger_eq:.0f}</span> beef burgers
-                </div>
+                <div class="equiv-text">Produce <span class="equiv-value">~{burger_eq:.0f}</span> beef burgers</div>
             </div>
             <div class="equiv-card">
                 <div class="equiv-emoji">💡</div>
-                <div class="equiv-text">
-                    Keep 100 LED bulbs (10W) on for <span class="equiv-value">~{led_days_eq:.0f}</span> days
-                </div>
+                <div class="equiv-text">Keep 100 LED bulbs (10W) on for <span class="equiv-value">~{led_days_eq:.0f}</span> days</div>
             </div>
             <div class="equiv-card">
                 <div class="equiv-emoji">🚗</div>
-                <div class="equiv-text">
-                    Drive a gasoline car for <span class="equiv-value">~{car_km_eq:.0f}</span> km
-                </div>
+                <div class="equiv-text">Drive a gasoline car for <span class="equiv-value">~{car_km_eq:.0f}</span> km</div>
             </div>
             <div class="equiv-card">
                 <div class="equiv-emoji">📺</div>
-                <div class="equiv-text">
-                    Watch Netflix for <span class="equiv-value">~{netflix_hours_eq:.0f}</span> hours
-                </div>
+                <div class="equiv-text">Watch Netflix for <span class="equiv-value">~{netflix_hours_eq:.0f}</span> hours</div>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # --- FINALE MOTIVAZIONALE ---
-
     st.markdown(f"""
     <div style="text-align: center; padding: 40px 10px;">
-        <h2 style="color: #1d3557;"> Visit the next page to discover useful tips for reducing your footprint!💥</h2>
+        <h2 style="color: #1d3557;">Visit the next page to discover useful tips for reducing your footprint!💥</h2>
     </div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
+    # Nav + autosave
     st.markdown("### ")
     left, _, right = st.columns([1, 4, 1])
     with left:
-        if st.button("⬅️ Back", key="res_back_btn", use_container_width=True):
-            st.session_state.page = "guess"  # oppure "main" se preferisci
+        if st.button("⬅️ Back to Breakdown", key="res_eq_back", use_container_width=True):
+            st.session_state.page = "results_breakdown"
             st.rerun()
     with right:
-        if st.button("➡️ Discover Tips", key="res_continue_btn", use_container_width=True):
+        if st.button("➡️ Discover Tips", key="res_eq_next", use_container_width=True):
             try:
                 if not st.session_state.get("saved_once", False):
-                    # --- sanity checks (non rompono la UI, ma alzano se qualcosa manca)
                     import sys
                     api_url = st.secrets.get("SHEETBEST_URL", None)
                     assert api_url, "SHEETBEST_URL not found in st.secrets"
 
                     role_label = st.session_state.get("role", "")
-                    res = st.session_state.results
-                    total = float(sum(res.values()))
-
-                    # log solo in console server (non visibile utente)
-                    print("[autosave] URL:", api_url, file=sys.stderr)
-                    print("[autosave] payload:", {
-                        "Role": role_label,
-                        "CO2 Devices": res.get("Devices", 0),
-                        "CO2 E-Waste": res.get("E-Waste", 0),
-                        "CO2 AI": res.get("AI Tools", 0),
-                        "CO2 Digital Activities": res.get("Digital Activities", 0),
-                        "CO2 Total": total,
-                    }, file=sys.stderr)
-
-                    # chiamata reale
+                    total_val = float(sum(st.session_state.results.values()))
                     resp = save_row(
                         role_label,
-                        res.get("Devices", 0),
-                        res.get("E-Waste", 0),
-                        res.get("AI Tools", 0),
-                        res.get("Digital Activities", 0),
-                        total
+                        st.session_state.results.get("Devices", 0),
+                        st.session_state.results.get("E-Waste", 0),
+                        st.session_state.results.get("AI Tools", 0),
+                        st.session_state.results.get("Digital Activities", 0),
+                        total_val
                     )
-
-                    # log dell’esito
                     print("[autosave] response:", resp, file=sys.stderr)
-
                     st.session_state.saved_once = True
-
             except Exception as e:
-                # log in console, nessun feedback in UI
                 import traceback, sys
                 print("[autosave][ERROR]", e, file=sys.stderr)
                 traceback.print_exc()
-                # non settare saved_once, così ritenta al prossimo click
 
             st.session_state.page = "virtues"
             st.rerun()
+
 
 
 def show_virtues():
@@ -1345,10 +1236,15 @@ elif st.session_state.page == "main":
     show_main()
 elif st.session_state.page == "guess":
     show_guess()
-elif st.session_state.page == "results":
-    show_results()
+elif st.session_state.page == "results_cards":
+    show_results_cards()
+elif st.session_state.page == "results_breakdown":
+    show_results_breakdown()
+elif st.session_state.page == "results_equiv":
+    show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
