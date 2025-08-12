@@ -214,7 +214,7 @@ def show_intro():
     # --- HERO INTUITIVO ---
     st.markdown("""
         <div class="intro-box">
-            <h1 style="font-size: 2.6em;">📱 Digital Carbon Footprint Calculator</h1>
+            <h1 style="font-size: 2.6em;">Digital Carbon Footprint Calculator📱</h1>
         </div>
     """, unsafe_allow_html=True)
 
@@ -735,7 +735,7 @@ def show_results_cards():
     """, unsafe_allow_html=True)
     st.markdown("""
         <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc); padding: 40px 20px; border-radius: 12px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 30px;">
-            <h1 style="font-size: 2.8em; margin-bottom: 0.1em;">🌍 Your Digital Carbon Footprint</h1>
+            <h1 style="font-size: 2.8em; margin-bottom: 0.1em;">Your Digital Carbon Footprint🌍</h1>
             <p style="font-size: 1.2em; color: #1b4332;">Discover your impact — and what to do about it.</p>
         </div>
     """, unsafe_allow_html=True)
@@ -1244,6 +1244,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
