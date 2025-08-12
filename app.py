@@ -344,30 +344,57 @@ def show_main():
                 label_visibility="collapsed"
             )
 
+    from collections import Counter
+
     if st.button("➕ Add selected devices"):
-        added = False
+        changed = False
+
+        # conteggio attuale per tipo
+        counts = Counter(d.rsplit("_", 1)[0] for d in st.session_state.device_list)
+
         for t in types:
-            qty = int(st.session_state.get(f"picker_qty_{t}", 0) or 0)
-            for _ in range(qty):
-                count = sum(d.startswith(t) for d in st.session_state.device_list)
-                new_id = f"{t}_{count}"
-                st.session_state.device_list.insert(0, new_id)
-                st.session_state.device_inputs[new_id] = {
-                    "years": 1.0,
-                    "used": "-- Select --",
-                    "shared": "-- Select --",
-                    "eol": "-- Select --",
-                }
-                st.session_state.device_expanders[new_id] = True
-                st.session_state.expander_tokens[new_id] = 0
-                added = True
-        if added:
-            st.session_state["_picker_reset"] = True
+            desired = int(st.session_state.get(f"picker_qty_{t}", 0) or 0)
+            current = counts.get(t, 0)
+            delta = desired - current
+
+            # aggiungi i mancanti
+            if delta > 0:
+                for _ in range(delta):
+                    # prossimo indice = numero attuale di quel tipo
+                    curr_ids = [i for i in st.session_state.device_list if i.rsplit("_", 1)[0] == t]
+                    next_idx = len(curr_ids)
+                    new_id = f"{t}_{next_idx}"
+
+                    st.session_state.device_list.insert(0, new_id)
+                    st.session_state.device_inputs[new_id] = {
+                        "years": 1.0, "used": "-- Select --", "shared": "-- Select --", "eol": "-- Select --"
+                    }
+                    st.session_state.device_expanders[new_id] = True
+                    st.session_state.expander_tokens[new_id] = 0
+                    changed = True
+
+            # rimuovi l'eccesso (prima non confermati, poi i più recenti)
+            elif delta < 0:
+                to_remove = -delta
+                ids_of_type = [i for i in st.session_state.device_list if i.rsplit("_", 1)[0] == t]
+
+                unconf = [i for i in ids_of_type if st.session_state.device_expanders.get(i, True)]
+                conf   = [i for i in ids_of_type if i not in unconf]
+
+                key_idx = lambda s: int(s.rsplit("_", 1)[1]) if "_" in s else -1
+                ordered = sorted(unconf, key=key_idx, reverse=True) + sorted(conf, key=key_idx, reverse=True)
+
+                for rid in ordered[:to_remove]:
+                    st.session_state.device_list.remove(rid)
+                    st.session_state.device_inputs.pop(rid, None)
+                    st.session_state.device_expanders.pop(rid, None)
+                    st.session_state.expander_tokens.pop(rid, None)
+                    changed = True
+
+        if changed:
             st.rerun()
         else:
-            st.info("Select at least one device quantity.")
-
-
+            st.info("No changes to apply.")
 
     # Riepilogo compatto dei device già aggiunti
     from collections import Counter
@@ -1306,6 +1333,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
