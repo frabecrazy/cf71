@@ -586,6 +586,23 @@ def show_main():
             use_container_width=True
         )
 
+    def _devices_missing():
+        """
+        Ritorna True se esiste almeno un device con select lasciate su '-- Select --'
+        (Ownership/Condition/EOL) oppure senza anni validi.
+        """
+        for dev_id in st.session_state.get("device_list", []):
+            vals = st.session_state.get("device_inputs", {}).get(dev_id, {})
+            if (
+                vals.get("used", "-- Select --") == "-- Select --" or
+                vals.get("shared", "-- Select --") == "-- Select --" or
+                vals.get("eol", "-- Select --") == "-- Select --" or
+                float(vals.get("years", 0) or 0) <= 0
+            ):
+                return True
+        return False
+
+
     # --- LOGICA DEL NEXT ---
     if next_clicked:
         unconfirmed_devices = [
@@ -599,14 +616,18 @@ def show_main():
             or st.session_state.get("cloud", "-- Select option --") == "-- Select option --"
         )
 
+        missing_devices = _devices_missing()
+
         # Mostra eventuali warning
         if unconfirmed_devices:
             st.warning("⚠️ You have devices not yet confirmed. Please click 'Confirm' in each box to proceed.")
+        if missing_devices:
+            st.warning("⚠️ Please add at least one device.")
         if missing_activities:
             st.warning("⚠️ Please complete all digital activity fields before continuing.")
 
         # Procedi solo se tutto è OK
-        if not unconfirmed_devices and not missing_activities:
+        if not (unconfirmed_devices or missing_devices or missing_activities):
             st.session_state.results = {
                 "Devices": total_prod,
                 "E-Waste": total_eol,
@@ -615,6 +636,7 @@ def show_main():
             }
             st.session_state.page = "guess"
             st.rerun()
+
 
 def show_guess():
     scroll_top()
@@ -1323,6 +1345,7 @@ elif st.session_state.page == "results":
     show_results()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
