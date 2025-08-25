@@ -477,20 +477,23 @@ def show_main():
             with col3:
                 st.markdown("""
                     <div style='margin-bottom:-20px'>
-                        <div class="label-with-tooltip">
-                            <strong>Device's lifespan</strong>
-                            <span class="info-icon">i
-                                <span class="tooltip-text">
-                                    Numero totale di anni in cui il dispositivo verrà utilizzato (anche da più persone).
-                                    Questo valore ripartisce le emissioni di produzione per anno: maggiore è la lifespan,
-                                    minore è l’impatto annuo. Esempi: 4 anni personali ≈ 4; se condiviso e usato più a lungo, aumenta.
-                                </span>
-                            </span>
-                        </div>
+                        <strong>Device's lifespan</strong>
+                        <span title="Numero totale di anni in cui il dispositivo verrà utilizzato (anche se condiviso). Questo valore ripartisce le emissioni di produzione per anno: più lunga è la lifespan, minore è l’impatto annuo."
+                              style="display:inline-block;margin-left:6px;width:18px;height:18px;border-radius:50%;
+                                     background:#e9ecef;color:#495057;font-weight:700;font-size:12px;line-height:18px;
+                                     text-align:center;cursor:help;">i</span><br/>
                         <span style='font-size:12px; color:gray'>How many years you plan to use the device in total</span>
                     </div>
                 """, unsafe_allow_html=True)
-                years = st.number_input("", 0.5, 20.0, step=0.5, format="%.1f", key=f"{device_id}_years")
+                years = st.number_input(
+                    "",
+                    0.5,
+                    20.0,
+                    step=0.5,
+                    format="%.1f",
+                    key=f"{device_id}_years"
+                )
+
 
 
             with col4:
@@ -1373,6 +1376,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
