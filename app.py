@@ -478,7 +478,8 @@ def show_main():
                 st.markdown("""
                     <div style='margin-bottom:-20px'>
                         <strong>Device's lifespan</strong>
-                        <span title="Numero totale di anni in cui il dispositivo verrà utilizzato (anche se condiviso). Questo valore ripartisce le emissioni di produzione per anno: più lunga è la lifespan, minore è l’impatto annuo."
+                        <span title="Example: if you have had a phone for 2 years and expect to keep it for 3 more, enter 5. 
+If the device was purchased second-hand, only count your own usage period, not the years used by the previous owner."
                               style="display:inline-block;margin-left:6px;width:18px;height:18px;border-radius:50%;
                                      background:#e9ecef;color:#495057;font-weight:700;font-size:12px;line-height:18px;
                                      text-align:center;cursor:help;">i</span><br/>
@@ -1376,6 +1377,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
