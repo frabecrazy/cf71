@@ -166,9 +166,9 @@ ARCHETYPES = [
 ]
 
 AVERAGE_CO2_BY_ROLE = {
-    "Student": 300,        # <-- metti i tuoi numeri
-    "Professor": 300,
-    "Staff Member": 300,
+    "Student": 297,      
+    "Professor": 323,
+    "Staff Member": 309,
 }
 
 # INTRO PAGE 
@@ -1377,6 +1377,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
