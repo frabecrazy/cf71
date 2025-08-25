@@ -268,6 +268,29 @@ def show_main():
         </style>
     """, unsafe_allow_html=True)
 
+    st.markdown("""
+    <style>
+    .label-with-tooltip{display:flex;align-items:center;gap:6px}
+    .info-icon{
+      display:inline-block;width:18px;height:18px;border-radius:50%;
+      background:#e9ecef;color:#495057;font-weight:700;font-size:12px;
+      line-height:18px;text-align:center;cursor:default;position:relative
+    }
+    .info-icon .tooltip-text{
+      visibility:hidden;opacity:0;position:absolute;top:120%;left:50%;
+      transform:translateX(-50%);background:#1d3557;color:#fff;border-radius:8px;
+      padding:8px 10px;font-size:12px;max-width:280px;box-shadow:0 8px 24px rgba(0,0,0,.12);
+      transition:opacity .12s ease-in-out;white-space:normal;z-index:9999
+    }
+    .info-icon:hover .tooltip-text{visibility:visible;opacity:1}
+    .info-icon .tooltip-text::after{
+      content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+      border-width:6px;border-style:solid;border-color:transparent transparent #1d3557 transparent
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
     st.markdown(f"""
     <div style="
         background: linear-gradient(to right, #d8f3dc, #a8dadc);
@@ -294,6 +317,7 @@ def show_main():
         <h3 style="margin-top: 25px; color:#1d3557;">💻 Devices & E-Waste</h3>
         <p>Choose the digital devices you currently use, and for each one, provide a few details about how you use it and what you do when it's no longer needed.</p>
     """, unsafe_allow_html=True)
+
 
     # --- STATE INIT ---
     if "device_list" not in st.session_state:
@@ -453,11 +477,21 @@ def show_main():
             with col3:
                 st.markdown("""
                     <div style='margin-bottom:-20px'>
-                        <strong>Device's lifespan</strong><br/>
+                        <div class="label-with-tooltip">
+                            <strong>Device's lifespan</strong>
+                            <span class="info-icon">i
+                                <span class="tooltip-text">
+                                    Numero totale di anni in cui il dispositivo verrà utilizzato (anche da più persone).
+                                    Questo valore ripartisce le emissioni di produzione per anno: maggiore è la lifespan,
+                                    minore è l’impatto annuo. Esempi: 4 anni personali ≈ 4; se condiviso e usato più a lungo, aumenta.
+                                </span>
+                            </span>
+                        </div>
                         <span style='font-size:12px; color:gray'>How many years you plan to use the device in total</span>
                     </div>
                 """, unsafe_allow_html=True)
                 years = st.number_input("", 0.5, 20.0, step=0.5, format="%.1f", key=f"{device_id}_years")
+
 
             with col4:
                 st.markdown("""
@@ -1339,6 +1373,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
