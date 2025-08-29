@@ -1076,13 +1076,13 @@ def show_results_breakdown():
     st.markdown("""
         <div style="background-color:#fefae0; border-left: 6px solid #e09f3e; 
                     padding: 14px; border-radius: 8px; margin-top: 18px;">
-            <h4 style="margin-top:0;">🤔 Why is my E-Waste impact negative?</h4>
+            <h4 style="margin-top:0;">Why is my E-Waste impact negative?</h4>
             <p style="margin:0; font-size: 15px; line-height: 1.5;">
                 Sometimes your E-Waste value can be <b>negative</b>: this means that you adopt 
                 responsible practices such as donating devices, bringing them to proper recycling 
                 centers, or returning them to the manufacturer. 
                 These actions help offset part of the CO₂ emissions associated with electronic devices, 
-                and consequently reduce your overall footprint. 🌍
+                and consequently reduce your overall footprint.
             </p>
         </div>
     """, unsafe_allow_html=True)
@@ -1365,9 +1365,9 @@ def show_virtues():
         virtues.append("You keep your cloud storage light by cleaning up files you no longer need! This reduces the energy required to store and maintain them.")
 
     # 6) Spegnere il computer quando non usato
-    if st.session_state.get("idle") == "I turn it off":
+    idle_choice = (st.session_state.get("idle") or "").strip().lower()
+    if idle_choice.startswith("I turn it off"):
         virtues.append("You turn off your computer when not in use. This single action can save over 150 kWh of energy per year for a single computer!")
-
 
     # 7) Zero stampe
     if int(st.session_state.get("pages", 0)) == 0:
@@ -1431,6 +1431,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
