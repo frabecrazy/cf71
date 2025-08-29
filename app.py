@@ -1367,7 +1367,7 @@ def show_virtues():
     # 6) Spegnere il computer quando non usato
     raw = str(st.session_state.get("idle") or "")
     idle_choice = " ".join(raw.split()).casefold()   # normalizza spazi e rende case-insensitive
-    if "turn it off" in idle_choice:
+    if "I turn it off" in idle_choice:
         virtues.append(
             "You turn off your computer when not in use. This single action can save over 150 kWh of energy per year for a single computer!"
         )
@@ -1435,6 +1435,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
