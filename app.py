@@ -1365,11 +1365,14 @@ def show_virtues():
         virtues.append("You keep your cloud storage light by cleaning up files you no longer need! This reduces the energy required to store and maintain them.")
 
     # 6) Spegnere il computer quando non usato
-    idle_choice = (st.session_state.get("idle") or "").strip()
-    if idle_choice == "I turn it off":
-        virtues.append("You turn off your computer when not in use. This single action can save over 150 kWh of energy per year for a single computer!")
+    raw = str(st.session_state.get("idle") or "")
+    idle_choice = " ".join(raw.split()).casefold()   # normalizza spazi e rende case-insensitive
+    if "turn it off" in idle_choice:
+        virtues.append(
+            "You turn off your computer when not in use. This single action can save over 150 kWh of energy per year for a single computer!"
+        )
 
-
+    
     # 7) Zero stampe
     if int(st.session_state.get("pages", 0)) == 0:
         virtues.append("You never print. This saves paper, ink, and the energy needed for printing... the trees thank you!")
@@ -1432,6 +1435,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
