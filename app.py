@@ -294,7 +294,7 @@ def show_main():
         border-radius: 8px;
         padding: 8px 10px;
         font-size: 12.5px;
-        max-width: 260px;       /* ✅ limite larghezza tooltip */
+        max-width: 460px;       /* ✅ limite larghezza tooltip */
         word-wrap: break-word;  /* ✅ va a capo se serve */
         white-space: normal;    /* ✅ permette più righe */
         box-shadow: 0 8px 24px rgba(0,0,0,.15);
@@ -1428,6 +1428,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
