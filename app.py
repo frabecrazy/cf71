@@ -61,7 +61,7 @@ if "archetype_guess" not in st.session_state:
 
 activity_factors = {
     "Student": {
-        "MS Office (e.g. Excel, Word, PPT…)": 0.00901,
+        "MS Office (e.g. Excel, Word, PPT, Outlook…)": 0.00901,
         "Technical softwares (e.g. Matlab, Python…)": 0.00901,
         "Web browsing": 0.0264,
         "Watching lecture recordings": 0.0439,
@@ -69,7 +69,7 @@ activity_factors = {
         "Reading study materials on your computer (e.g. slides, articles, digital textbooks)": 0.00901
     },
     "Professor": {
-        "MS Office (e.g. Excel, Word, PPT…)": 0.00901,
+        "MS Office (e.g. Excel, Word, PPT, Outlook…)": 0.00901,
         "Web browsing": 0.0264,
         "Videocall (e.g. Zoom, Teams…)": 0.112,
         "Online classes streaming": 0.112,
@@ -77,7 +77,7 @@ activity_factors = {
         "Technical softwares (e.g. Matlab, Python…)": 0.00901
     },
     "Staff Member": {
-        "MS Office (e.g. Excel, Word, PPT…)": 0.00901,
+        "MS Office (e.g. Excel, Word, PPT, Outlook…)": 0.00901,
         "Management software (e.g. SAP)": 0.00901,
         "Web browsing": 0.0264,
         "Videocall (e.g. Zoom, Teams…)": 0.112,
@@ -136,6 +136,7 @@ cloud_gb = {
     "5–20GB": 12.5,
     "20–50GB": 35,
     "50–100GB": 75,
+    "100–200GB": 150,
 }
 
 ARCHETYPES = [
@@ -255,40 +256,68 @@ def show_main():
     scroll_top()
 
     st.markdown("""
-        <style>
-            .device-box {
-                padding: 10px 15px 15px 10px;
-                border-radius: 12px;
-                margin-top: 15px;
-                margin-bottom: 25px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            }
-            .device-header { font-size: 1.4em; font-weight: 600; color: #1d3557; margin-bottom: 10px; }
-            .stMarkdown { margin-bottom: 2px !important; }
-        </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
     <style>
-    .label-with-tooltip{display:flex;align-items:center;gap:6px}
-    .info-icon{
-      display:inline-block;width:18px;height:18px;border-radius:50%;
-      background:#e9ecef;color:#495057;font-weight:700;font-size:12px;
-      line-height:18px;text-align:center;cursor:default;position:relative
+    .label-with-tooltip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
-    .info-icon .tooltip-text{
-      visibility:hidden;opacity:0;position:absolute;top:120%;left:50%;
-      transform:translateX(-50%);background:#1d3557;color:#fff;border-radius:8px;
-      padding:8px 10px;font-size:12px;max-width:280px;box-shadow:0 8px 24px rgba(0,0,0,.12);
-      transition:opacity .12s ease-in-out;white-space:normal;z-index:9999
+    .info-icon {
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #457b9d; /* blu elegante */
+        color: #fff;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 22px;
+        text-align: center;
+        cursor: default;
+        position: relative;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
-    .info-icon:hover .tooltip-text{visibility:visible;opacity:1}
-    .info-icon .tooltip-text::after{
-      content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%);
-      border-width:6px;border-style:solid;border-color:transparent transparent #1d3557 transparent
+    .info-icon:hover {
+        background: #1d3557; /* più scuro in hover */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    }
+    .info-icon .tooltip-text {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        top: 120%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1d3557;
+        color: #fff;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 12.5px;
+        max-width: 260px;       /* ✅ limite larghezza tooltip */
+        word-wrap: break-word;  /* ✅ va a capo se serve */
+        white-space: normal;    /* ✅ permette più righe */
+        box-shadow: 0 8px 24px rgba(0,0,0,.15);
+        transition: opacity .15s ease-in-out;
+        z-index: 9999;
+    }
+    .info-icon:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+    }
+    .info-icon .tooltip-text::after {
+        content: "";
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: transparent transparent #1d3557 transparent;
     }
     </style>
     """, unsafe_allow_html=True)
+
 
 
     st.markdown(f"""
@@ -620,7 +649,7 @@ If the device was purchased second-hand, only count your own usage period, not t
     """, unsafe_allow_html=True)
 
     email_opts = ["-- Select option --", "1–10", "11–20", "21–30", "31–40", "> 40"]
-    cloud_opts = ["-- Select option --", "<5GB", "5–20GB", "20–50GB", "50–100GB"]
+    cloud_opts = ["-- Select option --", "<5GB", "5–20GB", "20–50GB", "50–100GB", "100–200GB"]
 
 
     email_col1, email_col2 = st.columns(2)
@@ -1033,6 +1062,21 @@ def show_results_breakdown():
         </div>
     """, unsafe_allow_html=True)
 
+    # Nota su E-Waste (con titolo più grande)
+    st.markdown("""
+        <div style="background-color:#fefae0; border-left: 6px solid #e09f3e; 
+                    padding: 14px; border-radius: 8px; margin-top: 18px;">
+            <h4 style="margin-top:0;">🤔 Why is my E-Waste impact negative?</h4>
+            <p style="margin:0; font-size: 15px; line-height: 1.5;">
+                Sometimes your E-Waste value can be <b>negative</b>: this means that you adopt 
+                responsible practices such as donating devices, bringing them to proper recycling 
+                centers, or returning them to the manufacturer. 
+                These actions help offset part of the CO₂ emissions associated with electronic devices, 
+                and consequently reduce your overall footprint. 🌍
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
     st.divider()
 
     st.subheader("Hotspots at a glance")
@@ -1377,6 +1421,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
