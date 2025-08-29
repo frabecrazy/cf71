@@ -678,6 +678,8 @@ def show_main():
     idle = st.radio("When you're not using your computer...", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"],
     key="idle")
 
+    st.session_state["idle_turns_off"] = (st.session_state.get("idle") == "I turn it off")
+
 
 # --- CALCOLI 
     em_plain  = emails.get(st.session_state.get("email_plain"), 0)
@@ -1365,12 +1367,9 @@ def show_virtues():
         virtues.append("You keep your cloud storage light by cleaning up files you no longer need! This reduces the energy required to store and maintain them.")
 
     # 6) Spegnere il computer quando non usato
-    raw = str(st.session_state.get("idle") or "")
-    idle_choice = " ".join(raw.split()).casefold()   # normalizza spazi e rende case-insensitive
-    if "I turn it off" in idle_choice:
-        virtues.append(
-            "You turn off your computer when not in use. This single action can save over 150 kWh of energy per year for a single computer!"
-        )
+    if st.session_state.get("idle_turns_off"):
+        virtues.append("You turn off your computer when not in use. This single action can save over 150 kWh of energy per year for a single computer!")
+
 
     
     # 7) Zero stampe
@@ -1435,6 +1434,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
