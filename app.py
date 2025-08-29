@@ -106,7 +106,7 @@ device_ef = {
     "Smartphone": 38.4,
     "Tablet": 87.1,
     "External Monitor": 235,
-    "Headphones": 12.17,
+    "Headphones": 10.22,
     "Printer": 62.3,
     "Router/Modem": 106
 }
@@ -277,6 +277,7 @@ def show_main():
         position: relative;
         transition: all 0.2s ease-in-out;
         box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        margin-left: 6px;
     }
     .info-icon:hover {
         background: #1d3557; /* più scuro in hover */
@@ -291,15 +292,19 @@ def show_main():
         transform: translateX(-50%);
         background: #1d3557;
         color: #fff;
-        border-radius: 8px;
-        padding: 8px 10px;
-        font-size: 12.5px;
-        max-width: 460px;       /* ✅ limite larghezza tooltip */
-        word-wrap: break-word;  /* ✅ va a capo se serve */
-        white-space: normal;    /* ✅ permette più righe */
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 13px;
+        line-height: 1.45;
+        width: 360px !important;              /* 🔥 larghezza fissa comoda */
+        max-width: min(90vw, 420px) !important;/* 🔥 limite responsive */
+        white-space: normal !important;        /* va a capo normalmente */
+        word-break: break-word;                /* spezza parole lunghe */
         box-shadow: 0 8px 24px rgba(0,0,0,.15);
         transition: opacity .15s ease-in-out;
         z-index: 9999;
+        text-align: left;
+        font-weight: 400;
     }
     .info-icon:hover .tooltip-text {
         visibility: visible;
@@ -317,8 +322,6 @@ def show_main():
     }
     </style>
     """, unsafe_allow_html=True)
-
-
 
     st.markdown(f"""
     <div style="
@@ -1428,6 +1431,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
