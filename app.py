@@ -504,17 +504,23 @@ def show_main():
                 used = st.selectbox("", used_options, index=used_index, key=f"{device_id}_used")
 
             with col3:
-                st.markdown("""
+                st.markdown(f"""
                     <div style='margin-bottom:-20px'>
-                        <strong>Device's lifespan</strong>
-                        <span title="Example: if you have had a phone for 2 years and expect to keep it for 3 more, enter 5. 
-If the device was purchased second-hand, only count your own usage period, not the years used by the previous owner."
-                              style="display:inline-block;margin-left:6px;width:18px;height:18px;border-radius:50%;
-                                     background:#e9ecef;color:#495057;font-weight:700;font-size:12px;line-height:18px;
-                                     text-align:center;cursor:help;">i</span><br/>
-                        <span style='font-size:12px; color:gray'>How many years you plan to use the device in total</span>
+                        <div class="label-with-tooltip">
+                            <strong>Device's lifespan</strong>
+                            <div class="info-icon">i
+                                <div class="tooltip-text">
+                                    Example: if you have had a phone for 2 years and expect to keep it for 3 more, enter 5.<br/>
+                                    If the device was purchased second-hand, only count your own usage period, not the years used by the previous owner.
+                                </div>
+                            </div>
+                        </div>
+                        <span style='font-size:12px; color:gray'>
+                            How many years you plan to use the device in total
+                        </span>
                     </div>
                 """, unsafe_allow_html=True)
+
                 years = st.number_input(
                     "",
                     0.5,
@@ -523,6 +529,7 @@ If the device was purchased second-hand, only count your own usage period, not t
                     format="%.1f",
                     key=f"{device_id}_years"
                 )
+
 
 
 
@@ -1421,6 +1428,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
