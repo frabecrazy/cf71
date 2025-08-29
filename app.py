@@ -513,7 +513,7 @@ def show_main():
                             <strong>Device's lifespan</strong>
                             <div class="info-icon">i
                                 <div class="tooltip-text">
-                                    Example: if you have had a phone for 2 years and expect to keep it for 3 more, enter 5.<br/>
+                                    <b>Example:</b> if you have had a phone for 2 years and expect to keep it for 3 more, enter 5. 
                                     If the device was purchased second-hand, only count your own usage period, not the years used by the previous owner.
                                 </div>
                             </div>
@@ -1431,6 +1431,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
