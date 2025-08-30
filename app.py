@@ -686,6 +686,11 @@ def show_main():
     em_attach = emails.get(st.session_state.get("email_attach"), 0)
     cld = cloud_gb.get(st.session_state.get("cloud"), 0)
 
+    st.session_state["da_em_plain"]   = int(em_plain)
+    st.session_state["da_em_attach"]  = int(em_attach)
+    st.session_state["da_cloud_gb"]   = float(cld)
+
+
     mail_total = (em_plain * 0.004 + em_attach * 0.035 + cld * 0.01) * DAYS
     wifi_total  = st.session_state.get("wifi", 4.0) * 0.00584 * DAYS
     print_total = st.session_state.get("pages", 0) * 0.0045 * DAYS
@@ -1500,7 +1505,7 @@ def show_virtues():
                 Mostra l'impatto annuo delle email con allegati
                 SOLO se > 10 email/giorno (soglia).
                 """
-                em_attach = emails.get(state.get("email_attach"), 0)
+                em_attach = int(state.get("da_em_attach", 0))  # soglia > 10
                 if em_attach <= 10:
                         return None
                 impact_year = em_attach * 0.035 * DAYS  # kg CO2e/anno
@@ -1514,7 +1519,7 @@ def show_virtues():
                 Mostra l'impatto annuo delle email senza allegati
                 SOLO se > 10 email/giorno (soglia).
                 """
-                em_plain = emails.get(state.get("email_plain"), 0)
+                em_plain = int(state.get("da_em_plain", 0))  # soglia > 10
                 if em_plain <= 10:
                         return None
                 impact_year = em_plain * 0.004 * DAYS  # kg CO2e/anno
@@ -1527,7 +1532,7 @@ def show_virtues():
                 """
                 Se lo storage cloud è >50GB, mostra l'impatto annuo attuale e consiglia di fare decluttering.
                 """
-                cld = cloud_gb.get(state.get("cloud"), 0)
+                cld = float(state.get("da_cloud_gb", 0))  # soglia > 50
                 if cld <= 50:
                         return None
                 impact_year = cld * 0.01 * DAYS  # kg CO2e/anno
@@ -1778,6 +1783,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
