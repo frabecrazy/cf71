@@ -1670,6 +1670,16 @@ def show_virtues():
                             unsafe_allow_html=True
                         )
 
+    st.markdown("""
+        <div style="background-color:#fefae0; border-left: 6px solid #e09f3e; 
+                    padding: 14px; border-radius: 8px; margin-top: 18px;">
+            <h4 style="margin-top:0;">Next step</h4>
+            <p style="margin:0; font-size: 15px; line-height: 1.5;">
+                Try applying some or all of these tips, then come back in 6 months and recalculate your footprint. 
+                You’ll see how much you’ve improved — and which habits delivered the biggest cuts.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
 
 
 
@@ -1804,6 +1814,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
