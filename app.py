@@ -1641,7 +1641,7 @@ def show_virtues():
         top_generic  = GENERIC_TIPS.get(most_impact_cat, [])
         top_tips = _dedup_keep_order(top_personal + top_generic)
 
-        with st.expander(f"📌 Tips to reduce your {most_impact_cat} footprint", expanded=True):
+        with st.expander(f"📌 Tips for top impact area: {most_impact_cat}", expanded=True):
             for tip in top_tips:
                 st.markdown(
                     f"<div style='background:#e3fced; padding:15px; border-radius:10px; margin-bottom:10px;'>{tip}</div>",
@@ -1663,10 +1663,10 @@ def show_virtues():
                     picked += gen_pool if len(gen_pool) <= remaining else rnd.sample(gen_pool, remaining)
 
             if picked:  # se resta solo 1 tip va bene
-                with st.expander(f"✨ Other opportunities in {cat}", expanded=False):
+                with st.expander(f"📌 More to improve in {cat}", expanded=False):
                     for tip in picked:
                         st.markdown(
-                            f"<div style='background:#e7f5ff; padding:15px; border-radius:10px; margin-bottom:10px;'>{tip}</div>",
+                            f"<div style='background:#e3fced; padding:15px; border-radius:10px; margin-bottom:10px;'>{tip}</div>",
                             unsafe_allow_html=True
                         )
 
@@ -1804,6 +1804,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
