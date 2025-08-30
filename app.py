@@ -977,6 +977,15 @@ def show_results_cards():
     actual = category_to_arc.get(actual_top)
     guessed_right = bool(guessed) and (key_to_category.get(guessed["key"]) == actual_top)
 
+    # DEBUG TEMP (puoi toglierlo dopo)
+    try:
+        _rows = fetch_role_stats()
+        st.write("DEBUG Stats rows:", _rows)
+        st.write("DEBUG role_label:", st.session_state.get("role", ""))
+    except Exception as e:
+        st.write("DEBUG Stats error:", e)
+
+    
     # --- Media dinamica dal tab Stats, con soglia minima campioni ---
     MIN_SAMPLES = 10
 
@@ -1870,6 +1879,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
