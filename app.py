@@ -1278,21 +1278,21 @@ def show_virtues():
         # === 1) GENERIC (evergreen) TIPS, per categoria ===
         GENERIC_TIPS = {
                 "Devices": [
-                        "<b>Update software regularly</b> – This enhances efficiency and performance, often reducing energy consumption.",
-                        "<b>Activate power-saving settings, reduce screen brightness and enable dark mode</b> – This lowers energy use.",
-                        "<b>Choose accessories made from recycled or sustainable materials</b> – This minimizes the environmental impact of your tech choices."
+                        "<b>Update software regularly.</b> This enhances efficiency and performance, often reducing energy consumption.",
+                        "<b>Activate power-saving settings, reduce screen brightness and enable dark mode.</b> This lowers energy use.",
+                        "<b>Choose accessories made from recycled or sustainable materials.</b> This minimizes the environmental impact of your tech choices."
                 ],
                 "E-Waste": [
-                        "<b>Repair instead of replacing</b> – Fix broken electronics whenever possible to avoid unnecessary waste."
+                        "<b>Repair instead of replacing.</b> Fix broken electronics whenever possible to avoid unnecessary waste."
                 ],
                 "Digital Activities": [
-                        "<b>Use your internet mindfully</b> – Close unused apps, avoid sending large attachments, and turn off video during calls when not essential."
+                        "<b>Use your internet mindfully:</b> close unused apps, avoid sending large attachments, and turn off video during calls when not essential."
                 ],
                 "Artificial Intelligence": [
-                        "<b>Use search engines for simple tasks</b> – They consume far less energy than AI tools.",
-                        "<b>Disable AI-generated results in search engines</b> – (e.g., on Bing: go to Settings > Search > Uncheck \"Include AI-powered answers\" or similar option).",
-                        "<b>Prefer smaller AI models when possible</b> – For basic tasks, use lighter versions like GPT-4o-mini instead of more energy-intensive models.",
-                        "<b>Be concise in AI prompts and require concise answers</b> – Short inputs and outputs require less processing."
+                        "<b>Use search engines for simple tasks: </b> They consume far less energy than AI tools.",
+                        "<b>Disable AI-generated results in search engines</b> (e.g., on Bing: go to Settings > Search > Uncheck \"Include AI-powered answers\" or similar option).",
+                        "<b>Prefer smaller AI models when possible.</b> For basic tasks, use lighter versions like GPT-4o-mini instead of more energy-intensive models.",
+                        "<b>Be concise in AI prompts and require concise answers:</b> short inputs and outputs require less processing."
                 ]
         }
         
@@ -1372,8 +1372,8 @@ def show_virtues():
             if best_saving > 0 and best_noun:
                 X = _fmt_kg(best_saving)
                 return (
-                    f"You chose a new {best_noun} — next time consider buying a used or refurbished one. "
-                    f"You could save about ~{X} kg CO₂e/year (vs a new device with the same usage)."
+                    f"<b>You bought a new {best_noun}: next time consider choosing a used or refurbished one.<b> "
+                    f"You could save about {X} kg CO₂e/year (vs a new device with the same usage)."
                 )
             return None
 
@@ -1412,8 +1412,8 @@ def show_virtues():
                 X = _fmt_kg(best["saving"])
                 device_label = best["base"].lower()
                 return (
-                    f"You plan to use your {device_label} for {best['years']:.0f} years — "
-                    f"if you extend it to {best['years'] + 2:.0f}, you could save about ~{X} kg CO₂e/year."
+                    f"<b>You plan to use your {device_label} for {best['years']:.0f} years.<b> "
+                    f"if you extend it to {best['years'] + 2:.0f}, you could save about {X} kg CO₂e/year."
                 )
             return None
 
@@ -1467,7 +1467,7 @@ def show_virtues():
                 lo = _fmt_kg(saving_min)
                 hi = _fmt_kg(saving_max)
                 return (
-                    f"You have {uniq} stored at home — recycling or reusing them could save between ~{lo} and ~{hi} kg CO₂e/year. Don’t let them gather dust!"
+                    f"<b>You have {uniq} stored at home.<b> Recycling or reusing them could save between {lo} and {hi} kg CO₂e/year. Don’t let them gather dust!"
                 )
             return None
 
@@ -1512,8 +1512,8 @@ def show_virtues():
                 names = ", ".join(sorted(set(devices)))
                 X = _fmt_kg(total_saving)
                 return (
-                    f"You selected “I throw it away in general waste” for {names} — this prevents proper recycling or reuse. "
-                    f"Choosing a certified alternative could save about ~{X} kg CO₂e/year."
+                    f"<b>You throw {names} away in general waste. this prevents proper recycling or reuse.<b> "
+                    f"Bringing it to a certified collection point could save about {X} kg CO₂e/year."
                 )
             return None
 
@@ -1532,7 +1532,7 @@ def show_virtues():
                 impact_year = em_attach * 0.035 * DAYS  # kg CO2e/anno
                 X = _fmt_kg(impact_year)
                 return (
-                        f"Currently, your emails with attachments emit ~{X} kg CO₂e/year — try sharing links instead (e.g., OneDrive or Google Drive)."
+                        f"<b>Currently, your emails with attachments emit around {X} kg CO₂e/year.<b> Try sharing links to OneDrive or Google Drive instead of large attachments."
                 )
 
         def tip_emails_plain_impact(state) -> str | None:
@@ -1546,7 +1546,7 @@ def show_virtues():
                 impact_year = em_plain * 0.004 * DAYS  # kg CO2e/anno
                 X = _fmt_kg(impact_year)
                 return (
-                        f"Currently, your emails without attachments emit ~{X} kg CO₂e/year — to reduce this, opt for instant messaging where possible."
+                        f"<b>Currently, your emails without attachments emit around {X} kg CO₂e/year. <b> To reduce this, opt for instant messaging where possible."
                 )
             
         def tip_cloud_storage_impact(state) -> str | None:
@@ -1559,7 +1559,7 @@ def show_virtues():
                 impact_year = cld * 0.01 * DAYS  # kg CO2e/anno
                 X = _fmt_kg(impact_year)
                 return (
-                        f"At the moment, your annual footprint from stored data is ~{X} kg CO₂e/year — Try to declutter your digital space by regularly deleting unnecessary files and emptying trash and spam folders to reduce digital pollution."
+                        f"<b>At the moment, your annual footprint from stored data is ~{X} kg CO₂e/year.<b> Try to declutter your digital space by regularly deleting unnecessary files and emptying trash and spam folders to reduce digital pollution."
                 )
 
         def tip_idle_left_on(state) -> str | None:
@@ -1571,7 +1571,7 @@ def show_virtues():
             saved = DAYS * 16.0 * (0.0104 - 0.0005204)
             X = _fmt_kg(saved)
             return (
-                f"You usually leave your computer on in idle mode — turning it off at the end of the day could save ~{X} kg CO₂e/year and extend its lifespan."
+                f"<b>You usually leave your computer on in idle mode. <b> Turning it off at the end of the day could save up to {X} kg CO₂e/year and extend its lifespan."
             )
 
         # ===============================
@@ -1586,7 +1586,7 @@ def show_virtues():
                 if Q <= 30:
                         return None
                 return (
-                        f"You're averaging about {Q} AI queries per day — try making more targeted requests to reduce this number and save energy."
+                        f"<b>You're asking about {Q} AI queries per day. <b> Try making more targeted requests to reduce this number and save energy."
                 )
 
         # ===============================
@@ -1804,6 +1804,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
