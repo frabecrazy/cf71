@@ -1249,58 +1249,402 @@ def show_virtues():
 
         most_impact_cat = df_plot.sort_values("CO₂e (kg)", ascending=False).iloc[0]["Category"]
 
-        detailed_tips = {
+        # === 1) GENERIC (evergreen) TIPS, per categoria ===
+        GENERIC_TIPS = {
+                "Devices": [
+                        "<b>Update software regularly</b> – This enhances efficiency and performance, often reducing energy consumption.",
+                        "<b>Activate power-saving settings, reduce screen brightness and enable dark mode</b> – This lowers energy use.",
+                        "<b>Choose accessories made from recycled or sustainable materials</b> – This minimizes the environmental impact of your tech choices."
+                ],
+                "E-Waste": [
+                        "<b>Repair instead of replacing</b> – Fix broken electronics whenever possible to avoid unnecessary waste."
+                ],
+                "Digital Activities": [
+                        "<b>Use your internet mindfully</b> – Close unused apps, avoid sending large attachments, and turn off video during calls when not essential."
+                ],
+                "Artificial Intelligence": [
+                        "<b>Use search engines for simple tasks</b> – They consume far less energy than AI tools.",
+                        "<b>Disable AI-generated results in search engines</b> – (e.g., on Bing: go to Settings > Search > Uncheck \"Include AI-powered answers\" or similar option).",
+                        "<b>Prefer smaller AI models when possible</b> – For basic tasks, use lighter versions like GPT-4o-mini instead of more energy-intensive models.",
+                        "<b>Be concise in AI prompts and require concise answers</b> – Short inputs and outputs require less processing."
+                ]
+        }
+        
+        # === 2) PERSONALIZED TIPS FACTORIES 
+        
+        # ===============================
+        # Helpers comuni
+        # ===============================
+        def _adj_years(years: float, used: str, shared: str) -> float:
+            """
+            Calcola gli 'anni aggiustati' come nel tuo modello:
+            - New & Personal: years
+            - Used & Personal: years + years/2
+            - New & Shared: years * 3
+            - Used & Shared: years * 4.5
+            """
+            if years <= 0:
+                return 0.0
+            if (used == "New" or not used) and shared == "Personal":
+                return years
+            if used == "Used" and shared == "Personal":
+                return years * 1.5
+            if (used == "New" or not used) and shared == "Shared":
+                return years * 3.0
+            if used == "Used" and shared == "Shared":
+                return years * 4.5
+            # fallback (tratta come Personal & New)
+            return years
+
+        def _fmt_kg(x: float) -> str:
+            # arrotonda "pulito": 0 decimali se grande, 1 decimale altrimenti
+            if x >= 10:
+                return f"{round(x):,}".replace(",", " ")
+            return f"{round(x, 1)}"
+
+        # ===============================
+        # Personalized Tips – DEVICES
+        # ===============================
+        def tip_devices_new_laptopdesktop_best(state) -> str | None:
+            """
+            Se esistono Laptop/Desktop nuovi, suggerisci il ricondizionato.
+            Mostra solo il device con risparmio annuo maggiore.
+            """
+            best_saving = 0.0
+            best_noun = None
+
+            for dev_id, vals in (state.get("device_inputs") or {}).items():
+                base = dev_id.rsplit("_", 1)[0]
+                if base not in ("Laptop Computer", "Desktop Computer"):
+                    continue
+                if vals.get("used") != "New":
+                    continue
+
+                try:
+                    years = float(vals.get("years", 0) or 0)
+                except Exception:
+                    years = 0.0
+                if years <= 0:
+                    continue
+
+                shared = vals.get("shared") or "Personal"
+                impact = float(device_ef.get(base, 0) or 0)
+                if impact <= 0:
+                    continue
+
+                adj_curr = _adj_years(years, used="New", shared=shared)
+                # scenario alternativo: stesso shared, ma 'Used'
+                adj_alt = _adj_years(years, used="Used", shared=shared)
+                if adj_curr <= 0 or adj_alt <= 0:
+                    continue
+
+                saving = impact * (1.0 / adj_curr - 1.0 / adj_alt)  # kg/anno
+                if saving > best_saving:
+                    best_saving = saving
+                    best_noun = "laptop" if base == "Laptop Computer" else "desktop"
+
+            if best_saving > 0 and best_noun:
+                X = _fmt_kg(best_saving)
+                return (
+                    f"You chose a new {best_noun} — next time consider buying a used or refurbished one. "
+                    f"You could save about ~{X} kg CO₂e/year (vs a new device with the same usage)."
+                )
+            return None
+
+        def tip_devices_extend_life_any_device(state) -> str | None:
+            """
+            Qualsiasi device con lifespan <= 3 anni → suggerisci estensione di +2 anni.
+            Mostra solo il caso con risparmio annuo maggiore.
+            """
+            best = {"base": None, "years": None, "saving": 0.0}
+
+            for dev_id, vals in (state.get("device_inputs") or {}).items():
+                base = dev_id.rsplit("_", 1)[0]
+                try:
+                    years = float(vals.get("years", 0) or 0)
+                except Exception:
+                    years = 0.0
+                if years <= 0 or years > 3:
+                    continue
+
+                used = vals.get("used") or "New"
+                shared = vals.get("shared") or "Personal"
+                impact = float(device_ef.get(base, 0) or 0)
+                if impact <= 0:
+                    continue
+
+                adj_curr = _adj_years(years, used=used, shared=shared)
+                adj_ext = _adj_years(years + 2.0, used=used, shared=shared)
+                if adj_curr <= 0 or adj_ext <= 0:
+                    continue
+
+                saving = impact * (1.0 / adj_curr - 1.0 / adj_ext)  # kg CO2e/anno
+                if saving > best["saving"]:
+                    best.update({"base": base, "years": years, "saving": saving})
+
+            if best["saving"] > 0 and best["base"]:
+                X = _fmt_kg(best["saving"])
+                device_label = best["base"].lower()
+                return (
+                    f"You plan to use your {device_label} for {best['years']:.0f} years — "
+                    f"if you extend it to {best['years'] + 2:.0f}, you could save about ~{X} kg CO₂e/year."
+                )
+            return None
+
+
+        # ===============================
+        # Personalized Tips – E-WASTE
+        # ===============================
+        def tip_ewaste_stored_at_home(state) -> str | None:
+            """
+            Per tutti i device con eol == 'I store it at home, unused':
+            stima saving annuo passando da 'store' (0.402) a:
+              - centro raccolta (-0.224)  → delta min
+              - sell/donate (-0.445)      → delta max
+            Somma i risparmi e mostra range.
+            """
+            items = []
+            saving_min = 0.0
+            saving_max = 0.0
+
+            for dev_id, vals in (state.get("device_inputs") or {}).items():
+                if vals.get("eol") != "I store it at home, unused":
+                    continue
+
+                base = dev_id.rsplit("_", 1)[0]
+                try:
+                    years = float(vals.get("years", 0) or 0)
+                except Exception:
+                    years = 0.0
+                if years <= 0:
+                    continue
+
+                used = vals.get("used") or "New"
+                shared = vals.get("shared") or "Personal"
+                impact = float(device_ef.get(base, 0) or 0)
+                if impact <= 0:
+                    continue
+
+                adj = _adj_years(years, used=used, shared=shared)
+                if adj <= 0:
+                    continue
+
+                # delta verso alternative (per anno)
+                delta_min = impact * ((0.402 - (-0.224)) / adj)   # -> certified
+                delta_max = impact * ((0.402 - (-0.445)) / adj)   # -> sell/donate
+                saving_min += max(0.0, delta_min)
+                saving_max += max(0.0, delta_max)
+                items.append(base)
+
+            if items and (saving_min > 0 or saving_max > 0):
+                uniq = ", ".join(sorted(set(items)))
+                lo = _fmt_kg(saving_min)
+                hi = _fmt_kg(saving_max)
+                return (
+                    f"You have {uniq} stored at home — recycling or reusing them could save between ~{lo} and ~{hi} kg CO₂e/year. Don’t let them gather dust!"
+                )
+            return None
+
+        def tip_ewaste_general_trash(state) -> str | None:
+            """
+            Per device con eol == 'I throw it away in general waste' (0.611):
+            stima il saving annuo se passassero alla miglior alternativa (sell/donate: -0.445)
+            e indica per quali device vale.
+            """
+            total_saving = 0.0
+            devices = []
+
+            for dev_id, vals in (state.get("device_inputs") or {}).items():
+                if vals.get("eol") != "I throw it away in general waste":
+                    continue
+
+                base = dev_id.rsplit("_", 1)[0]
+                devices.append(base)
+
+                try:
+                    years = float(vals.get("years", 0) or 0)
+                except Exception:
+                    years = 0.0
+                if years <= 0:
+                    continue
+
+                used = vals.get("used") or "New"
+                shared = vals.get("shared") or "Personal"
+                impact = float(device_ef.get(base, 0) or 0)
+                if impact <= 0:
+                    continue
+
+                adj = _adj_years(years, used=used, shared=shared)
+                if adj <= 0:
+                    continue
+
+                # delta verso best alternative (sell/donate: -0.445)
+                delta = impact * ((0.611 - (-0.445)) / adj)
+                total_saving += max(0.0, delta)
+
+            if devices and total_saving > 0:
+                names = ", ".join(sorted(set(devices)))
+                X = _fmt_kg(total_saving)
+                return (
+                    f"You selected “I throw it away in general waste” for {names} — this prevents proper recycling or reuse. "
+                    f"Choosing a certified alternative could save about ~{X} kg CO₂e/year."
+                )
+            return None
+
+
+        # ===============================
+        # Personalized Tips – DIGITAL ACTIVITIES
+        # ===============================
+        def tip_emails_with_attachments_impact(state) -> str | None:
+                """
+                Mostra l'impatto annuo delle email con allegati
+                SOLO se > 10 email/giorno (soglia).
+                """
+                em_attach = emails.get(state.get("email_attach"), 0)
+                if em_attach <= 10:
+                        return None
+                impact_year = em_attach * 0.035 * DAYS  # kg CO2e/anno
+                X = _fmt_kg(impact_year)
+                return (
+                        f"Currently, your emails with attachments emit ~{X} kg CO₂e/year — try sharing links instead (e.g., OneDrive or Google Drive)."
+                )
+
+        def tip_emails_plain_impact(state) -> str | None:
+                """
+                Mostra l'impatto annuo delle email senza allegati
+                SOLO se > 10 email/giorno (soglia).
+                """
+                em_plain = emails.get(state.get("email_plain"), 0)
+                if em_plain <= 10:
+                        return None
+                impact_year = em_plain * 0.004 * DAYS  # kg CO2e/anno
+                X = _fmt_kg(impact_year)
+                return (
+                        f"Currently, your emails without attachments emit ~{X} kg CO₂e/year — to reduce this, opt for instant messaging where possible."
+                )
+            
+        def tip_cloud_storage_impact(state) -> str | None:
+                """
+                Se lo storage cloud è >50GB, mostra l'impatto annuo attuale e consiglia di fare decluttering.
+                """
+                cld = cloud_gb.get(state.get("cloud"), 0)
+                if cld <= 50:
+                        return None
+                impact_year = cld * 0.01 * DAYS  # kg CO2e/anno
+                X = _fmt_kg(impact_year)
+                return (
+                        f"At the moment, your annual footprint from stored data is ~{X} kg CO₂e/year — Try to declutter your digital space by regularly deleting unnecessary files and emptying trash and spam folders to reduce digital pollution."
+                )
+
+        def tip_idle_left_on(state) -> str | None:
+            """
+            Se 'I leave it on (idle mode)': saving passando a 'I turn it off'.
+            """
+            if state.get("idle") == "I leave it on (idle mode)":
+                saved = DAYS * 16.0 * (0.0104 - 0.0005204)
+                X = _fmt_kg(saved)
+                return (
+                    f"Start turning off your computer at the end of the day — this could save up to 40 kg CO₂e/year and extend its lifespan."
+                )
+            return None
+
+        # ===============================
+        # Personalized Tips – AI
+        # ===============================
+        def tip_ai_queries_volume(state) -> str | None:
+                """
+                Mostra il volume totale di query AI al giorno.
+                Se > 30, suggerisce di fare richieste più mirate per ridurre il numero e l'energia usata.
+                """
+                Q = int(state.get("ai_total_queries", 0) or 0)
+                if Q <= 30:
+                        return None
+                return (
+                        f"You're averaging about {Q} AI queries per day — try making more targeted requests to reduce this number and save energy."
+                )
+
+        # ===============================
+        # Registry + Aggregator + Rendering
+        # ===============================
+        PERSONALIZED_TIP_FACTORIES = {
             "Devices": [
-                "<b>Turn off devices when not in use</b> – Even in standby mode, they consume energy. Powering them off saves electricity and extends their lifespan.",
-                "<b>Update software regularly</b> – This enhances efficiency and performance, often reducing energy consumption.",
-                "<b>Activate power-saving settings, reduce screen brightness and enable dark mode</b> – This lowers energy use.",
-                "<b>Choose accessories made from recycled or sustainable materials</b> – This minimizes the environmental impact of your tech choices."
+                tip_devices_new_laptopdesktop_best,
+                tip_devices_extend_life_any_device,
             ],
             "E-Waste": [
-                "<b>Avoid upgrading devices every year</b> – Extending device lifespan significantly reduces environmental impact.",
-                "<b>Repair instead of replacing</b> – Fix broken electronics whenever possible to avoid unnecessary waste.",
-                "<b>Consider buying refurbished devices</b> – They’re often as good as new, but with a much lower environmental footprint.",
-                "<b>Recycle unused electronics properly</b> – Don’t store old devices at home or dispose of them in the environment! E-waste contains polluting and valuable materials that need specialized treatment."
+                tip_ewaste_stored_at_home,
+                tip_ewaste_general_trash,
             ],
             "Digital Activities": [
-                "<b>Use your internet mindfully</b> – Close unused apps, avoid sending large attachments, and turn off video during calls when not essential.",
-                "<b>Declutter your digital space</b> – Regularly delete unnecessary files, empty trash and spam folders, and clean up cloud storage to reduce digital pollution.",
-                "<b>Share links instead of attachments</b> – For example, link to a document on OneDrive or Google Drive instead of attaching it in an email.",
-                "<b>Use instant messaging for short, urgent messages</b> – It's more efficient than email for quick communications."
+                tip_cloud_storage_impact,
+                tip_emails_with_attachments_impact,
+                tip_emails_plain_impact,
+                tip_idle_left_on,
             ],
             "Artificial Intelligence": [
-                "<b>Use search engines for simple tasks</b> – They consume far less energy than AI tools.",
-                "<b>Disable AI-generated results in search engines</b> – (e.g., on Bing: go to Settings > Search > Uncheck \"Include AI-powered answers\" or similar option)",
-                "<b>Prefer smaller AI models when possible</b> – For basic tasks, use lighter versions like GPT-4o-mini instead of more energy-intensive models.",
-                "<b>Be concise in AI prompts and require concise answers</b> – Short inputs and outputs require less processing."
-            ]
+                tip_ai_queries_volume,
+            ],
         }
 
+        def gather_personalized_tips(state):
+            out = {k: [] for k in PERSONALIZED_TIP_FACTORIES}
+            for cat, funcs in PERSONALIZED_TIP_FACTORIES.items():
+                for f in funcs:
+                    try:
+                        tip = f(state)
+                    except Exception:
+                        tip = None
+                    if tip:
+                        out[cat].append(tip)
+            return out
+
+        def _dedup_keep_order(seq):
+            seen = set()
+            out = []
+            for x in seq:
+                if x not in seen:
+                    out.append(x)
+                    seen.add(x)
+            return out
+
+        # --- Build personalized tips
+        personalized = gather_personalized_tips(st.session_state)
+
+        # --- TOP CATEGORY → show ALL tips (personalized + generic)
+        top_personal = personalized.get(most_impact_cat, [])
+        top_generic  = GENERIC_TIPS.get(most_impact_cat, [])
+        top_tips = _dedup_keep_order(top_personal + top_generic)
+
         with st.expander(f"📌 Tips to reduce your {most_impact_cat} footprint", expanded=True):
-            for tip in detailed_tips.get(most_impact_cat, []):
-                st.markdown(f"""
-                    <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-                        {tip}
-                    </div>
-                """, unsafe_allow_html=True)
+            for tip in top_tips:
+                st.markdown(
+                    f"<div style='background:#e3fced; padding:15px; border-radius:10px; margin-bottom:10px;'>{tip}</div>",
+                    unsafe_allow_html=True
+                )
 
-        # Bonus tips da altre categorie
-        other_categories = [cat for cat in detailed_tips if cat != most_impact_cat]
-        # Se hai meno di 3 categorie alternative, limita la sample di conseguenza
-        import random
-        k = min(3, len(other_categories))
-        extra_pool = random.sample(other_categories, k) if k > 0 else []
+        # --- OTHER CATEGORIES → up to 2 tips each, prioritize personalized
+        seed = f"{st.session_state.get('name','')}|{st.session_state.get('role','')}"
+        rnd = random.Random(seed)  # stable per utente
 
-        with st.expander("📌 Some Extra Tips", expanded=False):
-            for cat in extra_pool:
-                tip = random.choice(detailed_tips[cat])
-                st.markdown(f"""
-                    <div style="background-color: #e3fced; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
-                        {tip}
-                    </div>
-                """, unsafe_allow_html=True)
-    else:
-        st.info("Complete the previous steps to unlock your personalized tips.")
+        for cat in [c for c in GENERIC_TIPS.keys() if c != most_impact_cat]:
+            pers = personalized.get(cat, [])
+            picked = pers[:2]  # take up to 2 personalized
+
+            if len(picked) < 2:
+                remaining = 2 - len(picked)
+                gen_pool = [g for g in GENERIC_TIPS.get(cat, []) if g not in picked]
+                if gen_pool:
+                    picked += gen_pool if len(gen_pool) <= remaining else rnd.sample(gen_pool, remaining)
+
+            if picked:  # se resta solo 1 tip va bene
+                with st.expander(f"✨ Other opportunities in {cat}", expanded=False):
+                    for tip in picked:
+                        st.markdown(
+                            f"<div style='background:#e7f5ff; padding:15px; border-radius:10px; margin-bottom:10px;'>{tip}</div>",
+                            unsafe_allow_html=True
+                        )
+
+
 
 
     st.markdown("""
@@ -1434,6 +1778,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
