@@ -1082,9 +1082,11 @@ def show_results_breakdown():
         </div>
     """, unsafe_allow_html=True)
 
-    # Show the E-Waste note only when E-Waste is negative
+    # Show E-Waste notes conditionally
     ewaste_val = float(res.get("E-Waste", 0) or 0)
-    if ewaste_val < -1e-9:  # small epsilon to avoid float noise
+    eps = 1e-9  # to avoid float noise
+
+    if ewaste_val < -eps:
         st.markdown("""
             <div style="background-color:#fefae0; border-left: 6px solid #e09f3e; 
                         padding: 14px; border-radius: 8px; margin-top: 18px;">
@@ -1098,6 +1100,20 @@ def show_results_breakdown():
                 </p>
             </div>
         """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+            <div style="background-color:#fefae0; border-left: 6px solid #e09f3e; 
+                        padding: 14px; border-radius: 8px; margin-top: 18px;">
+                <h4 style="margin-top:0;">Did you know your E-Waste impact can be negative?</h4>
+                <p style="margin:0; font-size: 15px; line-height: 1.5;">
+                    By making more responsible end-of-life choices for your devices—e.g., taking them to a
+                    certified e-waste collection center, returning them to the manufacturer (take-back/recycling),
+                    or selling/donating them for reuse—you can not only bring this category down to zero, but
+                    actually <b>offset</b> part of your overall emissions.
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
+
 
     st.divider()
 
@@ -1788,6 +1804,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
