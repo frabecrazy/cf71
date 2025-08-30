@@ -1082,20 +1082,22 @@ def show_results_breakdown():
         </div>
     """, unsafe_allow_html=True)
 
-    # Nota su E-Waste (con titolo più grande)
-    st.markdown("""
-        <div style="background-color:#fefae0; border-left: 6px solid #e09f3e; 
-                    padding: 14px; border-radius: 8px; margin-top: 18px;">
-            <h4 style="margin-top:0;">Why is my E-Waste impact negative?</h4>
-            <p style="margin:0; font-size: 15px; line-height: 1.5;">
-                Sometimes your E-Waste value can be <b>negative</b>: this means that you adopt 
-                responsible practices such as donating devices, bringing them to proper recycling 
-                centers, or returning them to the manufacturer. 
-                These actions help offset part of the CO₂ emissions associated with electronic devices, 
-                and consequently reduce your overall footprint.
-            </p>
-        </div>
-    """, unsafe_allow_html=True)
+    # Show the E-Waste note only when E-Waste is negative
+    ewaste_val = float(res.get("E-Waste", 0) or 0)
+    if ewaste_val < -1e-9:  # small epsilon to avoid float noise
+        st.markdown("""
+            <div style="background-color:#fefae0; border-left: 6px solid #e09f3e; 
+                        padding: 14px; border-radius: 8px; margin-top: 18px;">
+                <h4 style="margin-top:0;">Why is my E-Waste impact negative?</h4>
+                <p style="margin:0; font-size: 15px; line-height: 1.5;">
+                    Sometimes your E-Waste value can be <b>negative</b>: this means that you adopt 
+                    responsible practices such as donating devices, bringing them to proper recycling 
+                    centers, or returning them to the manufacturer. 
+                    These actions help offset part of the CO₂ emissions associated with electronic devices, 
+                    and consequently reduce your overall footprint.
+                </p>
+            </div>
+        """, unsafe_allow_html=True)
 
     st.divider()
 
@@ -1786,6 +1788,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
