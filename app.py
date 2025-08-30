@@ -977,39 +977,24 @@ def show_results_cards():
     actual = category_to_arc.get(actual_top)
     guessed_right = bool(guessed) and (key_to_category.get(guessed["key"]) == actual_top)
 
-    # DEBUG TEMP (puoi toglierlo dopo)
-    try:
-        _rows = fetch_role_stats()
-        st.write("DEBUG Stats rows:", _rows)
-        st.write("DEBUG role_label:", st.session_state.get("role", ""))
-    except Exception as e:
-        st.write("DEBUG Stats error:", e)
-
     
-    # --- Media dinamica dal tab Stats, con soglia minima campioni ---
+    # --- Dynamic average from Stats with minimum sample threshold ---
     MIN_SAMPLES = 10
 
     role_label = st.session_state.get("role", "")
-    avg_dynamic, sample_n = get_avg_for_role_from_stats(role_label)
+    total = sum(res.values())
 
+    avg_dynamic, sample_n = get_avg_for_role_from_stats(role_label)
     use_dynamic = (
         isinstance(avg_dynamic, (int, float)) and avg_dynamic > 0 and (sample_n or 0) >= MIN_SAMPLES
     )
 
-    if use_dynamic:
-        avg = avg_dynamic
-        source = f"based on {sample_n} entr{'y' if sample_n == 1 else 'ies'} from this calculator"
-    else:
-        avg = AVERAGE_CO2_BY_ROLE.get(role_label)
-        source = (
-            f"based on preset benchmark (insufficient samples: {sample_n})"
-            if sample_n is not None else
-            "based on preset benchmark"
-        )
+    # Use this variable everywhere below
+    avg_used = avg_dynamic if use_dynamic else AVERAGE_CO2_BY_ROLE.get(role_label)
 
     msg, comp_color = None, "#6EA8FE"
-    if isinstance(avg, (int, float)) and avg > 0:
-        diff_pct = ((total - avg) / avg) * 100
+    if isinstance(avg_used, (int, float)) and avg_used > 0:
+        diff_pct = ((total - avg_used) / avg_used) * 100
         abs_pct = abs(diff_pct)
         if abs_pct < 1:
             msg = f"You're roughly in line with the average {role_label.lower()}."
@@ -1048,8 +1033,7 @@ def show_results_cards():
                     f"<div style='{CARD_STYLE} {CARD_ACCENT}'>"
                     f"<div style='font-size:1.3rem; font-weight:800; color:#1b4332; margin:0;'>Your footprint vs average</div>"
                     f"<div style='font-size:2rem; font-weight:800; color:{comp_color}; line-height:1.15; margin:0;'>{msg}</div>"
-                    f"<div style='font-size:1.05rem; color:#1b4332; margin:0;'>Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b></div>"
-                    f"<div style='font-size:0.9rem; color:#6c757d; margin:0;'>{source}</div>"   # ⬅️ AGGIUNTA QUESTA RIGA
+                    f"<div style='font-size:1.05rem; color:#1b4332; margin:0;'>Average {role_label.lower()} emissions: <b>{avg_used:.0f} kg/year</b></div>"
                     f"</div>", unsafe_allow_html=True
                 )
             else:
@@ -1879,6 +1863,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
