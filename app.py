@@ -8,6 +8,7 @@ import requests
 import math
 
 API_URL = st.secrets["SHEETBEST_URL"]
+API_URL_STATS = "https://api.sheetbest.com/sheets/b182e0f1-84d8-41f6-9ad3-ea8473065730/tabs/Stats" 
 
 def scroll_top():
     components.html(
@@ -43,6 +44,40 @@ def save_row(role, co2_devices, co2_ewaste, co2_ai, co2_digital, co2_total):
     r = requests.post(API_URL, json=payload, timeout=10)
     r.raise_for_status()
     return r.json()
+
+def _to_float(x):
+    # Converte "310,2" o "310.2" in float, gestisce None
+    if x is None:
+        return None
+    if isinstance(x, (int, float)):
+        return float(x)
+    s = str(x).strip().replace(" ", "").replace(",", ".")
+    try:
+        return float(s)
+    except ValueError:
+        return None
+
+def fetch_role_stats():
+    """Legge il tab 'Stats' via Sheet.best: [{'Role':'Student','AvgCO2':'297.3','Count':'42'}, ...]."""
+    if not API_URL_STATS:
+        return []
+    r = requests.get(API_URL_STATS, timeout=10)
+    r.raise_for_status()
+    return r.json() or []
+
+def get_avg_for_role_from_stats(role: str):
+    """Ritorna (avg, count) per il ruolo dal tab 'Stats', oppure (None, None) se non disponibile."""
+    try:
+        rows = fetch_role_stats()
+    except Exception:
+        return None, None
+    role = (role or "").strip()
+    for row in rows:
+        if (row.get("Role") or "").strip() == role:
+            avg = _to_float(row.get("AvgCO2"))
+            cnt = int(_to_float(row.get("Count")) or 0)
+            return avg, cnt
+    return None, None
 
 
 st.set_page_config(page_title="Digital Carbon Footprint Calculator", layout="wide")
@@ -942,8 +977,27 @@ def show_results_cards():
     actual = category_to_arc.get(actual_top)
     guessed_right = bool(guessed) and (key_to_category.get(guessed["key"]) == actual_top)
 
+    # --- Media dinamica dal tab Stats, con soglia minima campioni ---
+    MIN_SAMPLES = 10
+
     role_label = st.session_state.get("role", "")
-    avg = AVERAGE_CO2_BY_ROLE.get(role_label)
+    avg_dynamic, sample_n = get_avg_for_role_from_stats(role_label)
+
+    use_dynamic = (
+        isinstance(avg_dynamic, (int, float)) and avg_dynamic > 0 and (sample_n or 0) >= MIN_SAMPLES
+    )
+
+    if use_dynamic:
+        avg = avg_dynamic
+        source = f"based on {sample_n} entr{'y' if sample_n == 1 else 'ies'} from this calculator"
+    else:
+        avg = AVERAGE_CO2_BY_ROLE.get(role_label)
+        source = (
+            f"based on preset benchmark (insufficient samples: {sample_n})"
+            if sample_n is not None else
+            "based on preset benchmark"
+        )
+
     msg, comp_color = None, "#6EA8FE"
     if isinstance(avg, (int, float)) and avg > 0:
         diff_pct = ((total - avg) / avg) * 100
@@ -952,11 +1006,12 @@ def show_results_cards():
             msg = f"You're roughly in line with the average {role_label.lower()}."
             comp_color = "#6EA8FE"
         elif diff_pct > 0:
-            msg = f"You emit ~{abs_pct:.0f}% more than the average {role_label.lower()}."
+            msg = f"You emit {abs_pct:.0f}% more than the average {role_label.lower()}."
             comp_color = "#e63946"
         else:
-            msg = f"You emit ~{abs_pct:.0f}% less than the average {role_label.lower()}."
+            msg = f"You emit {abs_pct:.0f}% less than the average {role_label.lower()}."
             comp_color = "#2b8a3e"
+
 
     c1, c2, c3 = st.columns(3)
     CARD_STYLE = """
@@ -985,6 +1040,7 @@ def show_results_cards():
                     f"<div style='font-size:1.3rem; font-weight:800; color:#1b4332; margin:0;'>Your footprint vs average</div>"
                     f"<div style='font-size:2rem; font-weight:800; color:{comp_color}; line-height:1.15; margin:0;'>{msg}</div>"
                     f"<div style='font-size:1.05rem; color:#1b4332; margin:0;'>Average {role_label.lower()} emissions: <b>{avg:.0f} kg/year</b></div>"
+                    f"<div style='font-size:0.9rem; color:#6c757d; margin:0;'>{source}</div>"   # ⬅️ AGGIUNTA QUESTA RIGA
                     f"</div>", unsafe_allow_html=True
                 )
             else:
@@ -1814,6 +1870,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
