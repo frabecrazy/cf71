@@ -679,6 +679,9 @@ def show_main():
     key="idle")
 
     st.session_state["idle_turns_off"] = (st.session_state.get("idle") == "I turn it off")
+    st.session_state["idle_is_left_on"] = (st.session_state.get("idle") == "I leave it on (idle mode)")
+
+    
 
 
 # --- CALCOLI 
@@ -1545,13 +1548,13 @@ def show_virtues():
             """
             Se 'I leave it on (idle mode)': saving passando a 'I turn it off'.
             """
-            if state.get("idle") == "I leave it on (idle mode)":
-                saved = DAYS * 16.0 * (0.0104 - 0.0005204)
-                X = _fmt_kg(saved)
-                return (
-                    f"Start turning off your computer at the end of the day — this could save up to 40 kg CO₂e/year and extend its lifespan."
-                )
-            return None
+            if not state.get("idle_is_left_on", False):
+                return None
+            saved = DAYS * 16.0 * (0.0104 - 0.0005204)
+            X = _fmt_kg(saved)
+            return (
+                f"You usually leave your computer on in idle mode — turning it off at the end of the day could save ~{X} kg CO₂e/year and extend its lifespan."
+            )
 
         # ===============================
         # Personalized Tips – AI
@@ -1583,8 +1586,8 @@ def show_virtues():
             "Digital Activities": [
                 tip_cloud_storage_impact,
                 tip_emails_with_attachments_impact,
-                tip_emails_plain_impact,
                 tip_idle_left_on,
+                tip_emails_plain_impact,
             ],
             "Artificial Intelligence": [
                 tip_ai_queries_volume,
@@ -1783,6 +1786,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
