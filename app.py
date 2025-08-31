@@ -1605,10 +1605,10 @@ def show_virtues():
                 cld = float(state.get("da_cloud_gb", 0))  # soglia > 50
                 if cld <= 50:
                         return None
-                impact_year = cld * 0.01 * DAYS  # kg CO2e/anno
+                impact_year = cld * 0.01  # kg CO2e/anno
                 X = _fmt_kg(impact_year)
                 return (
-                        f"<b>At the moment, your annual footprint from stored data is ~{X} kg CO₂e/year.</b> Try to declutter your digital space by regularly deleting unnecessary files and emptying trash and spam folders to reduce digital pollution."
+                        f"<b>At the moment, your annual footprint from stored data is {X} kg CO₂e/year.</b> Try to declutter your digital space by regularly deleting unnecessary files and emptying trash and spam folders to reduce digital pollution."
                 )
 
         def tip_idle_left_on(state) -> str | None:
@@ -1863,6 +1863,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
