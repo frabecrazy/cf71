@@ -276,6 +276,15 @@ This calculator is tailored for **university students, professors, and staff mem
     # --- INPUT NOME ---
     st.session_state.name = st.text_input("What is your name")
 
+    # --- PRIVACY DISCLAIMER ---
+    st.markdown(
+        "<p style='font-size:0.85rem; color:gray; margin-top:-6px;'>"
+        "The information collected will be processed exclusively for research and educational purposes, in compliance with applicable data protection regulations, and will be handled confidentially and anonymously"
+        "</p>",
+        unsafe_allow_html=True
+    )
+
+    
     # --- BOTTONE START ---
     st.markdown('<div class="start-button">', unsafe_allow_html=True)
     if st.button("➡️ Start Calculation"):
@@ -1872,6 +1881,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
