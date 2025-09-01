@@ -274,7 +274,7 @@ This calculator is tailored for **university students, professors, and staff mem
         )
 
     # --- INPUT NOME ---
-    st.session_state.name = st.text_input("What is your name")
+    st.session_state.name = st.text_input("What is your name?")
 
     # --- PRIVACY DISCLAIMER ---
     st.markdown(
@@ -1881,6 +1881,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
