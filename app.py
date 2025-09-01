@@ -151,8 +151,8 @@ eol_modifier = {
     "I throw it away in general waste": 0.611,
     "I return it to manufacturer for recycling or reuse": -0.3665,
     "I sell or donate it to someone else": -0.445,
-    "I store it at home, unused": 0.402
-    "Lo restituisco all'università": -0.345
+    "I store it at home, unused": 0.402,
+    "Lo restituisco all'università": -0.345,
 }
 
 DAYS = 250  # Typical number of work/study days per year
@@ -1872,6 +1872,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
