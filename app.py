@@ -152,7 +152,7 @@ eol_modifier = {
     "I return it to manufacturer for recycling or reuse": -0.3665,
     "I sell or donate it to someone else": -0.445,
     "I store it at home, unused": 0.402,
-    "Lo restituisco all'università": -0.345,
+    "Device provided by the university, I return it after use": -0.345,
 }
 
 DAYS = 250  # Typical number of work/study days per year
@@ -584,7 +584,7 @@ def show_main():
                 # Filtra la nuova opzione per gli studenti
                 filtered_eol = [
                     k for k in all_eol
-                    if (role_curr in ["Professor", "Staff Member"]) or (k != "Lo restituisco all'università")
+                    if (role_curr in ["Professor", "Staff Member"]) or (k != "Device provided by the university, I return it after use")
                 ]
                 eol_options = ["-- Select --"] + filtered_eol               
                 eol_index = eol_options.index(prev["eol"]) if prev["eol"] in eol_options else 0
@@ -1787,7 +1787,7 @@ def show_virtues():
         "I bring it to a certified e-waste collection center",
         "I return it to manufacturer for recycling or reuse",
         "I sell or donate it to someone else",
-        "Lo restituisco all'università",
+        "Device provided by the university, I return it after use",
     }
     has_good_eol = any(
         vals.get("eol") in good_eols
@@ -1872,6 +1872,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
