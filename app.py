@@ -152,6 +152,7 @@ eol_modifier = {
     "I return it to manufacturer for recycling or reuse": -0.3665,
     "I sell or donate it to someone else": -0.445,
     "I store it at home, unused": 0.402
+    "Lo restituisco all'università": -0.345
 }
 
 DAYS = 250  # Typical number of work/study days per year
@@ -578,7 +579,14 @@ def show_main():
                         <span style='font-size:12px; color:gray'>What do you usually do when the device reaches its end of life?</span>
                     </div>
                 """, unsafe_allow_html=True)
-                eol_options = ["-- Select --"] + list(eol_modifier.keys())
+                role_curr = st.session_state.get("role", "")
+                all_eol = list(eol_modifier.keys())
+                # Filtra la nuova opzione per gli studenti
+                filtered_eol = [
+                    k for k in all_eol
+                    if (role_curr in ["Professor", "Staff Member"]) or (k != "Lo restituisco all'università")
+                ]
+                eol_options = ["-- Select --"] + filtered_eol               
                 eol_index = eol_options.index(prev["eol"]) if prev["eol"] in eol_options else 0
                 eol = st.selectbox("", eol_options, index=eol_index, key=f"{device_id}_eol")
 
@@ -1110,22 +1118,22 @@ def show_results_breakdown():
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
             <div class="tip-card" style="text-align:center;">
                 <div style="font-size: 2em;">💻</div>
-                <div style="font-size: 1.2em;"><b>{res['Devices']:.2f} kg</b></div>
+                <div style="font-size: 1.2em;"><b>{res['Devices']:.2f} kg CO2e/year</b></div>
                 <div style="color: #555;">Devices</div>
             </div>
             <div class="tip-card" style="text-align:center;">
                 <div style="font-size: 2em;">🗑️</div>
-                <div style="font-size: 1.2em;"><b>{res['E-Waste']:.2f} kg</b></div>
+                <div style="font-size: 1.2em;"><b>{res['E-Waste']:.2f} kg CO2e/year</b></div>
                 <div style="color: #555;">E-Waste</div>
             </div>
             <div class="tip-card" style="text-align:center;">
                 <div style="font-size: 2em;">🔌</div>
-                <div style="font-size: 1.2em;"><b>{res['Digital Activities']:.2f} kg</b></div>
+                <div style="font-size: 1.2em;"><b>{res['Digital Activities']:.2f} kg CO2e/year</b></div>
                 <div style="color: #555;">Digital Activities</div>
             </div>
             <div class="tip-card" style="text-align:center;">
                 <div style="font-size: 2em;">🦾</div>
-                <div style="font-size: 1.2em;"><b>{res['AI Tools']:.2f} kg</b></div>
+                <div style="font-size: 1.2em;"><b>{res['AI Tools']:.2f} kg CO2e/year</b></div>
                 <div style="color: #555;">AI Tools</div>
             </div>
         </div>
@@ -1153,7 +1161,7 @@ def show_results_breakdown():
         st.markdown("""
             <div style="background-color:#fefae0; border-left: 6px solid #e09f3e; 
                         padding: 14px; border-radius: 8px; margin-top: 18px;">
-                <h4 style="margin-top:0;">Did you know your E-Waste impact could be negative?</h4>
+                <h4 style="margin-top:0;">Did you know your E-Waste impact could reduce emissions?</h4>
                 <p style="margin:0; font-size: 15px; line-height: 1.5;">
                     By making more responsible end-of-life choices for your devices, such as taking them to a
                     certified e-waste collection center, returning them to the manufacturer,
@@ -1233,7 +1241,7 @@ def show_results_equiv():
         <div class="equiv-grid">
             <div class="equiv-card">
                 <div class="equiv-emoji">🍔</div>
-                <div class="equiv-text">Produce <span class="equiv-value">~{burger_eq:.0f}</span> beef burgers</div>
+                <div class="equiv-text">Eat <span class="equiv-value">~{burger_eq:.0f}</span> beef burgers</div>
             </div>
             <div class="equiv-card">
                 <div class="equiv-emoji">💡</div>
@@ -1779,6 +1787,7 @@ def show_virtues():
         "I bring it to a certified e-waste collection center",
         "I return it to manufacturer for recycling or reuse",
         "I sell or donate it to someone else",
+        "Lo restituisco all'università",
     }
     has_good_eol = any(
         vals.get("eol") in good_eols
@@ -1863,6 +1872,7 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
+
 
 
 
