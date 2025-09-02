@@ -247,30 +247,22 @@ def show_intro():
         </style>
     """, unsafe_allow_html=True)
 
-    # --- HERO INTUITIVO: titolo centrato + logo a destra dentro il box ---
-    st.markdown("""
-        <div class="intro-box" style="
-            position: relative;
-            padding: 40px 80px;
-        ">
-            <h1 style="
-                font-size: 2.6em;
-                margin: 0;
-                text-align: center;
-            ">
-                Digital Carbon Footprint Calculator📱
-            </h1>
+    # --- HERO INTUITIVO con titolo centrato e logo a destra ---
+    col1, col2 = st.columns([5, 1])
 
-            <!-- LOGO a destra -->
-            <img src="https://raw.githubusercontent.com/frabecrazy/cf71/main/logo.png"
-                 alt="Logo"
-                 style="position: absolute;
-                        right: 24px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                        height: 56px;">
-        </div>
-    """, unsafe_allow_html=True)
+    with col1:
+        st.markdown("""
+            <div class="intro-box">
+                <h1 style="font-size: 2.6em; text-align: center; margin: 0;">
+                    Digital Carbon Footprint Calculator📱
+                </h1>
+            </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="intro-box" style="text-align: right;">', unsafe_allow_html=True)
+        st.image("logo.png", width=80)   # 👈 qui regoli la dimensione del logo
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
 
@@ -1933,6 +1925,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
