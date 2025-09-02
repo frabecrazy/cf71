@@ -1831,7 +1831,6 @@ def show_virtues():
         )
 
 
-
     if virtues:
         st.markdown("#### You’re already making smart choices")
         st.markdown(
@@ -1844,7 +1843,6 @@ def show_virtues():
             "<p style='margin-top:-4px; font-size:0.95rem; color:#1b4332;'>Moreover, just by completing this tool, you're already part of the solution.</p>",
             unsafe_allow_html=True
         )
-    st.markdown(f"#### Great job, {name}! Keep going💪")
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
@@ -1855,16 +1853,53 @@ def show_virtues():
             st.session_state.page = "results_equiv"
             st.rerun()
     with right:
-        if st.button("✏️ Edit your answers", key="virt_edit_btn", use_container_width=True):
+        if st.button("Finish ➡️", key="virt_edit_btn", use_container_width=True):
+            st.session_state.page = "final"
+            st.rerun()   
+
+
+CONTACT_EMAIL = "marta.pinzone@polimi.it"
+
+def show_final():
+    scroll_top()
+
+    name = (st.session_state.get("name") or "").strip()
+    st.markdown(f"""
+        <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc);
+                    padding: 40px 25px; border-radius: 15px; text-align:center;
+                    box-shadow: 0 4px 18px rgba(0,0,0,0.06); margin-bottom: 30px;">
+            <h2 style="font-size:2.2rem; color:#1d3557; margin-bottom:0.6em;">
+                Great job, {name}! Keep going💪
+            </h2>
+            <p style="font-size:1.05rem; color:#1b4332; line-height:1.6; max-width:760px; margin:0 auto;">
+                By completing this tool, you are already part of the change towards greener digital practices.
+                <br><br>
+                If you would like more information about the calculator or the <i>Green DiLT</i> project,
+                or if you have suggestions for improvement, feel free to contact us at:
+                <b>{CONTACT_EMAIL}</b>.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # --- Navigazione finale ---
+    st.markdown("### ")
+    left, _, right = st.columns([1, 4, 1])
+    with left:
+        if st.button("⬅️ Back", key="final_back_btn", use_container_width=True):
+            st.session_state.page = "virtues"
+            st.rerun()
+    with right:
+        if st.button("✏️ Edit your answers", key="final_back_btn", use_container_width=True):
             st.session_state.page = "main"
             st.rerun()   
     
     _, _, right = st.columns([1, 4, 1])        
     with right:
-        if st.button("🔄Restart", key="virt_restart_btn", use_container_width=True):
+        if st.button("🔄 Restart", key="virt_restart_btn", use_container_width=True):
             st.session_state.clear() 
             st.session_state.page = "intro"
             st.rerun()
+
 
 # === PAGE NAVIGATION ===
 if st.session_state.page == "intro":
@@ -1881,67 +1916,5 @@ elif st.session_state.page == "results_equiv":
     show_results_equiv()
 elif st.session_state.page == "virtues":
     show_virtues()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+elif st.session_state.page == "final":
+    show_final()
