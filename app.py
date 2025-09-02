@@ -264,13 +264,11 @@ def show_intro():
             <!-- LOGO a destra -->
             <img src="https://raw.githubusercontent.com/frabecrazy/cf71/main/logo.png"
                  alt="Logo"
-                 style="
-                    position: absolute;
-                    right: 24px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    height: 56px;
-                 ">
+                 style="position: absolute;
+                        right: 24px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        height: 56px;">
         </div>
     """, unsafe_allow_html=True)
 
@@ -1935,6 +1933,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
