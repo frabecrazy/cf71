@@ -1839,10 +1839,6 @@ def show_virtues():
         )
         for v in virtues:
             st.markdown(f'<div class="virtue-card">{v}</div>', unsafe_allow_html=True)
-        st.markdown(
-            "<p style='margin-top:-4px; font-size:0.95rem; color:#1b4332;'>Moreover, just by completing this tool, you're already part of the solution.</p>",
-            unsafe_allow_html=True
-        )
 
     # Pulsante per passare ai risultati
     st.markdown("### ")
@@ -1918,4 +1914,5 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
