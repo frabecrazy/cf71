@@ -248,14 +248,15 @@ def show_intro():
     """, unsafe_allow_html=True)
 
     # --- HERO INTUITIVO con logo a destra ---
-    st.markdown("""
-        <div class="intro-box" style="display: flex; align-items: center; justify-content: center; position: relative;">
-            <h1 style="font-size: 2.6em; margin: 0 auto; text-align: center;">
-                Digital Carbon Footprint Calculator📱
-            </h1>
-            <img src="logo.png" style="position: absolute; right: 25px; top: 50%; transform: translateY(-50%); height: 60px;">
-        </div>
-    """, unsafe_allow_html=True)
+    col1, col2 = st.columns([1, 4])
+    with col1:
+        st.image("logo.png", width=100)  # <-- qui metti il tuo file
+    with col2:
+        st.markdown("""
+            <div class="intro-box">
+                <h1 style="font-size: 2.6em;">Digital Carbon Footprint Calculator📱</h1>
+            </div>
+        """, unsafe_allow_html=True)
 
     # --- TESTO DESCRITTIVO ---
     st.markdown("""
@@ -1916,6 +1917,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
