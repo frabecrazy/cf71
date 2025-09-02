@@ -247,27 +247,21 @@ def show_intro():
         </style>
     """, unsafe_allow_html=True)
 
-    # --- HERO INTUITIVO con titolo centrato e logo a destra ---
-    col1, col2 = st.columns([5, 1])
-
-    with col1:
-        st.markdown("""
-            <div class="intro-box">
-                <h1 style="font-size: 2.6em; text-align: center; margin: 0;">
-                    Digital Carbon Footprint Calculator📱
-                </h1>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        st.markdown('<div class="intro-box" style="text-align: right;">', unsafe_allow_html=True)
-        st.image("logo.png", width=80)   # 👈 qui regoli la dimensione del logo
-        st.markdown('</div>', unsafe_allow_html=True)
-
-
-
-    # --- TESTO DESCRITTIVO ---
+    # --- HERO INTUITIVO
     st.markdown("""
+        <div class="intro-box">
+            <h1 style="font-size: 2.6em; text-align: center; margin: 0;">
+                Digital Carbon Footprint Calculator📱
+            </h1>
+        </div>
+    """, unsafe_allow_html=True)
+
+
+    # --- TESTO DESCRITTIVO + LOGO A DESTRA ---
+    col_welcome, col_logo = st.columns([5, 1])
+
+    with col_welcome:
+        st.markdown("""
 Welcome to the **Digital Carbon Footprint Calculator**, a tool developed within the *Green DiLT* project to raise awareness about the hidden environmental impact of digital habits in academia.
 
 This calculator is tailored for **university students, professors, and staff members**, helping you estimate your CO₂e emissions from everyday digital activities, often overlooked, but increasingly relevant.
@@ -275,7 +269,14 @@ This calculator is tailored for **university students, professors, and staff mem
 ---
 
 👉 Please enter your details to begin:
-""")
+        """)
+
+    with col_logo:
+        # allinea il logo a destra e ridimensiona
+        st.markdown("<div style='text-align:right;'>", unsafe_allow_html=True)
+        st.image("logo.png", width=110)
+        st.markdown("</div>", unsafe_allow_html=True)
+
 
     # --- SELECTBOX ---
     with st.container():
@@ -290,7 +291,7 @@ This calculator is tailored for **university students, professors, and staff mem
     # --- PRIVACY DISCLAIMER ---
     st.markdown(
         "<p style='font-size:0.85rem; color:gray; margin-top:-6px;'>"
-        "The information collected will be processed exclusively for research and educational purposes, in compliance with applicable data protection regulations, and will be handled confidentially and anonymously"
+        "The information collected will be processed exclusively for research and educational purposes, in compliance with applicable data protection regulations, and will be handled confidentially and anonymously."
         "</p>",
         unsafe_allow_html=True
     )
@@ -1925,6 +1926,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
