@@ -83,7 +83,7 @@ def get_avg_for_role_from_stats(role: str):
 st.set_page_config(page_title="Digital Carbon Footprint Calculator", layout="wide")
 
 # Init session state
-if "page" not in st.session_state or st.session_state.page not in ["intro", "main", "guess", "results_cards", "results_breakdown", "results_equiv", "virtues"]:
+if "page" not in st.session_state or st.session_state.page not in ["intro", "main", "guess", "results_cards", "results_breakdown", "results_equiv", "virtues", "final"]:
     st.session_state.page = "intro"
 if "role" not in st.session_state:
     st.session_state.role = ""
@@ -1853,7 +1853,7 @@ def show_virtues():
             st.session_state.page = "results_equiv"
             st.rerun()
     with right:
-        if st.button("Finish ➡️", key="virt_edit_btn", use_container_width=True):
+        if st.button("Finish ➡️", key="virt_finish_btn", use_container_width=True):
             st.session_state.page = "final"
             st.rerun()   
 
@@ -1889,13 +1889,13 @@ def show_final():
             st.session_state.page = "virtues"
             st.rerun()
     with right:
-        if st.button("✏️ Edit your answers", key="final_back_btn", use_container_width=True):
+        if st.button("✏️ Edit your answers", key="final_edit_btn", use_container_width=True):
             st.session_state.page = "main"
             st.rerun()   
     
     _, _, right = st.columns([1, 4, 1])        
     with right:
-        if st.button("🔄 Restart", key="virt_restart_btn", use_container_width=True):
+        if st.button("🔄 Restart", key="final_restart_btn", use_container_width=True):
             st.session_state.clear() 
             st.session_state.page = "intro"
             st.rerun()
@@ -1918,3 +1918,4 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
