@@ -257,22 +257,24 @@ def show_intro():
     """, unsafe_allow_html=True)
 
 
-    # --- TESTO DESCRITTIVO CON LOGO A DESTRA ---
-    st.markdown(f"""
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <p style="font-size:1.05rem; line-height:1.6; max-width:85%;">
-                Welcome to the <b>Digital Carbon Footprint Calculator</b>, 
-                a tool developed within the <i>Green DiLT</i> project to raise awareness about 
-                the hidden environmental impact of digital habits in academia.
-                <br><br>
-                This calculator is tailored for <b>university students, professors, and staff members</b>, 
-                helping you estimate your CO₂e emissions from everyday digital activities, 
-                often overlooked, but increasingly relevant.
-            </p>
-            <img src="logo.png" style="max-height:80px; margin-left:20px;">
-        </div>
-        <hr style="margin-top:20px; margin-bottom:20px;">
-    """, unsafe_allow_html=True)
+    # --- TESTO DESCRITTIVO + LOGO A DESTRA (Streamlit columns, no <img>) ---
+    col_welcome, col_logo = st.columns([5, 2])
+
+    with col_welcome:
+        st.markdown("""
+Welcome to the **Digital Carbon Footprint Calculator**, a tool developed within the *Green DiLT* project to raise awareness about the hidden environmental impact of digital habits in academia.
+
+This calculator is tailored for **university students, professors, and staff members**, helping you estimate your CO₂e emissions from everyday digital activities, often overlooked, but increasingly relevant.
+        """)
+
+    with col_logo:
+        # Logo grande che occupa lo spazio a destra
+        box = st.container()
+        with box:
+            st.image("logo.png", use_column_width=True)  # <-- niente <img>, funziona anche con repo privata
+
+    st.divider()  # linea continua a tutta larghezza
+
 
 
 
@@ -1924,6 +1926,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
