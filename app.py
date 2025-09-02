@@ -258,7 +258,7 @@ def show_intro():
 
 
     # --- TESTO DESCRITTIVO + LOGO A DESTRA (Streamlit columns, no <img>) ---
-    col_welcome, col_logo = st.columns([6, 1])
+    col_welcome, col_logo = st.columns([8, 2])
 
     with col_welcome:
         st.markdown("""
@@ -1926,6 +1926,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
