@@ -212,7 +212,6 @@ AVERAGE_CO2_BY_ROLE = {
 
 def show_intro():
     scroll_top()
-    # --- STILE GLOBALE ---
     st.markdown("""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
@@ -248,10 +247,13 @@ def show_intro():
         </style>
     """, unsafe_allow_html=True)
 
-    # --- HERO INTUITIVO ---
+    # --- HERO INTUITIVO con logo a destra ---
     st.markdown("""
-        <div class="intro-box">
-            <h1 style="font-size: 2.6em;">Digital Carbon Footprint Calculator📱</h1>
+        <div class="intro-box" style="display: flex; align-items: center; justify-content: center; position: relative;">
+            <h1 style="font-size: 2.6em; margin: 0 auto; text-align: center;">
+                Digital Carbon Footprint Calculator📱
+            </h1>
+            <img src="logo.png" style="position: absolute; right: 25px; top: 50%; transform: translateY(-50%); height: 60px;">
         </div>
     """, unsafe_allow_html=True)
 
@@ -1914,5 +1916,6 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
