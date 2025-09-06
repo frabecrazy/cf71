@@ -160,11 +160,14 @@ DAYS = 250  # Typical number of work/study days per year
 
 emails = {
     "-- Select option --": 0,
+    "0": 0,
     "1–10": 5,
     "11–20": 15,
     "21–30": 25,
     "31–40": 35,
-    "> 40": 50,
+    "41–80": 60, 
+    "81–100": 90, 
+    ">100": 150,
 }
 cloud_gb = {
     "-- Select option --": 0,
@@ -722,7 +725,7 @@ def show_main():
         </p>
     """, unsafe_allow_html=True)
 
-    email_opts = ["-- Select option --", "1–10", "11–20", "21–30", "31–40", "> 40"]
+    email_opts = ["-- Select option --", "0", "1–10", "11–20", "21–30", "31–40", "41–80", "81–100", ">100"]
     cloud_opts = ["-- Select option --", "<5GB", "5–20GB", "20–50GB", "50–100GB", "100–200GB"]
 
 
@@ -737,7 +740,7 @@ def show_main():
     cloud = st.selectbox("Cloud storage you currently use for academic or work-related files (e.g., on iCloud, Google Drive, OneDrive)", cloud_opts, index=0, key="cloud")
 
     wifi = st.slider("Estimate your daily Wi-Fi connection time during a typical 8-hour study or work day, including hours when you're not actively using your device (e.g., background apps, idle mode)", 0.0, 8.0, 4.0, 0.5, key="wifi")
-    pages = st.number_input("Printed pages per day", 0, 100, 0, key="pages")
+    pages = st.number_input("Printed pages per week", 0, 100, 0, key="pages")
 
     idle = st.radio("When you're not using your computer...", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"],
     key="idle")
@@ -760,7 +763,7 @@ def show_main():
 
     mail_total = (em_plain * 0.004 + em_attach * 0.035 + cld * 0.01) * DAYS
     wifi_total  = st.session_state.get("wifi", 4.0) * 0.00584 * DAYS
-    print_total = st.session_state.get("pages", 0) * 0.0045 * DAYS
+    print_total = st.session_state.get("pages", 0) * 0.0045 * (DAYS/5)
 
     idle_val = st.session_state.get("idle")
     if idle_val == "I leave it on (idle mode)":
@@ -1236,7 +1239,7 @@ def show_results_equiv():
     """, unsafe_allow_html=True)
     st.markdown("""
         <div style="background: linear-gradient(to right, #d8f3dc, #a8dadc); padding: 28px 16px; border-radius: 12px; text-align: center; margin-bottom: 16px;">
-            <h2 style="margin:0;">With the same emissions, you could…</h2>
+            <h2 style="margin:0;">The same amount of emissions corresponds to...</h2>
         </div>
     """, unsafe_allow_html=True)
 
@@ -1262,19 +1265,19 @@ def show_results_equiv():
         <div class="equiv-grid">
             <div class="equiv-card">
                 <div class="equiv-emoji">🍔</div>
-                <div class="equiv-text">Eat <span class="equiv-value">~{burger_eq:.0f}</span> beef burgers</div>
+                <div class="equiv-text">Eating <span class="equiv-value">~{burger_eq:.0f}</span> beef burgers</div>
             </div>
             <div class="equiv-card">
                 <div class="equiv-emoji">💡</div>
-                <div class="equiv-text">Keep 100 LED bulbs (10W) on for <span class="equiv-value">~{led_days_eq:.0f}</span> days</div>
+                <div class="equiv-text">Keeping 100 LED bulbs (10W) on for <span class="equiv-value">~{led_days_eq:.0f}</span> days</div>
             </div>
             <div class="equiv-card">
                 <div class="equiv-emoji">🚗</div>
-                <div class="equiv-text">Drive a gasoline car for <span class="equiv-value">~{car_km_eq:.0f}</span> km</div>
+                <div class="equiv-text">Driving a gasoline car for <span class="equiv-value">~{car_km_eq:.0f}</span> km</div>
             </div>
             <div class="equiv-card">
                 <div class="equiv-emoji">📺</div>
-                <div class="equiv-text">Watch Netflix for <span class="equiv-value">~{netflix_hours_eq:.0f}</span> hours</div>
+                <div class="equiv-text">Watching Netflix for <span class="equiv-value">~{netflix_hours_eq:.0f}</span> hours</div>
             </div>
         </div>
     """, unsafe_allow_html=True)
@@ -1882,12 +1885,36 @@ def show_final():
             <p style="font-size:1.05rem; color:#1b4332; line-height:1.6; max-width:760px; margin:0 auto;">
                 By completing this tool, you are already part of the change towards greener digital practices.
                 <br><br>
+                The emission factors used in the calculator come primarily from internationally recognized databases, 
+                such as Ecoinvent v3.11 and Base Carbone® (ADEME, v23.7). Where not available, they have been 
+                supplemented with peer-reviewed scientific studies and specialized literature, listed below. 
+                <br><br>
+
+                <details style="margin-top:10px; cursor:pointer;">
+                    <summary style="font-weight:bold; color:#1b4332; font-size:1rem;">
+                        📚 Literature sources
+                    </summary>
+                    <ul style="margin-top:10px; padding-left:20px; color:#1b4332;">
+                        <li>Herrmann et al. (2023): <i>The Climate Impact of the Usage of Headphones and Headsets</i></li>
+                        <li>Sanchez-Cuadrado & Morato (2024): <i>The carbon footprint of Spanish university websites</i></li>
+                        <li>Dias & Arroja (2012): <i>Comparison of methodologies for estimating the carbon footprint – case study of office paper</i></li>
+                        <li>Lannelongue & Inouye (2023): <i>Carbon footprint estimation for computational research</i></li>
+                        <li>Jegham et al. (2025): <i>How Hungry is AI? Benchmarking Energy, Water, and Carbon Footprint of LLM Inference</i></li>
+                        <li>Tomlinson et al. (2024): <i>The Carbon Emissions of Writing and Illustrating Are Lower for AI than for Humans</i></li>
+                        <li>André et al. (2019): <i>Resource and environmental impacts of using second-hand laptop computers: A case study of commercial reuse</i></li>
+                        <li>Choi et al. (2006): <i>Life Cycle Assessment of a Personal Computer and its Effective Recycling Rate</i></li>
+                        <li>Yuksek et al. (2023): <i>Sustainability Assessment of Electronic Waste Remanufacturing: The Case of Laptop</i></li>
+                    </ul>
+                </details>
+
+                <br>
                 If you would like more information about the calculator or the <i>Green DiLT</i> project,
                 or if you have suggestions for improvement, feel free to contact us at:
                 <b>{CONTACT_EMAIL}</b>.
             </p>
         </div>
     """, unsafe_allow_html=True)
+
 
     # --- Navigazione finale ---
     st.markdown("### ")
@@ -1926,6 +1953,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
