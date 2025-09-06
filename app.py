@@ -1889,31 +1889,33 @@ def show_final():
                 such as Ecoinvent v3.11 and Base Carbone® (ADEME, v23.7). Where not available, they have been 
                 supplemented with peer-reviewed scientific studies and specialized literature, listed below. 
                 <br><br>
+            </p>
 
-                <details style="margin-top:10px; cursor:pointer;">
-                    <summary style="font-weight:bold; color:#1b4332; font-size:1rem;">
-                        📚 Literature sources
-                    </summary>
-                    <ul style="margin-top:10px; padding-left:20px; color:#1b4332;">
-                        <li>Herrmann et al. (2023): <i>The Climate Impact of the Usage of Headphones and Headsets</i></li>
-                        <li>Sanchez-Cuadrado & Morato (2024): <i>The carbon footprint of Spanish university websites</i></li>
-                        <li>Dias & Arroja (2012): <i>Comparison of methodologies for estimating the carbon footprint – case study of office paper</i></li>
-                        <li>Lannelongue & Inouye (2023): <i>Carbon footprint estimation for computational research</i></li>
-                        <li>Jegham et al. (2025): <i>How Hungry is AI? Benchmarking Energy, Water, and Carbon Footprint of LLM Inference</i></li>
-                        <li>Tomlinson et al. (2024): <i>The Carbon Emissions of Writing and Illustrating Are Lower for AI than for Humans</i></li>
-                        <li>André et al. (2019): <i>Resource and environmental impacts of using second-hand laptop computers: A case study of commercial reuse</i></li>
-                        <li>Choi et al. (2006): <i>Life Cycle Assessment of a Personal Computer and its Effective Recycling Rate</i></li>
-                        <li>Yuksek et al. (2023): <i>Sustainability Assessment of Electronic Waste Remanufacturing: The Case of Laptop</i></li>
-                    </ul>
-                </details>
+            <details style="margin-top:10px; cursor:pointer;">
+                <summary style="font-weight:bold; color:#1b4332; font-size:1rem;">
+                    📚 Literature sources
+                </summary>
+                <ul style="margin-top:10px; padding-left:20px; color:#1b4332; text-align:left;">
+                    <li>Herrmann et al. (2023): <i>The Climate Impact of the Usage of Headphones and Headsets</i></li>
+                    <li>Sanchez-Cuadrado & Morato (2024): <i>The carbon footprint of Spanish university websites</i></li>
+                    <li>Dias & Arroja (2012): <i>Comparison of methodologies for estimating the carbon footprint – case study of office paper</i></li>
+                    <li>Lannelongue & Inouye (2023): <i>Carbon footprint estimation for computational research</i></li>
+                    <li>Jegham et al. (2025): <i>How Hungry is AI? Benchmarking Energy, Water, and Carbon Footprint of LLM Inference</i></li>
+                    <li>Tomlinson et al. (2024): <i>The Carbon Emissions of Writing and Illustrating Are Lower for AI than for Humans</i></li>
+                    <li>André et al. (2019): <i>Resource and environmental impacts of using second-hand laptop computers: A case study of commercial reuse</i></li>
+                    <li>Choi et al. (2006): <i>Life Cycle Assessment of a Personal Computer and its Effective Recycling Rate</i></li>
+                    <li>Yuksek et al. (2023): <i>Sustainability Assessment of Electronic Waste Remanufacturing: The Case of Laptop</i></li>
+                </ul>
+            </details>
 
-                <br>
+            <p style="font-size:1.05rem; color:#1b4332; line-height:1.6; max-width:760px; margin:20px auto 0;">
                 If you would like more information about the calculator or the <i>Green DiLT</i> project,
                 or if you have suggestions for improvement, feel free to contact us at:
                 <b>{CONTACT_EMAIL}</b>.
             </p>
         </div>
     """, unsafe_allow_html=True)
+
 
 
     # --- Navigazione finale ---
@@ -1953,6 +1955,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
