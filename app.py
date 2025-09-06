@@ -441,8 +441,7 @@ def show_main():
         "External Monitor": "🖥️", "Headphones": "🎧", "Printer": "🖨️", "Router/Modem": "📶"
     }
 
-    st.markdown("**Set a quantity for each device you own**.For each device, you will then be asked a few details about how you use it 
-        and what you do when it is no longer needed.")
+    st.markdown("**Set a quantity for each device you own**. Then, you will then be asked a few details about how you use it and what you do when it is no longer needed.")
 
     types = list(device_ef.keys())
         # memorizza le quantità precedenti per rilevare cambi (no bottone)
@@ -1962,6 +1961,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
