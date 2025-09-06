@@ -1887,7 +1887,7 @@ def show_final():
                 <br><br>
                 The emission factors used in the calculator come primarily from internationally recognized databases, 
                 such as Ecoinvent v3.11 and Base Carbone® (ADEME, v23.7). Where not available, they have been 
-                supplemented with peer-reviewed scientific studies and specialized literature.
+                supplemented with peer-reviewed scientific studies and specialized literature, listed below.
                 <br><br>
                 If you would like more information about the calculator or the <i>Green DiLT</i> project,
                 or if you have suggestions for improvement, feel free to contact us at:
@@ -1900,7 +1900,7 @@ def show_final():
     st.markdown("""
         <details style="margin-top:10px; cursor:pointer;">
             <summary style="font-weight:bold; color:#1b4332; font-size:1rem;">
-                📚 Literature sources
+                Literature sources
             </summary>
             <ul style="margin-top:10px; padding-left:20px; color:#1b4332; text-align:left;">
                 <li>Herrmann et al. (2023): <i>The Climate Impact of the Usage of Headphones and Headsets</i></li>
@@ -1956,6 +1956,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
