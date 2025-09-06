@@ -408,10 +408,7 @@ def show_main():
     st.markdown("""
     <h3 style="margin-top: 25px; color:#1d3557;">💻 Devices & E-Waste</h3>
     <p>
-        Please select only the digital devices you use for <b>study or work</b>. 
-        <br><br>
-        Example: If you own a personal smartphone and a work smartphone, 
-        include <b>only the one used for study or work</b>. 
+        Please select only the digital devices you use for <b>study or work</b>. Example: If you own a personal smartphone and a work smartphone, include <b>only the one used for study or work</b>. 
     </p>
     """, unsafe_allow_html=True)
 
@@ -441,7 +438,7 @@ def show_main():
         "External Monitor": "🖥️", "Headphones": "🎧", "Printer": "🖨️", "Router/Modem": "📶"
     }
 
-    st.markdown("**Set a quantity for each device you own**. Then, you will then be asked a few details about how you use it and what you do when it is no longer needed.")
+    st.markdown("**Set a quantity for each device you own. Then, you will then be asked a few details about how you use it and what you do when it is no longer needed.**")
 
     types = list(device_ef.keys())
         # memorizza le quantità precedenti per rilevare cambi (no bottone)
@@ -1961,6 +1958,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
