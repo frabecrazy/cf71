@@ -407,7 +407,11 @@ def show_main():
 
     st.markdown("""
         <h3 style="margin-top: 25px; color:#1d3557;">💻 Devices & E-Waste</h3>
-        <p>Choose the digital devices you currently use, and for each one, provide a few details about how you use it and what you do when it's no longer needed.</p>
+        <p>    Please select only the digital devices you use for <b>study or work</b>. 
+    Example: If you own a personal smartphone and a work smartphone, 
+    include <b>only the one used for study or work</b>. 
+    For each device, you will then be asked a few details about how you use it 
+    and what you do when it is no longer needed.</p>
     """, unsafe_allow_html=True)
 
 
@@ -1956,6 +1960,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
