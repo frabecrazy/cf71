@@ -356,10 +356,10 @@ def show_main():
         padding: 10px 12px;
         font-size: 13px;
         line-height: 1.45;
-        width: 360px !important;              /* 🔥 larghezza fissa comoda */
-        max-width: min(90vw, 420px) !important;/* 🔥 limite responsive */
-        white-space: normal !important;        /* va a capo normalmente */
-        word-break: break-word;                /* spezza parole lunghe */
+        width: 360px !important;           
+        max-width: min(90vw, 420px) !important;
+        white-space: normal !important;        
+        word-break: break-word;               
         box-shadow: 0 8px 24px rgba(0,0,0,.15);
         transition: opacity .15s ease-in-out;
         z-index: 9999;
@@ -765,7 +765,8 @@ def show_main():
 
     mail_total = (em_plain * 0.004 + em_attach * 0.035 + cld * 0.01) * DAYS
     wifi_total  = st.session_state.get("wifi", 4.0) * 0.00584 * DAYS
-    print_total = st.session_state.get("pages", 0) * 0.0045 * (DAYS/5)
+    pages = int(st.session_state.get("pages", 0) or 0)
+    print_total = pages * 0.0045 * (DAYS/5)
 
     idle_val = st.session_state.get("idle")
     if idle_val == "I leave it on (idle mode)":
@@ -1837,7 +1838,7 @@ def show_virtues():
 
     
     # 7) Zero stampe
-    if int(st.session_state.get("pages", 0)) == 0:
+    if pages == 0:
         virtues.append("You never print. This saves paper, ink, and the energy needed for printing... the trees thank you!")
 
     # 8) Uso moderato dell’AI (< 20 query/giorno)
@@ -1958,6 +1959,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
