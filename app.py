@@ -1838,6 +1838,7 @@ def show_virtues():
 
     
     # 7) Zero stampe
+    pages = int(st.session_state.get("pages", 0) or 0) 
     if pages == 0:
         virtues.append("You never print. This saves paper, ink, and the energy needed for printing... the trees thank you!")
 
@@ -1959,6 +1960,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
