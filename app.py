@@ -275,6 +275,7 @@ This calculator is tailored for **university students, professors, and staff mem
         box = st.container()
         with box:
             st.image("logo.png", use_container_width=True)  # <-- niente <img>, funziona anche con repo privata
+            st.image("logo2.png", use_container_width=True)
 
     st.divider()  # linea continua a tutta larghezza
 
@@ -1966,6 +1967,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
