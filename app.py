@@ -265,7 +265,7 @@ def show_intro():
 
     with col_welcome:
         st.markdown(
-        """
+        f"""
         <div style="margin-top:20px;">
         Welcome to the **Digital Carbon Footprint Calculator**, a tool developed within the *Green DiLT* project to raise awareness about the hidden environmental impact of digital habits in academia.
 
@@ -1972,6 +1972,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
