@@ -267,9 +267,9 @@ def show_intro():
         st.markdown(
         f"""
         <div style="margin-top:20px;">
-        Welcome to the **Digital Carbon Footprint Calculator**, a tool developed within the *Green DiLT* project to raise awareness about the hidden environmental impact of digital habits in academia.
+        Welcome to the <b>Digital Carbon Footprint Calculator</b>, a tool developed within the <i>Green DiLT project</i> to raise awareness about the hidden environmental impact of digital habits in academia.
 
-        This calculator is tailored for **university students, professors, and staff members**, helping you estimate your CO₂e emissions from everyday digital activities, often overlooked, but increasingly relevant.
+        This calculator is tailored for <b>university students, professors, and staff members</b>, helping you estimate your CO₂e emissions from everyday digital activities, often overlooked, but increasingly relevant.
         </div>
         """,
         unsafe_allow_html=True
@@ -1972,6 +1972,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
