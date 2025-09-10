@@ -264,11 +264,16 @@ def show_intro():
     col_welcome, col_logo = st.columns([8, 2])
 
     with col_welcome:
-        st.markdown("""
-Welcome to the **Digital Carbon Footprint Calculator**, a tool developed within the *Green DiLT* project to raise awareness about the hidden environmental impact of digital habits in academia.
+        st.markdown(
+        """
+        <div style="margin-top:20px;">
+        Welcome to the **Digital Carbon Footprint Calculator**, a tool developed within the *Green DiLT* project to raise awareness about the hidden environmental impact of digital habits in academia.
 
-This calculator is tailored for **university students, professors, and staff members**, helping you estimate your CO₂e emissions from everyday digital activities, often overlooked, but increasingly relevant.
-        """)
+        This calculator is tailored for **university students, professors, and staff members**, helping you estimate your CO₂e emissions from everyday digital activities, often overlooked, but increasingly relevant.
+        </div>
+        """,
+        unsafe_allow_html=True
+        )
 
     with col_logo:
         # Logo grande che occupa lo spazio a destra
@@ -1967,6 +1972,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
