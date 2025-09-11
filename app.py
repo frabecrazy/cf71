@@ -152,7 +152,7 @@ eol_modifier = {
     "I return it to manufacturer for recycling or reuse": -0.3665,
     "I sell or donate it to someone else": -0.445,
     "I store it at home, unused": 0.402,
-    "Device provided by the university, I return it after use": -0.345,
+    "Device provided by the university, I return it after use": -0.089,
 }
 
 DAYS = 250  # Typical number of work/study days per year
@@ -1972,6 +1972,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
