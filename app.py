@@ -1828,22 +1828,26 @@ def show_virtues():
         for vals in st.session_state.get("device_inputs", {}).values()
     )
     if has_good_eol:
-        virtues.append("You dispose of devices responsibly! EU aims to achieve a correct e-waste disposal rate of 65%, but many countries are still below this threshold.")
+        virtues.append("You dispose some of devices responsibly! EU aims to achieve a correct e-waste disposal rate of 65%, but many countries are still below this threshold.")
 
     # 4) Poche email con allegato (1–10)
-    if st.session_state.get("email_attach") == "1–10":
-        virtues.append("You keep the exchange of emails with attachments low. An email with an attachment typically weighs almost ten times more than one without.")
-
+    da_em_attach = int(st.session_state.get("da_em_attach", 0) or 0)
+    if da_em_attach <= 10:
+        virtues.append(
+            "You keep the exchange of emails with attachments low. An email with an attachment typically weighs almost ten times more than one without."
+        )
+  
     # 5) Cloud storage basso (<5GB o 5–20GB)
-    if st.session_state.get("cloud") in ("<5GB", "5–20GB"):
-        virtues.append("You keep your cloud storage light by cleaning up files you no longer need! This reduces the energy required to store and maintain them.")
+    da_cloud_gb = float(st.session_state.get("da_cloud_gb", 0) or 0.0)
+    if da_cloud_gb <= 20:
+        virtues.append(
+            "You keep your cloud storage light by cleaning up files you no longer need! This reduces the energy required to store and maintain them."
+        )
 
     # 6) Spegnere il computer quando non usato
     if st.session_state.get("idle_turns_off"):
         virtues.append("You turn off your computer when not in use. This single action can save over 150 kWh of energy per year for a single computer!")
 
-
-    
     # 7) Zero stampe
     st.session_state.setdefault("pages", 0)
     try:
@@ -1860,7 +1864,6 @@ def show_virtues():
         virtues.append(
             "You use AI sparingly, staying under 20 queries a day. This reduces the energy consumed by high-compute AI models."
         )
-
 
     if virtues:
         st.markdown("#### You’re already making smart choices")
@@ -1972,6 +1975,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
