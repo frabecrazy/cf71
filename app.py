@@ -1849,14 +1849,11 @@ def show_virtues():
         virtues.append("You turn off your computer when not in use. This single action can save over 150 kWh of energy per year for a single computer!")
 
     # 7) Zero stampe
-    st.session_state.setdefault("pages", 0)
-    try:
-        pages = int(str(st.session_state["pages"]).strip())
-    except (TypeError, ValueError):
-        pages = 0
- 
+    pages = int(st.session_state.get("da_pages", 0) or 0)
     if pages == 0:
-        virtues.append("You never print. This saves paper, ink, and the energy needed for printing... the trees thank you!")
+        virtues.append(
+            "You never print. This saves paper, ink, and the energy needed for printing... the trees thank you!"
+        )
 
     # 8) Uso moderato dell’AI (< 20 query/giorno)
     ai_total_queries = int(st.session_state.get("ai_total_queries", 0))
@@ -1975,6 +1972,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
