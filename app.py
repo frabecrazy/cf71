@@ -954,7 +954,7 @@ def show_guess():
                     st.markdown('<div class="picked">', unsafe_allow_html=True)
 
                 st.markdown(f"<div class='arc-card'><h4>{arc['name']}</h4></div>", unsafe_allow_html=True)
-                st.image(arc["image"], width=250)
+                st.image(arc["image"], width=290)
                 st.markdown(f"<div style='text-align:center;'><span class='arc-badge'>{arc['category']}</span></div>",
                             unsafe_allow_html=True)
 
@@ -1972,6 +1972,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
