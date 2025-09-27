@@ -279,8 +279,8 @@ def show_intro():
         # Logo grande che occupa lo spazio a destra
         box = st.container()
         with box:
-            st.image("logo.png", width=200)  # <-- niente <img>, funziona anche con repo privata
-            st.image("logo2.png", use_container_width=True)
+            st.image("logo.png", width=300)  # <-- niente <img>, funziona anche con repo privata
+            st.image("logo2.png", width=300)
 
     st.divider()  # linea continua a tutta larghezza
 
@@ -1972,6 +1972,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
