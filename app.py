@@ -143,7 +143,7 @@ device_ef = {
     "External Monitor": 235,
     "Headphones": 10.22,
     "Printer": 62.3,
-    "Home Router/Modem": 106
+    "Home Router/Modem": 106,
     "eBook Reader": 1,
     "Projector": 1320,
     
@@ -2050,6 +2050,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
