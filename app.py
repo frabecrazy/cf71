@@ -673,7 +673,7 @@ def show_main():
                     label_visibility="visible"
                 )
 
-                st.session_state[idk_key] = is_idk
+                st.session_state[idk_key] = not is_idk
 
 
             with col4:
@@ -2043,6 +2043,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
