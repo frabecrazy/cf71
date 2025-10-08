@@ -143,7 +143,7 @@ device_ef = {
     "External Monitor": 235,
     "Headphones": 10.22,
     "Printer": 62.3,
-    "Router/Modem": 106
+    "Home Router/Modem": 106
 }
 
 eol_modifier = {
@@ -750,7 +750,7 @@ def show_main():
     wifi = st.slider("Estimate your daily Wi-Fi connection time during a typical 8-hour study or work day, including hours when you're not actively using your device (e.g., background apps, idle mode)", 0.0, 8.0, 4.0, 0.5, key="wifi")
     pages = st.number_input("Printed pages per week", 0, 100, 0, key="pages")
 
-    idle = st.radio("When you're not using your computer...", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"],
+    idle = st.radio("Do you turn off your computer at the end of the workday, or leave it on standby?", ["I turn it off", "I leave it on (idle mode)", "I don’t have a computer"],
     key="idle")
 
     st.session_state["idle_turns_off"] = (st.session_state.get("idle") == "I turn it off")
@@ -1972,6 +1972,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
