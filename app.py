@@ -478,9 +478,9 @@ def show_main():
             st.session_state.pop(f"picker_qty_{t}", None)
         st.session_state["_picker_reset"] = False
 
-    cols = st.columns(4)
+    cols = st.columns(5)
     for i, t in enumerate(types):
-        with cols[i % 4]:
+        with cols[i % 5]:
             st.markdown(f"{device_emoji.get(t, '•')} **{t}**")
             st.number_input(
                 "Qty",
@@ -2050,6 +2050,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
