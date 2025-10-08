@@ -638,11 +638,43 @@ def show_main():
                         key=years_key
                     )
 
-                # Bottone toggle "I don't know"
-                toggle_label = "✅ I don’t know (using average)" if st.session_state[idk_key] else "💡 I don’t know"
-                if st.button(toggle_label, key=f"idk_btn_{device_id}", use_container_width=True):
-                    st.session_state[idk_key] = not st.session_state[idk_key]
-                    st.rerun()
+                # --- "I don't know" single-radio style toggle ---
+                st.markdown("""
+                    <style>
+                    .radio-like input[type=checkbox] {
+                        appearance: none;
+                        -webkit-appearance: none;
+                        width: 16px;
+                        height: 16px;
+                        border-radius: 50%;
+                        border: 2px solid #999;
+                        outline: none;
+                        cursor: pointer;
+                        vertical-align: middle;
+                        margin-right: 6px;
+                    }
+                    .radio-like input[type=checkbox]:checked {
+                        background-color: #0d6efd;
+                        border-color: #0d6efd;
+                    }
+                    .radio-like label {
+                        cursor: pointer;
+                        font-size: 14px;
+                    }
+                    </style>
+                """, unsafe_allow_html=True)
+
+                # Pallino "I don't know" (toggle)
+                is_idk = st.checkbox(
+                    "I don’t know",
+                    value=st.session_state[idk_key],
+                    key=f"idk_checkbox_{device_id}",
+                    help="Use average lifespan and ignore manual edits",
+                    label_visibility="visible"
+                )
+
+                st.session_state[idk_key] = is_idk
+
 
             with col4:
                 st.markdown("""
@@ -2011,6 +2043,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
