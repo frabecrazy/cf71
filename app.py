@@ -669,6 +669,7 @@ def show_main():
                     "I don’t know",
                     value=prev_state,
                     key=f"idk_checkbox_{device_id}",
+                     help="If you select this option, the average lifespan of the device will be considered.",
                     label_visibility="visible"
                 )
 
@@ -2046,6 +2047,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
