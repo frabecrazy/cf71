@@ -677,6 +677,33 @@ def show_main():
                     st.rerun()
                 else:
                     st.session_state[idk_key] = is_idk
+                current_years = st.session_state.get(years_key, 0.5)
+
+                if st.session_state[idk_key]:
+                    # blocca input, ma NON cambia il numero visibile
+                    years = st.number_input(
+                        "",
+                        0.5,
+                        20.0,
+                        value=current_years,
+                        step=0.5,
+                        format="%.1f",
+                        key=years_key,
+                        disabled=True
+                    )
+                else:
+                    years = st.number_input(
+                        "",
+                        0.5,
+                        20.0,
+                        value=current_years,
+                        step=0.5,
+                        format="%.1f",
+                        key=years_key
+                    )
+
+                # usa la media solo nei calcoli, non a schermo
+                effective_years = avg_years if st.session_state[idk_key] else years
 
 
             with col4:
@@ -2046,6 +2073,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
