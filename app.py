@@ -155,6 +155,20 @@ eol_modifier = {
     "Device provided by the university, I return it after use": -0.089,
 }
 
+DEFAULT_LIFESPAN = {
+    "Desktop Computer": 6,
+    "Laptop Computer": 5,
+    "Smartphone": 3,
+    "Tablet": 4,
+    "External Monitor": 8,
+    "Headphones": 3,
+    "Printer": 7,
+    "Home Router/Modem": 8,
+    "eBook Reader": 4,
+    "Projector": 8,
+}
+
+
 DAYS = 250  # Typical number of work/study days per year
 
 
@@ -592,17 +606,44 @@ def show_main():
                     </div>
                 """, unsafe_allow_html=True)
 
-                years = st.number_input(
-                    "",
-                    0.5,
-                    20.0,
-                    step=0.5,
-                    format="%.1f",
-                    key=f"{device_id}_years"
-                )
+                # chiave di stato per il toggle "I don't know"
+                idk_key = f"{device_id}_idk"
+                years_key = f"{device_id}_years"
+                avg_years = DEFAULT_LIFESPAN.get(base_device, 5)
 
+                # Inizializza lo stato se non presente
+                if idk_key not in st.session_state:
+                    st.session_state[idk_key] = False
 
+                # Se "I don't know" è attivo, forza il valore medio e disabilita l'input
+                if st.session_state[idk_key]:
+                    st.session_state[years_key] = avg_years
+                    years = st.number_input(
+                        "",
+                        0.5,
+                        20.0,
+                        value=avg_years,
+                        step=0.5,
+                        format="%.1f",
+                        key=years_key,
+                        disabled=True
+                    )
+                    st.caption(f"Average lifespan used: {avg_years} years")
+                else:
+                    years = st.number_input(
+                        "",
+                        0.5,
+                        20.0,
+                        step=0.5,
+                        format="%.1f",
+                        key=years_key
+                    )
 
+                # Bottone toggle "I don't know"
+                toggle_label = "✅ I don’t know (using average)" if st.session_state[idk_key] else "💡 I don’t know"
+                if st.button(toggle_label, key=f"idk_btn_{device_id}", use_container_width=True):
+                    st.session_state[idk_key] = not st.session_state[idk_key]
+                    st.rerun()
 
             with col4:
                 st.markdown("""
@@ -1971,6 +2012,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
