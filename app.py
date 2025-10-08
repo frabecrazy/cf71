@@ -622,7 +622,6 @@ def show_main():
                         "",
                         0.5,
                         20.0,
-                        value=avg_years,
                         step=0.5,
                         format="%.1f",
                         key=years_key,
@@ -2012,6 +2011,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
