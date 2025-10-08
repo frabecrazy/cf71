@@ -663,15 +663,20 @@ def show_main():
                     </style>
                 """, unsafe_allow_html=True)
 
-                # Pallino "I don't know" (toggle)
+
+                prev_state = st.session_state.get(idk_key, False)
                 is_idk = st.checkbox(
                     "I don’t know",
-                    value=st.session_state[idk_key],
+                    value=prev_state,
                     key=f"idk_checkbox_{device_id}",
                     label_visibility="visible"
                 )
 
-                st.session_state[idk_key] = is_idk
+                if is_idk != prev_state:
+                    st.session_state[idk_key] = is_idk
+                    st.rerun()
+                else:
+                    st.session_state[idk_key] = is_idk
 
 
             with col4:
@@ -2041,6 +2046,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
