@@ -559,7 +559,7 @@ def show_main():
                         <span style='font-size:12px; color:gray'>Is this device used only by you or shared?</span>
                     </div>
                 """, unsafe_allow_html=True)
-                shared_options = ["-- Select --", "Personal", "Shared"]
+                shared_options = ["-- Select --", "Personal", "Shared with family", "Shared in university"]
                 shared_index = shared_options.index(prev["shared"]) if prev["shared"] in shared_options else 0
                 shared = st.selectbox("", shared_options, index=shared_index, key=f"{device_id}_shared")
 
@@ -628,12 +628,20 @@ def show_main():
                 adj_years = years
             elif used == "Used" and shared == "Personal":
                 adj_years = years + (years / 2)
-            elif used == "New" and shared == "Shared":
+
+            elif used == "New" and shared == "Shared with family":
                 adj_years = years * 3
-            elif used == "Used" and shared == "Shared":
+            elif used == "Used" and shared == "Shared with family":
                 adj_years = years * 4.5
+
+            elif used == "New" and shared == "Shared in university":
+                adj_years = years * 15
+            elif used == "Used" and shared == "Shared in university":
+                adj_years = years * 22.5  # 15 * 1.5 (come proporzione coerente)
+
             else:
                 adj_years = years
+
 
             eol_mod = eol_modifier.get(eol, 0)
             prod_per_year = impact / adj_years if adj_years else 0
@@ -1393,25 +1401,16 @@ def show_virtues():
         # Helpers comuni
         # ===============================
         def _adj_years(years: float, used: str, shared: str) -> float:
-            """
-            Calcola gli 'anni aggiustati' come nel tuo modello:
-            - New & Personal: years
-            - Used & Personal: years + years/2
-            - New & Shared: years * 3
-            - Used & Shared: years * 4.5
-            """
             if years <= 0:
                 return 0.0
-            if (used == "New" or not used) and shared == "Personal":
+            if shared == "Personal":
+                return years * (1.5 if used == "Used" else 1.0)
+            elif shared == "Shared with family":
+                return years * (4.5 if used == "Used" else 3.0)
+            elif shared == "Shared in university":
+                return years * (22.5 if used == "Used" else 15.0)
+            else:
                 return years
-            if used == "Used" and shared == "Personal":
-                return years * 1.5
-            if (used == "New" or not used) and shared == "Shared":
-                return years * 3.0
-            if used == "Used" and shared == "Shared":
-                return years * 4.5
-            # fallback (tratta come Personal & New)
-            return years
 
         def _fmt_kg(x: float) -> str:
             # arrotonda "pulito": 0 decimali se grande, 1 decimale altrimenti
@@ -1972,6 +1971,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
