@@ -617,7 +617,6 @@ def show_main():
 
                 # Se "I don't know" è attivo, forza il valore medio e disabilita l'input
                 if st.session_state[idk_key]:
-                    st.session_state[years_key] = avg_years
                     years = st.number_input(
                         "",
                         0.5,
@@ -627,7 +626,6 @@ def show_main():
                         key=years_key,
                         disabled=True
                     )
-                    st.caption(f"Average lifespan used: {avg_years} years")
                 else:
                     years = st.number_input(
                         "",
@@ -2043,6 +2041,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
