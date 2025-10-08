@@ -652,8 +652,8 @@ def show_main():
                         margin-right: 6px;
                     }
                     .radio-like input[type=checkbox]:checked {
-                        background-color: #0d6efd;
-                        border-color: #0d6efd;
+                        background-color: #6c757d;
+                        border-color: #6c757d;
                     }
                     .radio-like label {
                         cursor: pointer;
@@ -667,7 +667,6 @@ def show_main():
                     "I don’t know",
                     value=st.session_state[idk_key],
                     key=f"idk_checkbox_{device_id}",
-                    help="Use average lifespan and ignore manual edits",
                     label_visibility="visible"
                 )
 
@@ -2041,6 +2040,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
