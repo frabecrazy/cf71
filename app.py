@@ -714,9 +714,9 @@ def show_main():
                 adj_years = years * 4.5
 
             elif used == "New" and shared == "Shared in university":
-                adj_years = years * 15
+                adj_years = years * 10
             elif used == "Used" and shared == "Shared in university":
-                adj_years = years * 22.5  # 15 * 1.5 (come proporzione coerente)
+                adj_years = years * 15  # 10 * 1.5 (come proporzione coerente)
 
             else:
                 adj_years = years
@@ -1487,7 +1487,7 @@ def show_virtues():
             elif shared == "Shared with family":
                 return years * (4.5 if used == "Used" else 3.0)
             elif shared == "Shared in university":
-                return years * (22.5 if used == "Used" else 15.0)
+                return years * (15 if used == "Used" else 10.0)
             else:
                 return years
 
@@ -2050,6 +2050,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
