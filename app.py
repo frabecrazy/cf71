@@ -144,7 +144,8 @@ device_ef = {
     "Headphones": 10.22,
     "Printer": 62.3,
     "Home Router/Modem": 106,
-    "Projector": 1320,
+    "Maxi-screen": 1320,
+    "Projector": 145,
     
 }
 
@@ -166,6 +167,7 @@ DEFAULT_LIFESPAN = {
     "Headphones": 3,
     "Printer": 7,
     "Home Router/Modem": 8,
+    "Maxi-screen": 8,
     "Projector": 8,
 }
 
@@ -456,7 +458,7 @@ def show_main():
 
     device_emoji = {
         "Desktop Computer": "🖥️", "Laptop Computer": "💻", "Smartphone": "📱", "Tablet": "📲",
-        "External Monitor": "🖥️", "Headphones": "🎧", "Printer": "🖨️", "Home Router/Modem": "🛜", "Projector": "📽️"
+        "External Monitor": "🖥️", "Headphones": "🎧", "Printer": "🖨️", "Home Router/Modem": "🛜", "Projector": "📽️", "Maxi-screen": "📺"
     }
 
     st.markdown("**Set a quantity for each device you own. Then, you will then be asked a few details about how you use it and what you do when it is no longer needed.**")
@@ -2049,6 +2051,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
