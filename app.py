@@ -2004,6 +2004,7 @@ def show_final():
                 <li>André et al. (2019): <i>Resource and environmental impacts of using second-hand laptop computers: A case study of commercial reuse</i></li>
                 <li>Choi et al. (2006): <i>Life Cycle Assessment of a Personal Computer and its Effective Recycling Rate</i></li>
                 <li>Yuksek et al. (2023): <i>Sustainability Assessment of Electronic Waste Remanufacturing: The Case of Laptop</i></li>
+                <li>Tua et al. (2022): <i>Editoria scolastica e impatti ambientali: analisi del caso Zanichelli tramite la metodologia LCA</i></li>
             </ul>
         </details>
     """, unsafe_allow_html=True)
@@ -2048,6 +2049,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
