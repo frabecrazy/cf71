@@ -101,14 +101,14 @@ activity_factors = {
         "Web browsing": 0.0264,
         "Watching lecture recordings": 0.0439,
         "Online classes streaming or video call": 0.112,
-        "Reading study materials on your computer (e.g. slides, articles, digital textbooks)": 0.00901
+        "Reading study materials on your computer (e.g. slides, articles, digital textbooks)": 0.004352
     },
     "Professor": {
         "MS Office (e.g. Excel, Word, PPT, Outlook…)": 0.00901,
         "Web browsing": 0.0264,
         "Videocall (e.g. Zoom, Teams…)": 0.112,
         "Online classes streaming": 0.112,
-        "Reading materials on your computer (e.g. slides, articles, digital textbooks)": 0.00901,
+        "Reading materials on your computer (e.g. slides, articles, digital textbooks)": 0.004352,
         "Technical softwares (e.g. Matlab, Python…)": 0.00901
     },
     "Staff Member": {
@@ -116,7 +116,7 @@ activity_factors = {
         "Management software (e.g. SAP)": 0.00901,
         "Web browsing": 0.0264,
         "Videocall (e.g. Zoom, Teams…)": 0.112,
-        "Reading materials on your computer (e.g. documents)": 0.00901
+        "Reading materials on your computer (e.g. documents)": 0.004352
     }
 }
 
@@ -144,7 +144,6 @@ device_ef = {
     "Headphones": 10.22,
     "Printer": 62.3,
     "Home Router/Modem": 106,
-    "eBook Reader": 1,
     "Projector": 1320,
     
 }
@@ -167,7 +166,6 @@ DEFAULT_LIFESPAN = {
     "Headphones": 3,
     "Printer": 7,
     "Home Router/Modem": 8,
-    "eBook Reader": 4,
     "Projector": 8,
 }
 
@@ -458,7 +456,7 @@ def show_main():
 
     device_emoji = {
         "Desktop Computer": "🖥️", "Laptop Computer": "💻", "Smartphone": "📱", "Tablet": "📲",
-        "External Monitor": "🖥️", "Headphones": "🎧", "Printer": "🖨️", "Home Router/Modem": "🛜", "eBook Reader": "📖", "Projector": "📽️"
+        "External Monitor": "🖥️", "Headphones": "🎧", "Printer": "🖨️", "Home Router/Modem": "🛜", "Projector": "📽️"
     }
 
     st.markdown("**Set a quantity for each device you own. Then, you will then be asked a few details about how you use it and what you do when it is no longer needed.**")
@@ -2050,6 +2048,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
