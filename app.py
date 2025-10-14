@@ -463,12 +463,21 @@ def show_main():
 
     st.markdown("**Set a quantity for each device you own. Then, you will then be asked a few details about how you use it and what you do when it is no longer needed.**")
 
-    types = list(device_ef.keys())
-        # memorizza le quantità precedenti per rilevare cambi (no bottone)
+    # Filtra i device in base al ruolo
+    role_curr = st.session_state.get("role", "")
+    if role_curr == "Student":
+        # Gli studenti non vedono Maxi-screen e Projector
+        types = [d for d in device_ef.keys() if d not in ["Maxi-screen", "Projector"]]
+        num_cols = 4
+    else:
+        # Professor o Staff Member vedono tutti i device
+        types = list(device_ef.keys())
+        num_cols = 5
+
+    # memorizza le quantità precedenti per rilevare cambi (no bottone)
     if "picker_prev" not in st.session_state:
         st.session_state.picker_prev = {t: 0 for t in types}
     else:
-        # aggiungi eventuali nuovi tipi se non presenti
         for _t in types:
             st.session_state.picker_prev.setdefault(_t, 0)
 
@@ -478,9 +487,10 @@ def show_main():
             st.session_state.pop(f"picker_qty_{t}", None)
         st.session_state["_picker_reset"] = False
 
-    cols = st.columns(5)
+    # Crea il layout dinamico (4 colonne per studenti, 5 per altri)
+    cols = st.columns(num_cols)
     for i, t in enumerate(types):
-        with cols[i % 5]:
+        with cols[i % num_cols]:
             st.markdown(f"{device_emoji.get(t, '•')} **{t}**")
             st.number_input(
                 "Qty",
@@ -491,6 +501,7 @@ def show_main():
                 key=f"picker_qty_{t}",
                 label_visibility="collapsed"
             )
+
 
     # Applica la differenza subito quando cambi i Qty (senza bottone)
     from collections import Counter
@@ -2051,6 +2062,7 @@ elif st.session_state.page == "virtues":
     show_virtues()
 elif st.session_state.page == "final":
     show_final()
+
 
 
 
